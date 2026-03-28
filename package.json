@@ -1,0 +1,11 @@
+{
+  "name": "imba-beacon",
+  "version": "1.0.0",
+  "private": true,
+  "description": "IMBA Beacon frontend with lightweight Node backend",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  }
+}

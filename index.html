@@ -1,0 +1,2569 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>IMBA Beacon | IIT Mandi Interview Preparation</title>
+<meta name="description" content="IMBA Beacon is an institutional-style interview preparation platform for IIT Mandi IMBA aspirants with structured mentoring, mock interviews, and live sessions."/>
+
+<!-- Premium but restrained institutional typography -->
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Merriweather:wght@700&display=swap" rel="stylesheet"/>
+
+<!-- Preload hero imagery for smoother first paint -->
+<link rel="preload" as="image" href="https://images.unsplash.com/photo-1523050854058-8df90110c9f1?auto=format&fit=crop&w=1600&q=80"/>
+<link rel="preload" as="image" href="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=1600&q=80"/>
+<link rel="preload" as="image" href="https://images.unsplash.com/photo-1523240795612-9a054b0db644?auto=format&fit=crop&w=1600&q=80"/>
+
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+:root{
+  --navy:#6a1f36;
+  --navy-2:#7d2a43;
+  --navy-3:#94405b;
+  --navy-4:#ab5772;
+  --navy-5:#c17189;
+  --gold:#c9a24b;
+  --gold-soft:#e3c680;
+  --gold-deep:#9a7220;
+  --cream:#f6f0e6;
+  --ink:#4a2933;
+  --muted:#86656f;
+  --muted-2:#a78891;
+  --surface:#ffffff;
+  --surface-alt:#fcf7f8;
+  --line:rgba(255,255,255,.12);
+  --line-dark:rgba(106,31,54,.08);
+  --shadow-sm:0 10px 24px rgba(106,31,54,.08);
+  --shadow-md:0 22px 60px rgba(106,31,54,.14);
+  --shadow-lg:0 28px 80px rgba(106,31,54,.22);
+  --radius:18px;
+  --radius-lg:24px;
+  --container:min(1180px,calc(100% - 2rem));
+  --slider-duration:6800ms;
+  --slider-ease:cubic-bezier(.22,.61,.36,1);
+}
+
+html{scroll-behavior:smooth}
+body{
+  font-family:"Manrope",sans-serif;
+  background:#fbf6f7;
+  color:var(--ink);
+  line-height:1.7;
+  -webkit-font-smoothing:antialiased;
+  text-rendering:optimizeLegibility;
+}
+body.is-loading *{transition:none!important;animation:none!important}
+body::before{
+  content:"";
+  position:fixed;
+  inset:0;
+  background:radial-gradient(circle at top,rgba(197,155,61,.06),transparent 38%);
+  pointer-events:none;
+  z-index:-1;
+}
+a{text-decoration:none;color:inherit}
+img{max-width:100%;display:block}
+button{font:inherit}
+button,input{border:none}
+
+:focus-visible{
+  outline:3px solid rgba(225,197,123,.88);
+  outline-offset:3px;
+}
+
+.topbar,
+.mainnav,
+.hero,
+.quick-links-grid,
+.info-card,
+.message-panel,
+.stats-panel,
+.media-card,
+.notice-panel,
+.student-panel,
+.plan-card,
+.centre-card,
+.cta-shell{
+  will-change:transform;
+}
+
+.topbar{
+  background:linear-gradient(180deg,var(--navy-2),var(--navy));
+  color:rgba(255,255,255,.85);
+  font-size:.82rem;
+  border-bottom:1px solid rgba(255,255,255,.08);
+}
+.topbar-inner,
+.mainnav-inner,
+.hero-overlay,
+.section-inner,
+.footer-inner{
+  width:var(--container);
+  margin:0 auto;
+}
+.topbar-inner{
+  display:flex;
+  justify-content:space-between;
+  gap:1rem;
+  padding:.68rem 0;
+  flex-wrap:wrap;
+}
+.topbar-links,
+.topbar-meta{
+  display:flex;
+  gap:1rem;
+  flex-wrap:wrap;
+  align-items:center;
+}
+.topbar-links a{
+  transition:color .24s ease,opacity .24s ease;
+}
+.topbar-links a:hover{color:var(--gold-soft)}
+.topbar .pill{
+  color:var(--gold-soft);
+  font-weight:800;
+  letter-spacing:.05em;
+  text-transform:uppercase;
+}
+
+.mainnav{
+  position:sticky;
+  top:0;
+  z-index:60;
+  background:rgba(74,16,34,.84);
+  backdrop-filter:blur(18px) saturate(140%);
+  border-bottom:1px solid rgba(255,255,255,.06);
+  box-shadow:0 6px 24px rgba(0,0,0,.08);
+}
+.mainnav-inner{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:1.5rem;
+  padding:.92rem 0;
+}
+.brand{
+  display:flex;
+  align-items:center;
+  gap:.95rem;
+  color:#fff;
+  min-width:0;
+}
+.brand-logo{
+  width:172px;
+  max-width:36vw;
+  border-radius:14px;
+  display:block;
+  box-shadow:0 18px 40px rgba(74,16,34,.2);
+  transition:transform .35s var(--slider-ease),box-shadow .35s var(--slider-ease);
+}
+.brand:hover .brand-logo{
+  transform:translateY(-2px);
+  box-shadow:0 24px 48px rgba(74,16,34,.28);
+}
+.brand-copy strong{
+  display:block;
+  font-size:1rem;
+  letter-spacing:.01em;
+  line-height:1.2;
+}
+.brand-copy span{
+  display:block;
+  font-size:.79rem;
+  color:rgba(255,255,255,.72);
+  line-height:1.35;
+}
+.nav-menu{
+  list-style:none;
+  display:flex;
+  gap:1.35rem;
+  color:#fff;
+  font-size:.93rem;
+  font-weight:700;
+  align-items:center;
+}
+.nav-item{
+  position:relative;
+}
+.nav-trigger{
+  display:inline-flex;
+  align-items:center;
+  gap:.42rem;
+}
+.nav-trigger-icon{
+  font-size:.72rem;
+  color:rgba(255,255,255,.55);
+  transition:transform .28s var(--slider-ease),color .28s var(--slider-ease);
+}
+.nav-menu a{
+  position:relative;
+  padding:.2rem 0;
+  transition:color .24s ease;
+}
+.nav-menu a::after{
+  content:"";
+  position:absolute;
+  left:0;
+  bottom:-.2rem;
+  width:100%;
+  height:2px;
+  transform:scaleX(0);
+  transform-origin:left center;
+  background:linear-gradient(90deg,var(--gold),var(--gold-soft));
+  transition:transform .3s var(--slider-ease);
+}
+.nav-menu a:hover{color:var(--gold-soft)}
+.nav-menu a:hover::after{transform:scaleX(1)}
+.nav-item:hover .nav-trigger-icon,
+.nav-item:focus-within .nav-trigger-icon{
+  transform:rotate(180deg);
+  color:var(--gold-soft);
+}
+.nav-dropdown{
+  position:absolute;
+  top:calc(100% + 1rem);
+  left:50%;
+  min-width:280px;
+  padding:1rem;
+  border-radius:22px;
+  background:linear-gradient(180deg,rgba(100,25,47,.98),rgba(74,16,34,.98));
+  border:1px solid rgba(255,255,255,.08);
+  box-shadow:0 24px 50px rgba(0,0,0,.22);
+  opacity:0;
+  visibility:hidden;
+  transform:translateX(-50%) translateY(8px);
+  transition:opacity .28s var(--slider-ease),transform .28s var(--slider-ease),visibility 0s linear .28s;
+}
+.nav-item:hover .nav-dropdown,
+.nav-item:focus-within .nav-dropdown{
+  opacity:1;
+  visibility:visible;
+  transform:translateX(-50%) translateY(0);
+  transition:opacity .28s var(--slider-ease),transform .28s var(--slider-ease),visibility 0s linear 0s;
+}
+.nav-dropdown::before{
+  content:"";
+  position:absolute;
+  top:-7px;
+  left:50%;
+  width:14px;
+  height:14px;
+  background:rgba(100,25,47,.98);
+  border-top:1px solid rgba(255,255,255,.08);
+  border-left:1px solid rgba(255,255,255,.08);
+  transform:translateX(-50%) rotate(45deg);
+}
+.nav-dropdown-grid{
+  display:grid;
+  gap:.4rem;
+}
+.nav-dropdown a{
+  display:flex;
+  flex-direction:column;
+  gap:.16rem;
+  padding:.82rem .95rem;
+  border-radius:16px;
+  color:#fff;
+  text-decoration:none;
+  transition:background-color .28s var(--slider-ease),transform .28s var(--slider-ease),color .28s var(--slider-ease);
+}
+.nav-dropdown a::after{
+  display:none;
+}
+.nav-dropdown a:hover{
+  background:rgba(255,255,255,.08);
+  color:var(--gold-soft);
+  transform:translateX(3px);
+}
+.nav-dropdown strong{
+  font-size:.9rem;
+  line-height:1.45;
+}
+.nav-dropdown span{
+  color:rgba(255,255,255,.62);
+  font-size:.77rem;
+  line-height:1.5;
+  font-weight:600;
+}
+.mobile-menu-toggle{
+  display:none;
+  width:48px;
+  height:48px;
+  border-radius:14px;
+  border:1px solid rgba(255,255,255,.12);
+  background:rgba(255,255,255,.06);
+  color:#fff;
+  align-items:center;
+  justify-content:center;
+  cursor:pointer;
+  transition:transform .28s var(--slider-ease),background-color .28s var(--slider-ease),border-color .28s var(--slider-ease);
+}
+.mobile-menu-toggle:hover{
+  transform:translateY(-1px);
+  background:rgba(255,255,255,.1);
+  border-color:rgba(225,197,123,.28);
+}
+.mobile-menu-toggle .menu-line{
+  width:18px;
+  height:2px;
+  background:currentColor;
+  border-radius:999px;
+  display:block;
+  transition:transform .25s var(--slider-ease),opacity .25s var(--slider-ease);
+}
+.mobile-menu-toggle .menu-stack{
+  display:flex;
+  flex-direction:column;
+  gap:4px;
+}
+.mobile-menu-toggle[aria-expanded="true"] .menu-line:nth-child(1){
+  transform:translateY(6px) rotate(45deg);
+}
+.mobile-menu-toggle[aria-expanded="true"] .menu-line:nth-child(2){
+  opacity:0;
+}
+.mobile-menu-toggle[aria-expanded="true"] .menu-line:nth-child(3){
+  transform:translateY(-6px) rotate(-45deg);
+}
+.nav-cta,
+.btn-primary,
+.btn-secondary,
+.plan-action,
+.cta-form button{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:.45rem;
+  border-radius:999px;
+  font-weight:800;
+  transition:
+    transform .28s var(--slider-ease),
+    box-shadow .28s var(--slider-ease),
+    background-color .28s var(--slider-ease),
+    border-color .28s var(--slider-ease),
+    color .28s var(--slider-ease);
+}
+.nav-cta{
+  background:linear-gradient(135deg,var(--gold-soft),var(--gold));
+  color:var(--navy);
+  padding:.9rem 1.22rem;
+  white-space:nowrap;
+  box-shadow:0 14px 30px rgba(197,155,61,.2);
+}
+.nav-cta:hover,
+.btn-primary:hover,
+.plan-card.featured .plan-action:hover,
+.cta-form button:hover{
+  transform:translateY(-2px);
+  box-shadow:0 18px 34px rgba(197,155,61,.26);
+}
+.btn-secondary:hover,
+.plan-action:hover{
+  transform:translateY(-2px);
+  box-shadow:0 14px 32px rgba(74,16,34,.18);
+}
+
+.announcement-bar{
+  position:relative;
+  z-index:55;
+  background:linear-gradient(90deg,var(--gold-deep),var(--gold),var(--gold-soft));
+  color:var(--navy);
+  border-bottom:1px solid rgba(74,16,34,.08);
+  overflow:hidden;
+}
+.announcement-inner{
+  width:var(--container);
+  margin:0 auto;
+  display:flex;
+  align-items:center;
+  gap:1rem;
+  min-height:48px;
+}
+.announcement-label{
+  flex:0 0 auto;
+  font-size:.72rem;
+  letter-spacing:.14em;
+  text-transform:uppercase;
+  font-weight:800;
+  padding-right:.75rem;
+  border-right:1px solid rgba(74,16,34,.12);
+}
+.announcement-track{
+  position:relative;
+  overflow:hidden;
+  flex:1 1 auto;
+  mask-image:linear-gradient(90deg,transparent 0,black 5%,black 95%,transparent 100%);
+}
+.announcement-items{
+  display:flex;
+  gap:2.25rem;
+  width:max-content;
+  animation:marquee 20s linear infinite;
+  font-weight:700;
+  white-space:nowrap;
+}
+.announcement-items span::before{
+  content:"•";
+  margin-right:.7rem;
+  color:rgba(74,16,34,.56);
+}
+@keyframes marquee{
+  from{transform:translateX(0)}
+  to{transform:translateX(-50%)}
+}
+
+.mobile-menu{
+  display:none;
+  width:var(--container);
+  margin:0 auto;
+  padding:0 0 .95rem;
+}
+.mobile-menu-panel{
+  background:linear-gradient(180deg,rgba(100,25,47,.98),rgba(74,16,34,.98));
+  border:1px solid rgba(255,255,255,.08);
+  border-radius:22px;
+  padding:1rem;
+  box-shadow:0 18px 40px rgba(0,0,0,.18);
+}
+.mobile-menu-list{
+  list-style:none;
+  display:grid;
+  gap:.25rem;
+}
+.mobile-menu-group{
+  border-radius:18px;
+  overflow:hidden;
+  background:rgba(255,255,255,.03);
+  border:1px solid rgba(255,255,255,.06);
+}
+.mobile-menu-group + .mobile-menu-group{
+  margin-top:.4rem;
+}
+.mobile-menu-group summary{
+  list-style:none;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:1rem;
+  padding:.92rem 1rem;
+  color:#fff;
+  font-weight:700;
+  cursor:pointer;
+}
+.mobile-menu-group summary::-webkit-details-marker{
+  display:none;
+}
+.mobile-menu-group summary::after{
+  content:"+";
+  color:rgba(255,255,255,.54);
+  font-size:1rem;
+  transition:transform .28s var(--slider-ease);
+}
+.mobile-menu-group[open] summary::after{
+  transform:rotate(45deg);
+}
+.mobile-submenu{
+  display:grid;
+  gap:.15rem;
+  padding:0 .55rem .6rem;
+}
+.mobile-submenu a{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:1rem;
+  padding:.78rem .85rem;
+  border-radius:14px;
+  color:rgba(255,255,255,.86);
+  font-weight:700;
+  transition:background-color .28s var(--slider-ease),transform .28s var(--slider-ease),color .28s var(--slider-ease);
+}
+.mobile-submenu a::after{
+  content:"↗";
+  color:rgba(255,255,255,.36);
+  font-size:.92rem;
+}
+.mobile-submenu a:hover{
+  background:rgba(255,255,255,.08);
+  color:var(--gold-soft);
+  transform:translateX(3px);
+}
+.mobile-menu-list a{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:1rem;
+  padding:.92rem 1rem;
+  border-radius:16px;
+  color:#fff;
+  font-weight:700;
+  transition:background-color .28s var(--slider-ease),transform .28s var(--slider-ease),color .28s var(--slider-ease);
+}
+.mobile-menu-list a::after{
+  content:"↗";
+  color:rgba(255,255,255,.4);
+  font-size:.95rem;
+}
+.mobile-menu-list a:hover{
+  background:rgba(255,255,255,.08);
+  color:var(--gold-soft);
+  transform:translateX(3px);
+}
+.mobile-menu-cta{
+  display:flex;
+  margin-top:.9rem;
+}
+.mobile-menu-cta a{
+  width:100%;
+  justify-content:center;
+}
+
+.hero{
+  position:relative;
+  min-height:84vh;
+  background:var(--navy);
+  overflow:hidden;
+}
+.hero::before{
+  content:"";
+  position:absolute;
+  inset:auto auto -10rem -8rem;
+  width:22rem;
+  height:22rem;
+  border-radius:50%;
+  background:radial-gradient(circle,rgba(197,155,61,.2),transparent 68%);
+  z-index:1;
+  pointer-events:none;
+}
+.slides{
+  position:absolute;
+  inset:0;
+}
+
+/* Premium slide motion: opacity + horizontal travel + layered zoom */
+.slide{
+  position:absolute;
+  inset:0;
+  opacity:0;
+  visibility:hidden;
+  pointer-events:none;
+  transform:translate3d(4.5%,0,0);
+  transition:
+    opacity 1.05s var(--slider-ease),
+    transform 1.15s var(--slider-ease),
+    visibility 0s linear 1.15s;
+}
+.slide.is-prev{
+  transform:translate3d(-3.5%,0,0);
+}
+.slide.is-next{
+  transform:translate3d(4.5%,0,0);
+}
+.slide.active{
+  opacity:1;
+  visibility:visible;
+  pointer-events:auto;
+  transform:translate3d(0,0,0);
+  transition:
+    opacity 1.05s var(--slider-ease),
+    transform 1.15s var(--slider-ease),
+    visibility 0s linear 0s;
+}
+.slide-background{
+  position:absolute;
+  inset:-4%;
+  background-size:cover;
+  background-position:center;
+  transform:scale(1.03);
+  transition:transform 1.4s var(--slider-ease);
+}
+.slide.active .slide-background{
+  animation:kenburns 6.8s ease-out forwards;
+}
+@keyframes kenburns{
+  from{transform:scale(1.03)}
+  to{transform:scale(1.1)}
+}
+.slide::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:
+    linear-gradient(105deg,rgba(74,16,34,.94) 0%,rgba(74,16,34,.84) 34%,rgba(74,16,34,.58) 62%,rgba(74,16,34,.42) 100%),
+    linear-gradient(180deg,rgba(74,16,34,.18) 0%,rgba(74,16,34,.52) 100%);
+}
+.slide-1 .slide-background{background-image:linear-gradient(135deg,rgba(17,52,82,.62),rgba(5,20,34,.58)),url("https://images.unsplash.com/photo-1523050854058-8df90110c9f1?auto=format&fit=crop&w=1600&q=80")}
+.slide-2 .slide-background{background-image:linear-gradient(135deg,rgba(23,59,90,.62),rgba(8,23,39,.62)),url("https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=1600&q=80")}
+.slide-3 .slide-background{background-image:linear-gradient(135deg,rgba(28,64,95,.62),rgba(8,23,39,.66)),url("https://images.unsplash.com/photo-1523240795612-9a054b0db644?auto=format&fit=crop&w=1600&q=80")}
+
+.hero-overlay{
+  position:relative;
+  z-index:3;
+  min-height:84vh;
+  display:grid;
+  align-items:center;
+  padding:6rem 0 4.4rem;
+}
+.hero-layout{
+  display:grid;
+  grid-template-columns:minmax(0,1.08fr) minmax(320px,.68fr);
+  gap:1.4rem;
+  align-items:center;
+}
+.hero-content{
+  color:#fff;
+  max-width:760px;
+}
+.hero-label{
+  display:inline-flex;
+  align-items:center;
+  gap:.6rem;
+  padding:.55rem 1rem;
+  border:1px solid rgba(255,255,255,.16);
+  background:rgba(255,255,255,.08);
+  box-shadow:0 10px 30px rgba(0,0,0,.12);
+  border-radius:999px;
+  font-size:.76rem;
+  text-transform:uppercase;
+  letter-spacing:.14em;
+  color:var(--gold-soft);
+  font-weight:800;
+  margin-bottom:1.35rem;
+  backdrop-filter:blur(12px);
+}
+.hero-title{
+  font-family:"Merriweather",serif;
+  font-size:clamp(2.4rem,4.6vw,4.35rem);
+  line-height:1.07;
+  letter-spacing:-.03em;
+  margin-bottom:1.1rem;
+  max-width:14ch;
+  text-wrap:balance;
+}
+.hero-sub{
+  max-width:650px;
+  color:rgba(255,255,255,.84);
+  font-size:clamp(1rem,1.7vw,1.08rem);
+  line-height:1.78;
+  margin-bottom:2rem;
+}
+.hero-actions{
+  display:flex;
+  gap:.95rem;
+  flex-wrap:wrap;
+  margin-bottom:2.2rem;
+}
+.btn-primary,
+.btn-secondary{
+  padding:1rem 1.35rem;
+  box-shadow:var(--shadow-sm);
+}
+.btn-primary{
+  background:linear-gradient(135deg,var(--gold-soft),var(--gold));
+  color:var(--navy);
+}
+.btn-secondary{
+  border:1px solid rgba(255,255,255,.2);
+  color:#fff;
+  background:rgba(255,255,255,.06);
+  backdrop-filter:blur(12px);
+}
+.hero-highlights{
+  display:flex;
+  gap:1rem;
+  flex-wrap:wrap;
+}
+.hero-chip{
+  background:rgba(255,255,255,.08);
+  border:1px solid rgba(255,255,255,.1);
+  color:rgba(255,255,255,.84);
+  padding:.95rem 1.05rem;
+  border-radius:16px;
+  min-width:176px;
+  backdrop-filter:blur(12px);
+  box-shadow:0 10px 24px rgba(0,0,0,.08);
+  transition:transform .28s var(--slider-ease),border-color .28s var(--slider-ease),background-color .28s var(--slider-ease);
+}
+.hero-chip:hover{
+  transform:translateY(-3px);
+  border-color:rgba(225,197,123,.3);
+  background:rgba(255,255,255,.1);
+}
+.hero-chip strong{
+  display:block;
+  color:var(--gold-soft);
+  font-size:1.18rem;
+  line-height:1.2;
+  margin-bottom:.2rem;
+}
+.hero-chip span{font-size:.85rem;line-height:1.45}
+
+.hero-aside{
+  position:relative;
+}
+.hero-panel{
+  background:linear-gradient(180deg,rgba(255,255,255,.11),rgba(255,255,255,.06));
+  border:1px solid rgba(255,255,255,.14);
+  border-radius:24px;
+  padding:1.4rem;
+  backdrop-filter:blur(16px);
+  box-shadow:0 20px 44px rgba(0,0,0,.14);
+}
+.hero-panel + .hero-panel{
+  margin-top:1rem;
+}
+.hero-panel-head{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:1rem;
+  margin-bottom:1rem;
+}
+.hero-panel-head strong{
+  color:#fff;
+  font-size:1rem;
+  letter-spacing:.01em;
+}
+.hero-panel-head span{
+  color:var(--gold-soft);
+  font-size:.72rem;
+  text-transform:uppercase;
+  letter-spacing:.12em;
+  font-weight:800;
+}
+.hero-board{
+  display:grid;
+  gap:.85rem;
+}
+.hero-board-item{
+  padding:.9rem 1rem;
+  border-radius:18px;
+  background:rgba(255,255,255,.05);
+  border:1px solid rgba(255,255,255,.08);
+}
+.hero-board-item strong{
+  display:block;
+  color:#fff;
+  font-size:.94rem;
+  line-height:1.5;
+  margin-bottom:.22rem;
+}
+.hero-board-item span{
+  display:block;
+  color:rgba(255,255,255,.72);
+  font-size:.82rem;
+  line-height:1.55;
+}
+.hero-mini-grid{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:.85rem;
+}
+.hero-mini-stat{
+  padding:1rem;
+  border-radius:18px;
+  background:rgba(255,255,255,.05);
+  border:1px solid rgba(255,255,255,.08);
+}
+.hero-mini-stat strong{
+  display:block;
+  color:var(--gold-soft);
+  font-size:1.5rem;
+  line-height:1.15;
+  margin-bottom:.2rem;
+}
+.hero-mini-stat span{
+  color:rgba(255,255,255,.74);
+  font-size:.82rem;
+  line-height:1.5;
+}
+
+.slider-controls{
+  position:absolute;
+  left:0;
+  right:0;
+  bottom:1.65rem;
+  z-index:4;
+  width:var(--container);
+  margin:0 auto;
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-end;
+  gap:1rem;
+  pointer-events:none;
+}
+.slider-nav{
+  display:flex;
+  gap:.65rem;
+  pointer-events:auto;
+}
+.slider-arrow{
+  width:52px;
+  height:52px;
+  display:grid;
+  place-items:center;
+  border-radius:50%;
+  color:#fff;
+  background:rgba(255,255,255,.08);
+  border:1px solid rgba(255,255,255,.16);
+  backdrop-filter:blur(14px);
+  box-shadow:0 12px 24px rgba(0,0,0,.12);
+  cursor:pointer;
+  transition:transform .28s var(--slider-ease),background-color .28s var(--slider-ease),border-color .28s var(--slider-ease);
+}
+.slider-arrow:hover{
+  transform:translateY(-2px);
+  background:rgba(255,255,255,.14);
+  border-color:rgba(225,197,123,.36);
+}
+.slider-arrow svg{width:18px;height:18px}
+
+.slider-meta{
+  display:flex;
+  flex-direction:column;
+  gap:.9rem;
+  align-items:flex-end;
+  pointer-events:auto;
+  min-width:min(360px,100%);
+}
+.slider-progress{
+  width:min(320px,48vw);
+  height:4px;
+  border-radius:999px;
+  background:rgba(255,255,255,.16);
+  overflow:hidden;
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.05);
+}
+.slider-progress-bar{
+  width:100%;
+  height:100%;
+  transform-origin:left center;
+  transform:scaleX(0);
+  background:linear-gradient(90deg,var(--gold-soft),var(--gold));
+  border-radius:inherit;
+}
+.slider-dots{
+  display:flex;
+  gap:.62rem;
+  justify-content:flex-end;
+  flex-wrap:wrap;
+}
+.slider-dot{
+  width:42px;
+  height:14px;
+  border-radius:999px;
+  border:1px solid rgba(255,255,255,.22);
+  background:rgba(255,255,255,.06);
+  padding:2px;
+  cursor:pointer;
+  transition:width .3s var(--slider-ease),border-color .3s var(--slider-ease),background-color .3s var(--slider-ease),transform .3s var(--slider-ease);
+}
+.slider-dot:hover{
+  transform:translateY(-1px);
+  border-color:rgba(225,197,123,.34);
+}
+.slider-dot span{
+  display:block;
+  width:100%;
+  height:100%;
+  border-radius:inherit;
+  background:transparent;
+  transition:background-color .3s var(--slider-ease);
+}
+.slider-dot.active{
+  width:66px;
+  border-color:rgba(225,197,123,.5);
+}
+.slider-dot.active span{
+  background:linear-gradient(90deg,var(--gold-soft),var(--gold));
+}
+
+.quick-links{
+  position:relative;
+  z-index:5;
+  margin-top:-2.9rem;
+}
+.quick-links-grid{
+  width:var(--container);
+  margin:0 auto;
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  background:rgba(255,255,255,.94);
+  border:1px solid rgba(255,255,255,.72);
+  border-radius:26px;
+  box-shadow:var(--shadow-md);
+  overflow:hidden;
+  backdrop-filter:blur(14px);
+}
+.quick-link{
+  padding:1.45rem 1.45rem;
+  border-right:1px solid rgba(15,34,55,.08);
+  transition:background-color .28s var(--slider-ease),transform .28s var(--slider-ease);
+}
+.quick-link:hover{
+  background:#fbfdff;
+  transform:translateY(-2px);
+}
+.quick-link:last-child{border-right:none}
+.quick-link small{
+  display:block;
+  color:var(--muted-2);
+  text-transform:uppercase;
+  letter-spacing:.09em;
+  font-size:.7rem;
+  margin-bottom:.42rem;
+  font-weight:800;
+}
+.quick-link strong{
+  display:block;
+  font-size:1rem;
+  margin-bottom:.2rem;
+  line-height:1.35;
+}
+.quick-link span{
+  color:var(--muted);
+  font-size:.9rem;
+  line-height:1.5;
+}
+
+.admissions-band{
+  width:var(--container);
+  margin:1.15rem auto 0;
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:1rem;
+}
+.admission-card{
+  background:#fff;
+  border:1px solid rgba(15,34,55,.07);
+  border-radius:22px;
+  padding:1.3rem 1.35rem;
+  box-shadow:var(--shadow-sm);
+  transition:transform .28s var(--slider-ease),box-shadow .28s var(--slider-ease),border-color .28s var(--slider-ease);
+}
+.admission-card:hover{
+  transform:translateY(-4px);
+  box-shadow:var(--shadow-md);
+  border-color:rgba(197,155,61,.2);
+}
+.admission-card small{
+  display:block;
+  margin-bottom:.45rem;
+  color:var(--gold-deep);
+  font-size:.72rem;
+  font-weight:800;
+  text-transform:uppercase;
+  letter-spacing:.11em;
+}
+.admission-card strong{
+  display:block;
+  color:var(--navy);
+  font-size:1.06rem;
+  line-height:1.45;
+  margin-bottom:.25rem;
+}
+.admission-card span{
+  color:var(--muted);
+  font-size:.87rem;
+  line-height:1.6;
+}
+
+section{padding:5.4rem 0}
+.section-inner{display:block}
+.section-head{
+  margin-bottom:2.2rem;
+}
+.eyebrow{
+  color:var(--gold-deep);
+  text-transform:uppercase;
+  letter-spacing:.15em;
+  font-size:.75rem;
+  font-weight:800;
+  margin-bottom:.7rem;
+}
+.section-title{
+  font-family:"Merriweather",serif;
+  font-size:clamp(1.95rem,3vw,2.9rem);
+  line-height:1.22;
+  letter-spacing:-.02em;
+  color:var(--navy);
+  margin-bottom:.9rem;
+  max-width:20ch;
+  text-wrap:balance;
+}
+.section-copy{
+  max-width:760px;
+  color:var(--muted);
+  font-size:1rem;
+  line-height:1.78;
+}
+
+.academics,
+.showcase,
+.plans{
+  background:var(--surface-alt);
+}
+.greetings,
+.centres{
+  background:var(--surface);
+}
+
+.card-grid{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:1rem;
+}
+.info-card{
+  background:#fff;
+  border:1px solid var(--line-dark);
+  border-radius:20px;
+  padding:1.55rem;
+  box-shadow:var(--shadow-sm);
+  transition:transform .32s var(--slider-ease),box-shadow .32s var(--slider-ease),border-color .32s var(--slider-ease);
+}
+.info-card:hover{
+  transform:translateY(-5px);
+  box-shadow:var(--shadow-md);
+  border-color:rgba(37,89,136,.18);
+}
+.info-card .tag{
+  display:inline-block;
+  background:#eef5fb;
+  color:#315a80;
+  font-size:.72rem;
+  font-weight:800;
+  padding:.36rem .62rem;
+  border-radius:999px;
+  margin-bottom:1rem;
+}
+.info-card h3{
+  font-size:1.1rem;
+  line-height:1.45;
+  margin-bottom:.7rem;
+}
+.info-card p{
+  color:var(--muted);
+  font-size:.93rem;
+  line-height:1.7;
+  margin-bottom:1rem;
+}
+.info-card a{
+  color:#295988;
+  font-weight:800;
+}
+
+.split{
+  display:grid;
+  grid-template-columns:1.12fr .88fr;
+  gap:1.4rem;
+  align-items:stretch;
+}
+.message-panel{
+  background:linear-gradient(180deg,#fff,#f8fbfe);
+  border:1px solid var(--line-dark);
+  border-radius:24px;
+  padding:2.05rem;
+  box-shadow:var(--shadow-sm);
+}
+.message-panel p{
+  color:var(--muted);
+  margin-bottom:1rem;
+  font-size:.98rem;
+}
+.message-panel strong{
+  display:block;
+  margin-top:1.1rem;
+  font-size:1.02rem;
+}
+.message-panel span{
+  color:#5b6f87;
+  font-size:.9rem;
+}
+.stats-panel{
+  background:
+    radial-gradient(circle at top right,rgba(225,197,123,.12),transparent 30%),
+    linear-gradient(145deg,var(--navy-3),var(--navy));
+  color:#fff;
+  border-radius:24px;
+  padding:2rem;
+  box-shadow:var(--shadow-lg);
+}
+.stats-panel h3{
+  font-family:"Merriweather",serif;
+  font-size:1.5rem;
+  margin-bottom:1.15rem;
+}
+.stats-list{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:1rem;
+}
+.stat-box{
+  background:rgba(255,255,255,.08);
+  border:1px solid rgba(255,255,255,.1);
+  border-radius:16px;
+  padding:1rem;
+  transition:transform .28s var(--slider-ease),background-color .28s var(--slider-ease),border-color .28s var(--slider-ease);
+}
+.stat-box:hover{
+  transform:translateY(-3px);
+  background:rgba(255,255,255,.1);
+  border-color:rgba(225,197,123,.18);
+}
+.stat-box strong{
+  display:block;
+  color:var(--gold-soft);
+  font-size:1.65rem;
+  line-height:1.15;
+  margin-bottom:.18rem;
+}
+.stat-box span{
+  font-size:.86rem;
+  color:rgba(255,255,255,.78);
+  line-height:1.55;
+}
+
+.feature-split{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:1.2rem;
+}
+.media-card{
+  min-height:340px;
+  border-radius:24px;
+  overflow:hidden;
+  position:relative;
+  background-size:cover;
+  background-position:center;
+  box-shadow:var(--shadow-md);
+  transition:transform .34s var(--slider-ease),box-shadow .34s var(--slider-ease);
+}
+.media-card:hover{
+  transform:translateY(-5px);
+  box-shadow:var(--shadow-lg);
+}
+.media-card::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:linear-gradient(180deg,rgba(74,16,34,.06),rgba(74,16,34,.76));
+}
+.media-card-content{
+  position:absolute;
+  inset:auto 0 0 0;
+  z-index:1;
+  color:#fff;
+  padding:1.7rem;
+}
+.media-card-content h3{
+  font-size:1.3rem;
+  line-height:1.35;
+  margin-bottom:.45rem;
+}
+.media-card-content p{
+  color:rgba(255,255,255,.82);
+  margin-bottom:.95rem;
+  font-size:.94rem;
+  line-height:1.7;
+}
+.media-card-content a{
+  color:var(--gold-soft);
+  font-weight:800;
+}
+
+.notice-wrap{
+  display:grid;
+  grid-template-columns:.95fr 1.05fr;
+  gap:1.2rem;
+}
+.notice-panel,
+.student-panel{
+  background:#fff;
+  border:1px solid var(--line-dark);
+  border-radius:24px;
+  padding:1.65rem;
+  box-shadow:var(--shadow-sm);
+}
+.notice-item,
+.student-item{
+  padding:1rem 0;
+  border-bottom:1px solid rgba(15,34,55,.08);
+}
+.notice-item:last-child,
+.student-item:last-child{border-bottom:none}
+.notice-item small,
+.student-item small{
+  display:block;
+  color:#8b9bb0;
+  text-transform:uppercase;
+  letter-spacing:.08em;
+  font-size:.69rem;
+  font-weight:800;
+  margin-bottom:.42rem;
+}
+.notice-item strong,
+.student-item strong{
+  display:block;
+  margin-bottom:.35rem;
+  font-size:.98rem;
+  line-height:1.5;
+}
+.notice-item p,
+.student-item p{
+  color:var(--muted);
+  font-size:.9rem;
+  line-height:1.7;
+}
+
+.plans-grid{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:1.2rem;
+}
+.plan-card{
+  background:#fff;
+  border:1px solid rgba(15,34,55,.08);
+  border-radius:24px;
+  padding:1.9rem;
+  box-shadow:var(--shadow-sm);
+  position:relative;
+  transition:transform .32s var(--slider-ease),box-shadow .32s var(--slider-ease),border-color .32s var(--slider-ease);
+}
+.plan-card:hover{
+  transform:translateY(-5px);
+  box-shadow:var(--shadow-md);
+}
+.plan-card.featured{
+  border:2px solid rgba(197,155,61,.84);
+  box-shadow:0 20px 44px rgba(197,155,61,.14);
+}
+.plan-badge{
+  position:absolute;
+  top:-12px;
+  left:1.5rem;
+  background:linear-gradient(135deg,var(--gold-soft),var(--gold));
+  color:var(--navy);
+  padding:.34rem .82rem;
+  border-radius:999px;
+  font-size:.72rem;
+  font-weight:800;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+  box-shadow:0 12px 30px rgba(197,155,61,.18);
+}
+.plan-label{
+  color:var(--gold-deep);
+  font-size:.74rem;
+  font-weight:800;
+  letter-spacing:.12em;
+  text-transform:uppercase;
+  margin-bottom:.58rem;
+}
+.plan-price{
+  font-family:"Merriweather",serif;
+  font-size:2.55rem;
+  color:var(--navy);
+  line-height:1.15;
+  margin-bottom:.32rem;
+}
+.plan-note{
+  color:var(--muted);
+  font-size:.9rem;
+  margin-bottom:1.24rem;
+}
+.plan-list{
+  list-style:none;
+  display:grid;
+  gap:.74rem;
+  margin-bottom:1.6rem;
+}
+.plan-list li{
+  display:flex;
+  gap:.72rem;
+  align-items:flex-start;
+  color:#30465e;
+  font-size:.94rem;
+  line-height:1.68;
+}
+.plan-list .tick{
+  color:var(--gold);
+  font-weight:800;
+}
+.plan-action{
+  padding:.86rem 1.18rem;
+  background:var(--navy);
+  color:#fff;
+}
+.plan-card.featured .plan-action{
+  background:linear-gradient(135deg,var(--gold-soft),var(--gold));
+  color:var(--navy);
+}
+
+.centre-grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:1rem;
+}
+.centre-card{
+  border-radius:22px;
+  padding:1.7rem;
+  color:#fff;
+  min-height:250px;
+  display:flex;
+  flex-direction:column;
+  justify-content:space-between;
+  box-shadow:var(--shadow-md);
+  transition:transform .34s var(--slider-ease),box-shadow .34s var(--slider-ease);
+}
+.centre-card:hover{
+  transform:translateY(-5px);
+  box-shadow:var(--shadow-lg);
+}
+.centre-card:nth-child(1){background:linear-gradient(145deg,#284f77,#10273f)}
+.centre-card:nth-child(2){background:linear-gradient(145deg,#6b5323,#32240f)}
+.centre-card:nth-child(3){background:linear-gradient(145deg,#24574a,#112c27)}
+.centre-card small{
+  text-transform:uppercase;
+  letter-spacing:.1em;
+  font-size:.72rem;
+  color:rgba(255,255,255,.74);
+  font-weight:800;
+}
+.centre-card h3{
+  font-family:"Merriweather",serif;
+  font-size:1.32rem;
+  line-height:1.4;
+  margin:.7rem 0;
+}
+.centre-card p{
+  color:rgba(255,255,255,.82);
+  font-size:.94rem;
+  line-height:1.72;
+}
+.centre-card a{
+  color:var(--gold-soft);
+  font-weight:800;
+}
+
+.cta{
+  background:linear-gradient(135deg,var(--navy),var(--navy-3));
+  color:#fff;
+}
+.cta-shell{
+  background:rgba(255,255,255,.06);
+  border:1px solid rgba(255,255,255,.08);
+  border-radius:26px;
+  padding:2.15rem;
+  display:flex;
+  justify-content:space-between;
+  gap:1.5rem;
+  align-items:center;
+  backdrop-filter:blur(14px);
+}
+.cta-shell h2{
+  font-family:"Merriweather",serif;
+  font-size:clamp(1.8rem,3vw,2.45rem);
+  line-height:1.25;
+  margin-bottom:.6rem;
+}
+.cta-shell p{
+  color:rgba(255,255,255,.78);
+  max-width:52ch;
+}
+.cta-form{
+  display:flex;
+  gap:.8rem;
+  flex-wrap:wrap;
+}
+.form-status{
+  margin-top:.9rem;
+  font-size:.9rem;
+  line-height:1.6;
+  min-height:1.6em;
+}
+.form-status.success{
+  color:#f8e9b6;
+}
+.form-status.error{
+  color:#ffd0d0;
+}
+.cta-form input{
+  min-width:280px;
+  outline:none;
+  border-radius:999px;
+  padding:1rem 1.2rem;
+  font:inherit;
+  color:var(--navy);
+  box-shadow:inset 0 0 0 1px rgba(74,16,34,.06);
+}
+.cta-form input::placeholder{color:#7f8fa3}
+.cta-form button{
+  padding:1rem 1.32rem;
+  background:linear-gradient(135deg,var(--gold-soft),var(--gold));
+  color:var(--navy);
+  cursor:pointer;
+  box-shadow:0 14px 30px rgba(197,155,61,.2);
+}
+
+footer{
+  background:linear-gradient(180deg,var(--navy-2),var(--navy));
+  color:rgba(255,255,255,.74);
+  padding:2.3rem 0;
+}
+.footer-inner{
+  display:flex;
+  justify-content:space-between;
+  gap:1rem;
+  flex-wrap:wrap;
+  align-items:center;
+}
+.footer-brand strong{
+  display:block;
+  color:#fff;
+  margin-bottom:.34rem;
+}
+.footer-links{
+  display:flex;
+  gap:1rem;
+  flex-wrap:wrap;
+}
+.footer-links a{
+  transition:color .24s ease;
+}
+.footer-links a:hover{color:var(--gold-soft)}
+
+/* Scroll reveal animation */
+.reveal{
+  opacity:0;
+  transform:translate3d(0,26px,0);
+  transition:opacity .8s var(--slider-ease),transform .8s var(--slider-ease);
+}
+.reveal.is-visible{
+  opacity:1;
+  transform:translate3d(0,0,0);
+}
+
+/* Mobile and tablet refinements */
+@media (max-width:1100px){
+  .card-grid,.centre-grid{grid-template-columns:repeat(2,1fr)}
+  .quick-links-grid{grid-template-columns:repeat(2,1fr)}
+  .hero-content{max-width:680px}
+  .hero-layout{grid-template-columns:1fr}
+  .admissions-band{grid-template-columns:repeat(2,1fr)}
+}
+@media (max-width:920px){
+  .nav-menu{display:none}
+  .split,.feature-split,.notice-wrap,.cta-shell{grid-template-columns:1fr;display:grid}
+  .cta-shell{align-items:start}
+  .mobile-menu-toggle{display:inline-flex}
+  .mobile-menu{display:block}
+  .nav-dropdown{display:none}
+  .hero{
+    min-height:min(92svh,860px);
+  }
+  .hero-overlay{
+    min-height:min(92svh,860px);
+    padding:5.25rem 0 5.8rem;
+  }
+  .slider-controls{
+    align-items:center;
+  }
+  .announcement-inner{
+    min-height:44px;
+  }
+}
+@media (max-width:720px){
+  .topbar-inner{
+    justify-content:center;
+  }
+  .mainnav-inner{
+    padding:.8rem 0;
+  }
+  .brand-logo{
+    width:138px;
+  }
+  .brand-copy span{
+    display:none;
+  }
+  .nav-cta{
+    display:none;
+  }
+  .hero{
+    min-height:auto;
+  }
+  .hero-overlay{
+    min-height:auto;
+    padding:4.9rem 0 7rem;
+  }
+  .hero-title{
+    font-size:clamp(2.2rem,10vw,3.2rem);
+    max-width:12ch;
+  }
+  .hero-sub{
+    font-size:.98rem;
+    margin-bottom:1.7rem;
+  }
+  .hero-highlights{
+    gap:.8rem;
+  }
+  .hero-chip{
+    min-width:calc(50% - .4rem);
+    flex:1 1 180px;
+  }
+  .quick-links{
+    margin-top:-1.6rem;
+  }
+  .quick-links-grid,
+  .card-grid,
+  .centre-grid,
+  .feature-split,
+  .stats-list,
+  .plans-grid,
+  .admissions-band{
+    grid-template-columns:1fr;
+  }
+  .quick-link{
+    border-right:none;
+    border-bottom:1px solid rgba(15,34,55,.08);
+  }
+  .quick-link:last-child{border-bottom:none}
+  section{
+    padding:4.5rem 0;
+  }
+  .section-title{
+    max-width:15ch;
+  }
+  .slider-controls{
+    width:min(calc(100% - 1rem),var(--container));
+    bottom:1rem;
+    align-items:flex-end;
+  }
+  .slider-arrow{
+    width:46px;
+    height:46px;
+  }
+  .slider-meta{
+    min-width:auto;
+    max-width:58%;
+  }
+  .slider-progress{
+    width:100%;
+  }
+  .slider-dot{
+    width:34px;
+    height:12px;
+  }
+  .slider-dot.active{
+    width:52px;
+  }
+  .cta-form input{
+    min-width:100%;
+  }
+  .announcement-label{
+    display:none;
+  }
+  .announcement-inner{
+    width:min(calc(100% - 1rem),var(--container));
+  }
+}
+@media (max-width:560px){
+  .hero-overlay{
+    padding-top:4.6rem;
+  }
+  .hero-content{
+    max-width:none;
+  }
+  .hero-chip{
+    min-width:100%;
+  }
+  .slider-controls{
+    flex-direction:column;
+    align-items:stretch;
+    gap:.9rem;
+  }
+  .slider-meta{
+    order:1;
+    align-items:stretch;
+    max-width:none;
+  }
+  .slider-nav{
+    order:2;
+  }
+}
+
+/* Respect reduced motion preferences */
+@media (prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  .slide,
+  .slide-background,
+  .reveal,
+  .slider-progress-bar,
+  .brand-logo,
+  .quick-link,
+  .info-card,
+  .plan-card,
+  .centre-card,
+  .hero-chip,
+  .slider-arrow,
+  .btn-primary,
+  .btn-secondary,
+  .plan-action,
+  .cta-form button{
+    transition:none!important;
+    animation:none!important;
+  }
+}
+</style>
+</head>
+<body class="is-loading">
+  <div class="topbar">
+    <div class="topbar-inner">
+      <div class="topbar-links">
+        <a href="#notices">Notice Board</a>
+        <a href="#news">News &amp; Events</a>
+        <a href="#students">Student Corner</a>
+        <a href="#contact">Contact Us</a>
+      </div>
+      <div class="topbar-meta">
+        <span class="pill">IIT Mandi Initiative</span>
+        <span>Interview Prep Platform for IMBA Aspirants</span>
+      </div>
+    </div>
+  </div>
+
+  <header class="mainnav">
+    <div class="mainnav-inner">
+      <a class="brand" href="#hero" aria-label="IMBA Beacon home">
+        <img class="brand-logo" src="./assets/imba-beacon-logo.jpeg" alt="IMBA Beacon logo"/>
+        <div class="brand-copy">
+          <strong>IMBA Beacon</strong>
+          <span>Structured preparation inspired by institutional portals</span>
+        </div>
+      </a>
+      <ul class="nav-menu">
+        <li class="nav-item">
+          <a class="nav-trigger" href="#academics">
+            <span>Academics</span>
+            <span class="nav-trigger-icon">▾</span>
+          </a>
+          <div class="nav-dropdown">
+            <div class="nav-dropdown-grid">
+              <a href="#academics">
+                <strong>Preparation Tracks</strong>
+                <span>Foundation, behavioral prep, communication, and guided mocks.</span>
+              </a>
+              <a href="#plans">
+                <strong>Plans &amp; Pricing</strong>
+                <span>Compare Basic and Pro support options.</span>
+              </a>
+              <a href="#centres">
+                <strong>Learning Pillars</strong>
+                <span>Explore the platform’s core preparation strengths.</span>
+              </a>
+            </div>
+          </div>
+        </li>
+        <li class="nav-item">
+          <a class="nav-trigger" href="#greetings">
+            <span>About</span>
+            <span class="nav-trigger-icon">▾</span>
+          </a>
+          <div class="nav-dropdown">
+            <div class="nav-dropdown-grid">
+              <a href="#greetings">
+                <strong>Message to Aspirants</strong>
+                <span>Understand the purpose and structure behind IMBA Beacon.</span>
+              </a>
+              <a href="#students">
+                <strong>Student Corner</strong>
+                <span>Peer learning, batch interaction, and community guidance.</span>
+              </a>
+            </div>
+          </div>
+        </li>
+        <li class="nav-item">
+          <a class="nav-trigger" href="#news">
+            <span>Updates</span>
+            <span class="nav-trigger-icon">▾</span>
+          </a>
+          <div class="nav-dropdown">
+            <div class="nav-dropdown-grid">
+              <a href="#news">
+                <strong>News &amp; Events</strong>
+                <span>Upcoming sessions, talks, and engagement announcements.</span>
+              </a>
+              <a href="#notices">
+                <strong>Notice Board</strong>
+                <span>Admissions, schedules, recordings, and key alerts.</span>
+              </a>
+            </div>
+          </div>
+        </li>
+        <li class="nav-item">
+          <a class="nav-trigger" href="#students">
+            <span>Campus Life</span>
+            <span class="nav-trigger-icon">▾</span>
+          </a>
+          <div class="nav-dropdown">
+            <div class="nav-dropdown-grid">
+              <a href="#students">
+                <strong>Student Corner</strong>
+                <span>Current-batch interaction and mentorship touchpoints.</span>
+              </a>
+              <a href="#notices">
+                <strong>Important Announcements</strong>
+                <span>Stay aligned with schedules and support updates.</span>
+              </a>
+            </div>
+          </div>
+        </li>
+        <li class="nav-item">
+          <a class="nav-trigger" href="#apply">
+            <span>Admissions</span>
+            <span class="nav-trigger-icon">▾</span>
+          </a>
+          <div class="nav-dropdown">
+            <div class="nav-dropdown-grid">
+              <a href="#apply">
+                <strong>Apply for Early Access</strong>
+                <span>Join the waitlist and receive onboarding information.</span>
+              </a>
+              <a href="#plans">
+                <strong>Track Comparison</strong>
+                <span>See which plan best matches your preparation intensity.</span>
+              </a>
+            </div>
+          </div>
+        </li>
+      </ul>
+      <button class="mobile-menu-toggle" type="button" aria-expanded="false" aria-controls="mobile-menu" aria-label="Open navigation menu" data-mobile-menu-toggle>
+        <span class="menu-stack" aria-hidden="true">
+          <span class="menu-line"></span>
+          <span class="menu-line"></span>
+          <span class="menu-line"></span>
+        </span>
+      </button>
+      <a class="nav-cta" href="#apply">Apply for Early Access</a>
+    </div>
+    <div class="mobile-menu" id="mobile-menu" hidden>
+      <div class="mobile-menu-panel">
+        <ul class="mobile-menu-list">
+          <li>
+            <details class="mobile-menu-group">
+              <summary>Academics</summary>
+              <div class="mobile-submenu">
+                <a href="#academics">Preparation Tracks</a>
+                <a href="#plans">Plans &amp; Pricing</a>
+                <a href="#centres">Learning Pillars</a>
+              </div>
+            </details>
+          </li>
+          <li>
+            <details class="mobile-menu-group">
+              <summary>About</summary>
+              <div class="mobile-submenu">
+                <a href="#greetings">Message to Aspirants</a>
+                <a href="#students">Student Corner</a>
+              </div>
+            </details>
+          </li>
+          <li>
+            <details class="mobile-menu-group">
+              <summary>Updates</summary>
+              <div class="mobile-submenu">
+                <a href="#news">News &amp; Events</a>
+                <a href="#notices">Notice Board</a>
+              </div>
+            </details>
+          </li>
+          <li>
+            <details class="mobile-menu-group">
+              <summary>Campus Life</summary>
+              <div class="mobile-submenu">
+                <a href="#students">Student Corner</a>
+                <a href="#notices">Announcements</a>
+              </div>
+            </details>
+          </li>
+          <li>
+            <details class="mobile-menu-group">
+              <summary>Admissions</summary>
+              <div class="mobile-submenu">
+                <a href="#apply">Apply</a>
+                <a href="#plans">Track Comparison</a>
+              </div>
+            </details>
+          </li>
+        </ul>
+        <div class="mobile-menu-cta">
+          <a class="nav-cta" href="#apply">Apply for Early Access</a>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <div class="announcement-bar" aria-label="Latest announcements">
+    <div class="announcement-inner">
+      <div class="announcement-label">Latest</div>
+      <div class="announcement-track">
+        <div class="announcement-items">
+          <span>Free Intro Session on 28 March at 6:00 PM IST</span>
+          <span>Applications open for Basic and Pro preparation tracks</span>
+          <span>Mock interview scheduling window now available for enrolled students</span>
+          <span>Current-batch interaction session calendar releasing this week</span>
+          <span>Free Intro Session on 28 March at 6:00 PM IST</span>
+          <span>Applications open for Basic and Pro preparation tracks</span>
+          <span>Mock interview scheduling window now available for enrolled students</span>
+          <span>Current-batch interaction session calendar releasing this week</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <section class="hero" id="hero" aria-label="Featured highlights">
+    <div class="slides" data-slider-track>
+      <div class="slide slide-1 active" data-slide aria-hidden="false">
+        <div class="slide-background"></div>
+      </div>
+      <div class="slide slide-2 is-next" data-slide aria-hidden="true">
+        <div class="slide-background"></div>
+      </div>
+      <div class="slide slide-3 is-next" data-slide aria-hidden="true">
+        <div class="slide-background"></div>
+      </div>
+    </div>
+
+    <div class="hero-overlay">
+      <div class="hero-layout">
+        <div class="hero-content reveal">
+          <div class="hero-label">Institutional Home Experience</div>
+          <h1 class="hero-title">IMBA interview preparation with a full campus-style homepage and premium top banner slider.</h1>
+          <p class="hero-sub">Built around the section flow you liked from the IIM Kashipur website: a strong top navigation, rotating hero banners, academic overview, leadership message, updates, student corner, and centre-style feature blocks.</p>
+          <div class="hero-actions">
+            <a class="btn-primary" href="#academics">Explore Academics</a>
+            <a class="btn-secondary" href="#apply">Join the Waitlist</a>
+          </div>
+          <div class="hero-highlights">
+            <div class="hero-chip">
+              <strong>3 Plans</strong>
+              <span>Mock interviews, practice, verbal coaching</span>
+            </div>
+            <div class="hero-chip">
+              <strong>Live Sessions</strong>
+              <span>Interactive classes and open Q&amp;A formats</span>
+            </div>
+            <div class="hero-chip">
+              <strong>Student-Led</strong>
+              <span>An IIT Mandi initiative for IMBA aspirants</span>
+            </div>
+          </div>
+        </div>
+
+        <aside class="hero-aside reveal">
+          <div class="hero-panel">
+            <div class="hero-panel-head">
+              <strong>Admissions Snapshot</strong>
+              <span>2026 Cycle</span>
+            </div>
+            <div class="hero-board">
+              <div class="hero-board-item">
+                <strong>Interview readiness roadmap now open for new aspirants</strong>
+                <span>Foundation, storytelling, communication, and mock interview sequencing in one structured track.</span>
+              </div>
+              <div class="hero-board-item">
+                <strong>Live mentor sessions and batch interactions scheduled weekly</strong>
+                <span>Students get guided practice, real discussion, and program-facing insights in one place.</span>
+              </div>
+              <div class="hero-board-item">
+                <strong>Premium prep designed specifically for IIT Mandi IMBA applicants</strong>
+                <span>Built to feel serious, organized, and closer to an institutional student experience.</span>
+              </div>
+            </div>
+          </div>
+          <div class="hero-panel">
+            <div class="hero-panel-head">
+              <strong>At a Glance</strong>
+              <span>Highlights</span>
+            </div>
+            <div class="hero-mini-grid">
+              <div class="hero-mini-stat">
+                <strong>4</strong>
+                <span>Mock interviews in the Pro plan</span>
+              </div>
+              <div class="hero-mini-stat">
+                <strong>3</strong>
+                <span>Communication-focused guided sessions</span>
+              </div>
+              <div class="hero-mini-stat">
+                <strong>2</strong>
+                <span>Current-batch interaction sessions</span>
+              </div>
+              <div class="hero-mini-stat">
+                <strong>24h</strong>
+                <span>Replay turnaround target for recordings</span>
+              </div>
+            </div>
+          </div>
+        </aside>
+      </div>
+    </div>
+
+    <!-- Premium slider controls with arrows, modern dots, and progress -->
+    <div class="slider-controls" aria-label="Slider controls">
+      <div class="slider-nav">
+        <button class="slider-arrow" type="button" data-slider-prev aria-label="Previous slide">
+          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M14.5 5.5 8 12l6.5 6.5" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
+        <button class="slider-arrow" type="button" data-slider-next aria-label="Next slide">
+          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="m9.5 5.5 6.5 6.5-6.5 6.5" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
+      </div>
+
+      <div class="slider-meta">
+        <div class="slider-progress" aria-hidden="true">
+          <div class="slider-progress-bar" data-slider-progress></div>
+        </div>
+        <div class="slider-dots" role="tablist" aria-label="Select hero slide">
+          <button class="slider-dot active" type="button" role="tab" aria-selected="true" aria-label="Show slide 1" data-slide-to="0"><span></span></button>
+          <button class="slider-dot" type="button" role="tab" aria-selected="false" aria-label="Show slide 2" data-slide-to="1"><span></span></button>
+          <button class="slider-dot" type="button" role="tab" aria-selected="false" aria-label="Show slide 3" data-slide-to="2"><span></span></button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="quick-links">
+    <div class="quick-links-grid reveal">
+      <a class="quick-link" href="#academics">
+        <small>Academics</small>
+        <strong>Preparation Tracks</strong>
+        <span>Structured interview modules and mock programs</span>
+      </a>
+      <a class="quick-link" href="#news">
+        <small>Updates</small>
+        <strong>News &amp; Events</strong>
+        <span>Upcoming sessions, workshops, and student briefings</span>
+      </a>
+      <a class="quick-link" href="#notices">
+        <small>Information</small>
+        <strong>Notice Board</strong>
+        <span>Enrollment windows, schedules, and important announcements</span>
+      </a>
+      <a class="quick-link" href="#students">
+        <small>Community</small>
+        <strong>Student Corner</strong>
+        <span>Mentor voices, batch interactions, and resources</span>
+      </a>
+    </div>
+    <div class="admissions-band reveal">
+      <article class="admission-card">
+        <small>Application Window</small>
+        <strong>Enrollment open for Basic and Pro plans</strong>
+        <span>Students can register now and receive onboarding, payment details, and first-session updates.</span>
+      </article>
+      <article class="admission-card">
+        <small>Upcoming Session</small>
+        <strong>Intro to IMBA Interview Prep on 28 March</strong>
+        <span>Open-format orientation session covering interview expectations, structure, and planning.</span>
+      </article>
+      <article class="admission-card">
+        <small>Mentor Access</small>
+        <strong>Batch interaction and guided mock scheduling</strong>
+        <span>Live support is arranged around practice intensity so students can prepare with accountability.</span>
+      </article>
+      <article class="admission-card">
+        <small>Student Support</small>
+        <strong>Recorded sessions, quizzes, and practice sheets included</strong>
+        <span>The site now reads more like an institute homepage while preserving your original prep offering.</span>
+      </article>
+    </div>
+  </div>
+
+  <section class="academics" id="academics">
+    <div class="section-inner">
+      <div class="section-head reveal">
+        <div class="eyebrow">Academics</div>
+        <h2 class="section-title">Preparation pathways designed around the IMBA interview journey.</h2>
+        <p class="section-copy">This section replaces your earlier course-style cards with a more institutional academic overview, similar to the program listing feel on the IIM Kashipur homepage.</p>
+      </div>
+      <div class="card-grid">
+        <article class="info-card reveal">
+          <span class="tag">Foundation</span>
+          <h3>Interview Readiness Bootcamp</h3>
+          <p>Clarify your profile, goals, and narrative before moving into structured practice and school-specific positioning.</p>
+          <a href="#apply">Read More</a>
+        </article>
+        <article class="info-card reveal">
+          <span class="tag">Core Prep</span>
+          <h3>Behavioral Question Mastery</h3>
+          <p>Build strong STAR-based responses for leadership, teamwork, conflict, failure, and motivation questions.</p>
+          <a href="#apply">Read More</a>
+        </article>
+        <article class="info-card reveal">
+          <span class="tag">Communication</span>
+          <h3>Verbal Communication Sessions</h3>
+          <p>Sharpen clarity, tone, pace, and confidence through guided speaking drills and real-time feedback.</p>
+          <a href="#apply">Read More</a>
+        </article>
+        <article class="info-card reveal">
+          <span class="tag">Mentoring</span>
+          <h3>Mock Interviews &amp; Batch Interaction</h3>
+          <p>Practice in realistic interview settings and learn directly from the current batch through interaction sessions.</p>
+          <a href="#apply">Read More</a>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="greetings" id="greetings">
+    <div class="section-inner split">
+      <div class="message-panel reveal">
+        <div class="eyebrow">Greetings!</div>
+        <h2 class="section-title">A message for prospective IMBA candidates.</h2>
+        <p>IMBA Beacon is positioned as a focused preparation initiative to help students approach the IIT Mandi IMBA interview with clarity, confidence, and structure. The goal is not just practice, but a complete preparation ecosystem that mirrors the seriousness of an institutional platform.</p>
+        <p>With mock interviews, communication support, live classes, practice sheets, and interaction sessions, the platform is designed to help aspirants understand both the interview process and their own story more deeply.</p>
+        <strong>Team IMBA Beacon</strong>
+        <span>Student initiative for interview readiness and guided preparation</span>
+      </div>
+      <aside class="stats-panel reveal">
+        <h3>At a Glance</h3>
+        <div class="stats-list">
+          <div class="stat-box">
+            <strong>4</strong>
+            <span>Mock interviews in the Pro track</span>
+          </div>
+          <div class="stat-box">
+            <strong>3</strong>
+            <span>Verbal communication sessions</span>
+          </div>
+          <div class="stat-box">
+            <strong>2</strong>
+            <span>Current-batch interaction sessions</span>
+          </div>
+          <div class="stat-box">
+            <strong>24h</strong>
+            <span>Replay access target for recorded classes</span>
+          </div>
+        </div>
+      </aside>
+    </div>
+  </section>
+
+  <section class="showcase" id="news">
+    <div class="section-inner">
+      <div class="section-head reveal">
+        <div class="eyebrow">News &amp; Events</div>
+        <h2 class="section-title">Session updates and platform activity in a homepage showcase layout.</h2>
+        <p class="section-copy">These panels mirror the large visual content blocks used for updates and engagement on institutional homepages.</p>
+      </div>
+      <div class="feature-split">
+        <article class="media-card reveal" style="background-image:linear-gradient(135deg,rgba(122,36,64,.28),rgba(74,16,34,.18)),url('https://images.unsplash.com/photo-1516321165247-4aa89a48be28?auto=format&fit=crop&w=1200&q=80')">
+          <div class="media-card-content">
+            <h3>Behavioral Q&amp;A Deep Dive</h3>
+            <p>Weekly guided session focused on the most common IMBA interview themes, follow-up questions, and answer structuring.</p>
+            <a href="#apply">Read More</a>
+          </div>
+        </article>
+        <article class="media-card reveal" style="background-image:linear-gradient(135deg,rgba(154,114,32,.22),rgba(74,16,34,.2)),url('https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=1200&q=80')">
+          <div class="media-card-content">
+            <h3>Industry Connect Style Mentor Talks</h3>
+            <p>Conversation-led sessions where mentors and seniors decode expectations, mistakes to avoid, and interview mindset.</p>
+            <a href="#apply">Read More</a>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section id="notices">
+    <div class="section-inner notice-wrap">
+      <div class="notice-panel reveal">
+        <div class="eyebrow">Notice Board</div>
+        <h2 class="section-title">Important announcements.</h2>
+        <div class="notice-item">
+          <small>Admission Update</small>
+          <strong>Basic and Pro plan enrollments are now open for the current intake cycle.</strong>
+          <p>Students can register interest and receive the upcoming session calendar, payment details, and onboarding steps.</p>
+        </div>
+        <div class="notice-item">
+          <small>Schedule Notice</small>
+          <strong>Intro to IMBA Interview Prep scheduled for 28 March at 6:00 PM IST.</strong>
+          <p>Open introductory class for aspirants who want a structured overview of the interview process and preparation plan.</p>
+        </div>
+        <div class="notice-item">
+          <small>Student Access</small>
+          <strong>Recorded live sessions will be made available to enrolled students after processing.</strong>
+          <p>Replay support is planned for students who miss a live session or want to revisit mentor feedback.</p>
+        </div>
+      </div>
+
+      <div class="student-panel reveal" id="students">
+        <div class="eyebrow">Student Corner</div>
+        <h2 class="section-title">Student life and peer learning.</h2>
+        <div class="student-item">
+          <small>Community</small>
+          <strong>Current batch interaction sessions</strong>
+          <p>Understand academics, expectations, and interview reflections directly from students already on the IMBA path.</p>
+        </div>
+        <div class="student-item">
+          <small>Resources</small>
+          <strong>Practice sheets and quizzes</strong>
+          <p>Self-paced resources help reinforce concepts between mock interviews and live classes.</p>
+        </div>
+        <div class="student-item">
+          <small>Mentorship</small>
+          <strong>1-on-1 and open group guidance</strong>
+          <p>Students can prepare in both personalized and community-driven formats depending on their plan.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="plans" id="plans">
+    <div class="section-inner">
+      <div class="section-head reveal">
+        <div class="eyebrow">Plans &amp; Pricing</div>
+        <h2 class="section-title">Choose the preparation plan that fits your level of support.</h2>
+        <p class="section-copy">Your original ₹1,500 and ₹2,000 course plans are retained and now presented in a more premium institutional format.</p>
+      </div>
+      <div class="plans-grid">
+        <article class="plan-card reveal">
+          <div class="plan-label">Basic</div>
+          <div class="plan-price">₹1,500</div>
+          <div class="plan-note">One-time fee per student</div>
+          <ul class="plan-list">
+            <li><span class="tick">✓</span><span>3 mock interviews</span></li>
+            <li><span class="tick">✓</span><span>Practice sheets</span></li>
+            <li><span class="tick">✓</span><span>1 verbal communication session</span></li>
+            <li><span class="tick">✓</span><span>Practice quizzes</span></li>
+            <li><span class="tick">✓</span><span>1 interaction session with current batch</span></li>
+          </ul>
+          <a class="plan-action" href="#apply">Enroll in Basic</a>
+        </article>
+
+        <article class="plan-card featured reveal">
+          <div class="plan-label">Pro</div>
+          <div class="plan-price">₹2,000</div>
+          <div class="plan-note">One-time fee per student</div>
+          <ul class="plan-list">
+            <li><span class="tick">✓</span><span>4 mock interviews</span></li>
+            <li><span class="tick">✓</span><span>Practice quizzes</span></li>
+            <li><span class="tick">✓</span><span>3 verbal communication sessions</span></li>
+            <li><span class="tick">✓</span><span>Practice sheets</span></li>
+            <li><span class="tick">✓</span><span>2 interaction sessions with current batch</span></li>
+            <li><span class="tick">✓</span><span>Live maths &amp; physics mentoring sessions</span></li>
+          </ul>
+          <a class="plan-action" href="#apply">Enroll in Pro</a>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="centres" id="centres">
+    <div class="section-inner">
+      <div class="section-head reveal">
+        <div class="eyebrow">Centre of Excellence Style Blocks</div>
+        <h2 class="section-title">Feature pillars presented like institutional centres.</h2>
+        <p class="section-copy">This section borrows the “Center of Excellence” homepage idea and repurposes it for your platform’s core strengths.</p>
+      </div>
+      <div class="centre-grid">
+        <article class="centre-card reveal">
+          <div>
+            <small>Centre 01</small>
+            <h3>Interview Simulation Lab</h3>
+            <p>High-pressure mock interview practice with structured evaluation, delivery feedback, and repeat rehearsal.</p>
+          </div>
+          <a href="#apply">Explore More</a>
+        </article>
+        <article class="centre-card reveal">
+          <div>
+            <small>Centre 02</small>
+            <h3>Communication &amp; Storytelling Studio</h3>
+            <p>Improve answer flow, confidence, and story framing so each response feels credible and memorable.</p>
+          </div>
+          <a href="#apply">Explore More</a>
+        </article>
+        <article class="centre-card reveal">
+          <div>
+            <small>Centre 03</small>
+            <h3>Maths &amp; Physics Support Desk</h3>
+            <p>Targeted academic mentoring included in the higher plan for students who want extra subject confidence.</p>
+          </div>
+          <a href="#apply">Explore More</a>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="cta" id="apply">
+    <div class="section-inner">
+      <div class="cta-shell reveal">
+        <div>
+          <div class="eyebrow" style="color:var(--gold-soft)">Apply / Early Access</div>
+          <h2>Join the IMBA Beacon waitlist.</h2>
+          <p>Get notified about enrollment, mock interview slots, live session schedules, and upcoming preparation batches.</p>
+        </div>
+        <form class="cta-form" id="waitlist-form">
+          <input type="email" name="email" placeholder="Enter your email address" required/>
+          <button type="submit">Get Early Access</button>
+        </form>
+        <p class="form-status" id="waitlist-status" aria-live="polite"></p>
+      </div>
+    </div>
+  </section>
+
+  <footer id="contact">
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <strong>IMBA Beacon</strong>
+        <span>Institutional-style landing page inspired by the information architecture of the IIM Kashipur homepage.</span>
+      </div>
+      <div class="footer-links">
+        <a href="#academics">Academics</a>
+        <a href="#notices">Notice Board</a>
+        <a href="#students">Student Corner</a>
+        <a href="#plans">Plans</a>
+        <a href="#apply">Apply</a>
+      </div>
+    </div>
+  </footer>
+
+<script>
+/*
+  Premium hero slider
+  - horizontal motion + fade
+  - Ken Burns background scale
+  - arrow, dot, keyboard, hover pause, swipe
+  - requestAnimationFrame progress bar
+*/
+(function () {
+  class HeroSlider {
+    constructor(root) {
+      this.root = root;
+      this.slides = Array.from(root.querySelectorAll("[data-slide]"));
+      this.dots = Array.from(root.querySelectorAll("[data-slide-to]"));
+      this.prevButton = root.querySelector("[data-slider-prev]");
+      this.nextButton = root.querySelector("[data-slider-next]");
+      this.progressBar = root.querySelector("[data-slider-progress]");
+      this.duration = 6800;
+      this.activeIndex = 0;
+      this.rafId = null;
+      this.startTime = 0;
+      this.elapsed = 0;
+      this.isPaused = false;
+      this.touchStartX = 0;
+      this.touchDeltaX = 0;
+      this.prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+      if (!this.root || this.slides.length <= 1) return;
+
+      this.bindEvents();
+      this.goTo(0, 1);
+
+      if (!this.prefersReducedMotion) {
+        this.start();
+      } else {
+        this.progressBar.style.transform = "scaleX(1)";
+      }
+    }
+
+    bindEvents() {
+      this.prevButton?.addEventListener("click", () => this.goTo(this.activeIndex - 1, -1, true));
+      this.nextButton?.addEventListener("click", () => this.goTo(this.activeIndex + 1, 1, true));
+
+      this.dots.forEach((dot, index) => {
+        dot.addEventListener("click", () => {
+          const direction = index > this.activeIndex ? 1 : -1;
+          this.goTo(index, direction, true);
+        });
+      });
+
+      this.root.addEventListener("mouseenter", () => this.pause());
+      this.root.addEventListener("mouseleave", () => this.resume());
+      this.root.addEventListener("focusin", () => this.pause());
+      this.root.addEventListener("focusout", () => this.resume());
+
+      this.root.addEventListener("touchstart", this.handleTouchStart.bind(this), { passive: true });
+      this.root.addEventListener("touchmove", this.handleTouchMove.bind(this), { passive: true });
+      this.root.addEventListener("touchend", this.handleTouchEnd.bind(this), { passive: true });
+
+      document.addEventListener("keydown", (event) => {
+        const heroInView = this.root.getBoundingClientRect().top < window.innerHeight && this.root.getBoundingClientRect().bottom > 0;
+        if (!heroInView) return;
+        if (event.key === "ArrowLeft") this.goTo(this.activeIndex - 1, -1, true);
+        if (event.key === "ArrowRight") this.goTo(this.activeIndex + 1, 1, true);
+      });
+
+      document.addEventListener("visibilitychange", () => {
+        if (document.hidden) {
+          this.pause();
+        } else {
+          this.resume();
+        }
+      });
+    }
+
+    handleTouchStart(event) {
+      this.touchStartX = event.changedTouches[0].clientX;
+      this.touchDeltaX = 0;
+      this.pause();
+    }
+
+    handleTouchMove(event) {
+      this.touchDeltaX = event.changedTouches[0].clientX - this.touchStartX;
+    }
+
+    handleTouchEnd() {
+      const swipeThreshold = 50;
+      if (Math.abs(this.touchDeltaX) > swipeThreshold) {
+        if (this.touchDeltaX < 0) {
+          this.goTo(this.activeIndex + 1, 1, true);
+        } else {
+          this.goTo(this.activeIndex - 1, -1, true);
+        }
+      }
+      this.resume();
+    }
+
+    normalizeIndex(index) {
+      return (index + this.slides.length) % this.slides.length;
+    }
+
+    goTo(targetIndex, direction = 1, resetTimer = false) {
+      const nextIndex = this.normalizeIndex(targetIndex);
+
+      this.slides.forEach((slide, index) => {
+        slide.classList.remove("active", "is-prev", "is-next");
+
+        if (index === nextIndex) {
+          slide.classList.add("active");
+          slide.setAttribute("aria-hidden", "false");
+        } else {
+          slide.classList.add(direction > 0 ? "is-prev" : "is-next");
+          slide.setAttribute("aria-hidden", "true");
+        }
+      });
+
+      this.dots.forEach((dot, index) => {
+        const isActive = index === nextIndex;
+        dot.classList.toggle("active", isActive);
+        dot.setAttribute("aria-selected", String(isActive));
+      });
+
+      this.activeIndex = nextIndex;
+
+      if (resetTimer && !this.prefersReducedMotion) {
+        this.resetProgress();
+      }
+    }
+
+    start() {
+      this.startTime = performance.now() - this.elapsed;
+      const tick = (now) => {
+        if (this.isPaused) return;
+
+        this.elapsed = now - this.startTime;
+        const progress = Math.min(this.elapsed / this.duration, 1);
+        this.progressBar.style.transform = "scaleX(" + progress + ")";
+
+        if (progress >= 1) {
+          this.goTo(this.activeIndex + 1, 1);
+          this.startTime = now;
+          this.elapsed = 0;
+          this.progressBar.style.transform = "scaleX(0)";
+        }
+
+        this.rafId = window.requestAnimationFrame(tick);
+      };
+
+      this.cancelFrame();
+      this.isPaused = false;
+      this.rafId = window.requestAnimationFrame(tick);
+    }
+
+    pause() {
+      if (this.prefersReducedMotion) return;
+      this.isPaused = true;
+      this.cancelFrame();
+    }
+
+    resume() {
+      if (this.prefersReducedMotion) return;
+      if (!this.isPaused) return;
+      this.start();
+    }
+
+    resetProgress() {
+      this.elapsed = 0;
+      this.progressBar.style.transform = "scaleX(0)";
+      this.start();
+    }
+
+    cancelFrame() {
+      if (this.rafId) {
+        window.cancelAnimationFrame(this.rafId);
+        this.rafId = null;
+      }
+    }
+  }
+
+  /*
+    Scroll reveal using Intersection Observer
+    Keeps animations subtle and efficient.
+  */
+  class RevealOnScroll {
+    constructor() {
+      this.elements = document.querySelectorAll(".reveal");
+      if (!("IntersectionObserver" in window) || !this.elements.length) {
+        this.elements.forEach((element) => element.classList.add("is-visible"));
+        return;
+      }
+
+      this.observer = new IntersectionObserver(this.handleIntersect.bind(this), {
+        threshold: 0.12,
+        rootMargin: "0px 0px -8% 0px"
+      });
+
+      this.elements.forEach((element, index) => {
+        element.style.transitionDelay = Math.min(index % 4, 3) * 70 + "ms";
+        this.observer.observe(element);
+      });
+    }
+
+    handleIntersect(entries) {
+      entries.forEach((entry) => {
+        if (!entry.isIntersecting) return;
+        entry.target.classList.add("is-visible");
+        this.observer.unobserve(entry.target);
+      });
+    }
+  }
+
+  /*
+    Mobile navigation
+    - toggles open/close on small screens
+    - closes after selecting a destination link
+    - resets on wider viewport resize
+  */
+  class MobileMenu {
+    constructor() {
+      this.toggle = document.querySelector("[data-mobile-menu-toggle]");
+      this.menu = document.getElementById("mobile-menu");
+      this.links = this.menu ? Array.from(this.menu.querySelectorAll("a")) : [];
+
+      if (!this.toggle || !this.menu) return;
+
+      this.toggle.addEventListener("click", () => this.toggleMenu());
+      this.links.forEach((link) => {
+        link.addEventListener("click", () => this.close());
+      });
+
+      window.addEventListener("resize", () => {
+        if (window.innerWidth > 920) {
+          this.close(true);
+        }
+      });
+    }
+
+    toggleMenu() {
+      const isOpen = this.toggle.getAttribute("aria-expanded") === "true";
+      if (isOpen) {
+        this.close();
+      } else {
+        this.open();
+      }
+    }
+
+    open() {
+      this.menu.hidden = false;
+      this.toggle.setAttribute("aria-expanded", "true");
+      this.toggle.setAttribute("aria-label", "Close navigation menu");
+    }
+
+    close(forceHide = false) {
+      this.toggle.setAttribute("aria-expanded", "false");
+      this.toggle.setAttribute("aria-label", "Open navigation menu");
+      if (forceHide || window.innerWidth <= 920) {
+        this.menu.hidden = true;
+      }
+    }
+  }
+
+  class WaitlistForm {
+    constructor() {
+      this.form = document.getElementById("waitlist-form");
+      this.status = document.getElementById("waitlist-status");
+
+      if (!this.form || !this.status) return;
+
+      this.form.addEventListener("submit", (event) => this.handleSubmit(event));
+    }
+
+    async handleSubmit(event) {
+      event.preventDefault();
+
+      const submitButton = this.form.querySelector("button[type='submit']");
+      const formData = new FormData(this.form);
+      const email = String(formData.get("email") || "").trim();
+
+      this.setStatus("", "");
+
+      if (!email) {
+        this.setStatus("Please enter a valid email address.", "error");
+        return;
+      }
+
+      submitButton.disabled = true;
+      submitButton.textContent = "Submitting...";
+
+      try {
+        const response = await fetch("/api/waitlist", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({ email })
+        });
+
+        const payload = await response.json();
+
+        if (!response.ok) {
+          this.setStatus(payload.message || "Something went wrong. Please try again.", "error");
+          return;
+        }
+
+        this.form.reset();
+        this.setStatus(payload.message || "You're on the waitlist now.", "success");
+      } catch (error) {
+        this.setStatus("Unable to connect right now. Please try again in a moment.", "error");
+      } finally {
+        submitButton.disabled = false;
+        submitButton.textContent = "Get Early Access";
+      }
+    }
+
+    setStatus(message, type) {
+      this.status.textContent = message;
+      this.status.className = "form-status" + (type ? " " + type : "");
+    }
+  }
+
+  window.addEventListener("load", () => {
+    document.body.classList.remove("is-loading");
+  });
+
+  new HeroSlider(document.querySelector(".hero"));
+  new RevealOnScroll();
+  new MobileMenu();
+  new WaitlistForm();
+})();
+</script>
+</body>
+</html>
