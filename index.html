@@ -2250,7 +2250,7 @@ footer{
       <div class="auth-panel reveal">
         <div class="auth-copy">
           <strong>Enrollment Access</strong>
-          <span>Sign in with Google to verify your identity and register your plan interest. Online payments are temporarily paused while enrollment is being finalized.</span>
+          <span>Sign in with Google to verify your identity and register your plan interest. Online payments are temporarily paused while the PhonePe checkout flow is being finalized.</span>
         </div>
         <div class="auth-actions">
           <div id="google-signin-slot"></div>
@@ -2733,9 +2733,6 @@ footer{
     async initialize() {
       await this.loadConfig();
       await this.loadSession();
-      if (this.config?.paymentsEnabled) {
-        await this.loadPaytmScript();
-      }
       this.bindEvents();
       this.renderGoogleButton();
       this.syncUi();
@@ -2780,32 +2777,6 @@ footer{
         this.user = null;
         this.syncUi();
         this.setStatus("Signed out successfully.", "success");
-      });
-    }
-
-    async loadPaytmScript() {
-      if (!this.config?.paytmMid) return;
-      if (window.Paytm?.CheckoutJS) return;
-
-      const scriptUrl = `${this.config.paytmHost}/merchantpgpui/checkoutjs/merchants/${this.config.paytmMid}.js`;
-
-      await new Promise((resolve, reject) => {
-        const existing = document.querySelector(`script[data-paytm-script="${scriptUrl}"]`);
-        if (existing) {
-          existing.addEventListener("load", resolve, { once: true });
-          existing.addEventListener("error", reject, { once: true });
-          return;
-        }
-
-        const script = document.createElement("script");
-        script.src = scriptUrl;
-        script.async = true;
-        script.dataset.paytmScript = scriptUrl;
-        script.onload = resolve;
-        script.onerror = reject;
-        document.head.appendChild(script);
-      }).catch(() => {
-        this.setStatus("Paytm checkout script could not be loaded.", "error");
       });
     }
 
@@ -2896,16 +2867,6 @@ footer{
         return;
       }
 
-      if (!this.config?.paytmMid) {
-        this.setStatus("Paytm is not configured yet on the server.", "error");
-        return;
-      }
-
-      if (!window.Paytm?.CheckoutJS) {
-        this.setStatus("Paytm checkout script could not be loaded.", "error");
-        return;
-      }
-
       const plan = this.getPlan(planId);
       if (!plan) {
         this.setStatus("Selected plan could not be found.", "error");
@@ -2914,7 +2875,7 @@ footer{
 
       triggerButton.disabled = true;
       const originalText = triggerButton.textContent;
-      triggerButton.textContent = "Preparing payment...";
+      triggerButton.textContent = "Preparing PhonePe...";
 
       try {
         const response = await fetch(`${this.apiBase}/api/payments/order`, {
@@ -2929,51 +2890,18 @@ footer{
         const payload = await response.json();
 
         if (!response.ok) {
-          this.setStatus(payload.message || "Unable to create Paytm transaction.", "error");
+          this.setStatus(payload.message || "Unable to create PhonePe order.", "error");
           return;
         }
 
-        const checkoutConfig = {
-          root: "",
-          flow: "DEFAULT",
-          data: {
-            orderId: payload.orderId,
-            token: payload.transactionToken,
-            tokenType: "TXN_TOKEN",
-            amount: payload.plan.amountDisplay
-          },
-          merchant: {
-            mid: this.config.paytmMid,
-            redirect: false
-          },
-          handler: {
-            notifyMerchant: async (eventName, data) => {
-              if (eventName === "APP_CLOSED") {
-                this.setStatus("Payment window closed before completion.", "error");
-              }
+        if (payload.checkoutUrl) {
+          window.location.href = payload.checkoutUrl;
+          return;
+        }
 
-              if (eventName === "SESSION_EXPIRED") {
-                this.setStatus("Payment session expired. Please try again.", "error");
-              }
-
-              if (eventName === "PAYMENT_SUCCESS" || eventName === "TRANSACTION_COMPLETED") {
-                await this.verifyPayment(planId, payload.orderId);
-              }
-            },
-            transactionStatus: async (data) => {
-              if (data?.STATUS === "TXN_SUCCESS" || data?.RESPCODE === "01") {
-                await this.verifyPayment(planId, payload.orderId);
-              } else if (data?.RESPMSG) {
-                this.setStatus(data.RESPMSG, "error");
-              }
-            }
-          }
-        };
-
-        await window.Paytm.CheckoutJS.init(checkoutConfig);
-        window.Paytm.CheckoutJS.invoke();
+        this.setStatus("PhonePe order created, but hosted checkout URL is not available yet.", "error");
       } catch (error) {
-        this.setStatus("Unable to initiate Paytm payment right now.", "error");
+        this.setStatus("Unable to initiate PhonePe payment right now.", "error");
       } finally {
         triggerButton.disabled = false;
         triggerButton.textContent = originalText;

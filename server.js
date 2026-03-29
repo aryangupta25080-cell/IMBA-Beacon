@@ -5,7 +5,6 @@ const path = require("node:path");
 const crypto = require("node:crypto");
 const { URL } = require("node:url");
 const { OAuth2Client } = require("google-auth-library");
-const PaytmChecksum = require("paytmchecksum");
 
 const HOST = process.env.HOST || "0.0.0.0";
 const PORT = Number(process.env.PORT || 3000);
@@ -35,10 +34,10 @@ if (existsSync(ENV_FILE)) {
 }
 
 const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID || "";
-const PAYTM_MID = process.env.PAYTM_MID || "";
-const PAYTM_MERCHANT_KEY = process.env.PAYTM_MERCHANT_KEY || "";
-const PAYTM_WEBSITE = process.env.PAYTM_WEBSITE || "WEBSTAGING";
-const PAYTM_ENV = process.env.PAYTM_ENV || "staging";
+const PHONEPE_CLIENT_ID = process.env.PHONEPE_CLIENT_ID || "";
+const PHONEPE_CLIENT_SECRET = process.env.PHONEPE_CLIENT_SECRET || "";
+const PHONEPE_CLIENT_VERSION = process.env.PHONEPE_CLIENT_VERSION || "";
+const PHONEPE_ENV = process.env.PHONEPE_ENV || "sandbox";
 const PAYMENTS_ENABLED = process.env.PAYMENTS_ENABLED === "true";
 const ADMIN_ACCESS_KEY = process.env.ADMIN_ACCESS_KEY || "";
 const APP_BASE_URL = process.env.APP_BASE_URL || `http://127.0.0.1:${PORT}`;
@@ -271,8 +270,10 @@ function getPublicUser(user) {
   };
 }
 
-function getPaytmHost() {
-  return PAYTM_ENV === "production" ? "https://securegw.paytm.in" : "https://securegw-stage.paytm.in";
+function getPhonePeHost() {
+  return PHONEPE_ENV === "production"
+    ? "https://api.phonepe.com/apis/pg"
+    : "https://api-preprod.phonepe.com/apis/pg-sandbox";
 }
 
 function getAdminAccessKey(request, url) {
@@ -429,8 +430,9 @@ function handleConfig(response) {
     frontendOrigin: FRONTEND_ORIGIN,
     googleClientId: GOOGLE_CLIENT_ID,
     paymentsEnabled: PAYMENTS_ENABLED,
-    paytmMid: PAYTM_MID,
-    paytmHost: getPaytmHost(),
+    paymentProvider: "phonepe",
+    phonepeClientId: PHONEPE_CLIENT_ID,
+    phonepeHost: getPhonePeHost(),
     plans: Object.values(PLAN_CATALOG).map((plan) => ({
       id: plan.id,
       label: plan.label,
@@ -518,48 +520,8 @@ function requireAuthenticatedUser(request, response) {
   return user;
 }
 
-async function createPaytmTransaction(plan, orderId, user) {
-  const body = {
-    requestType: "Payment",
-    mid: PAYTM_MID,
-    websiteName: PAYTM_WEBSITE,
-    orderId,
-    callbackUrl: `${APP_BASE_URL}/api/payments/paytm/callback`,
-    txnAmount: {
-      value: (plan.amount / 100).toFixed(2),
-      currency: plan.currency
-    },
-    userInfo: {
-      custId: user.email
-    }
-  };
-
-  const checksum = await PaytmChecksum.generateSignature(JSON.stringify(body), PAYTM_MERCHANT_KEY);
-
-  const response = await fetch(
-    `${getPaytmHost()}/theia/api/v1/initiateTransaction?mid=${encodeURIComponent(PAYTM_MID)}&orderId=${encodeURIComponent(orderId)}`,
-    {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
-        body,
-        head: {
-          signature: checksum
-        }
-      })
-    }
-  );
-
-  const payload = await response.json();
-  const resultInfo = payload.body?.resultInfo;
-
-  if (!response.ok || resultInfo?.resultStatus !== "S") {
-    throw new Error(resultInfo?.resultMsg || "Unable to initiate Paytm transaction.");
-  }
-
-  return payload;
+async function createPhonePeOrder() {
+  throw new Error("PhonePe checkout is not fully configured yet. Add merchant credentials and complete the hosted checkout integration.");
 }
 
 async function handleCreateOrder(request, response) {
@@ -573,9 +535,9 @@ async function handleCreateOrder(request, response) {
     return;
   }
 
-  if (!PAYTM_MID || !PAYTM_MERCHANT_KEY) {
+  if (!PHONEPE_CLIENT_ID || !PHONEPE_CLIENT_SECRET || !PHONEPE_CLIENT_VERSION) {
     sendJson(response, 503, {
-      message: "Paytm is not configured yet. Add PAYTM_MID and PAYTM_MERCHANT_KEY."
+      message: "PhonePe is not configured yet. Add PHONEPE_CLIENT_ID, PHONEPE_CLIENT_SECRET, and PHONEPE_CLIENT_VERSION."
     });
     return;
   }
@@ -591,10 +553,10 @@ async function handleCreateOrder(request, response) {
     }
 
     const orderId = `IMBA_${plan.id}_${Date.now()}`.slice(0, 40);
-    const transaction = await createPaytmTransaction(plan, orderId, user);
+    const transaction = await createPhonePeOrder(plan, orderId, user);
 
     sendJson(response, 201, {
-      transactionToken: transaction.body.txnToken,
+      checkoutUrl: transaction.checkoutUrl,
       orderId,
       plan: {
         id: plan.id,
@@ -606,33 +568,12 @@ async function handleCreateOrder(request, response) {
       user: getPublicUser(user)
     });
   } catch (error) {
-    sendJson(response, 500, { message: error.message || "Unable to create Paytm transaction." });
+    sendJson(response, 500, { message: error.message || "Unable to create PhonePe order." });
   }
 }
 
-async function fetchPaytmTransactionStatus(orderId) {
-  const body = {
-    mid: PAYTM_MID,
-    orderId
-  };
-
-  const checksum = await PaytmChecksum.generateSignature(JSON.stringify(body), PAYTM_MERCHANT_KEY);
-
-  const response = await fetch(`${getPaytmHost()}/v3/order/status`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify({
-      body,
-      head: {
-        signature: checksum
-      }
-    })
-  });
-
-  const payload = await response.json();
-  return payload;
+async function fetchPhonePeOrderStatus() {
+  throw new Error("PhonePe status verification is not configured yet.");
 }
 
 async function handleVerifyPayment(request, response) {
@@ -646,8 +587,8 @@ async function handleVerifyPayment(request, response) {
     return;
   }
 
-  if (!PAYTM_MID || !PAYTM_MERCHANT_KEY) {
-    sendJson(response, 503, { message: "Paytm verification is not configured yet." });
+  if (!PHONEPE_CLIENT_ID || !PHONEPE_CLIENT_SECRET || !PHONEPE_CLIENT_VERSION) {
+    sendJson(response, 503, { message: "PhonePe verification is not configured yet." });
     return;
   }
 
@@ -662,13 +603,12 @@ async function handleVerifyPayment(request, response) {
       return;
     }
 
-    const statusPayload = await fetchPaytmTransactionStatus(orderId);
-    const resultInfo = statusPayload.body?.resultInfo;
-    const txnInfo = statusPayload.body;
+    const statusPayload = await fetchPhonePeOrderStatus(orderId);
+    const txnInfo = statusPayload.data || {};
 
-    if (resultInfo?.resultStatus !== "TXN_SUCCESS") {
+    if (!statusPayload.success) {
       sendJson(response, 400, {
-        message: resultInfo?.resultMsg || "Payment has not been completed successfully yet."
+        message: statusPayload.message || "Payment has not been completed successfully yet."
       });
       return;
     }
@@ -683,9 +623,9 @@ async function handleVerifyPayment(request, response) {
         amount: plan.amount,
         currency: plan.currency,
         orderId,
-        paymentId: txnInfo.txnId || "",
-        paymentMode: txnInfo.paymentMode || "",
-        bankTxnId: txnInfo.bankTxnId || "",
+        paymentId: txnInfo.transactionId || "",
+        paymentMode: txnInfo.paymentInstrument || "",
+        bankTxnId: txnInfo.providerReferenceId || "",
         email: user.email,
         name: user.name,
         verifiedAt: new Date().toISOString()
@@ -695,7 +635,7 @@ async function handleVerifyPayment(request, response) {
     }
 
     sendJson(response, 200, {
-      message: `Payment verified successfully for the ${plan.label} plan.`
+      message: `Payment verified successfully for the ${plan.label} plan via PhonePe.`
     });
   } catch (error) {
     sendJson(response, 500, { message: error.message || "Unable to verify payment." });
@@ -719,8 +659,9 @@ async function requestHandler(request, response) {
       frontendOrigin: FRONTEND_ORIGIN,
       googleClientId: GOOGLE_CLIENT_ID,
       paymentsEnabled: PAYMENTS_ENABLED,
-      paytmMid: PAYTM_MID,
-      paytmHost: getPaytmHost(),
+      paymentProvider: "phonepe",
+      phonepeClientId: PHONEPE_CLIENT_ID,
+      phonepeHost: getPhonePeHost(),
       plans: Object.values(PLAN_CATALOG).map((plan) => ({
         id: plan.id,
         label: plan.label,
