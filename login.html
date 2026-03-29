@@ -113,6 +113,7 @@
               <div class="inline-actions">
                 <button type="submit">Create Beacon Account</button>
                 <button class="auth-secondary" type="button" id="verify-signup-otp">Verify Signup OTP</button>
+                <button class="auth-secondary" type="button" id="resend-signup-otp">Resend OTP</button>
               </div>
             </form>
             <div class="small-note">After sign up, an OTP will be sent to your email. Paste it here and click verify to activate your account.</div>
@@ -143,6 +144,7 @@
     const passwordLoginForm = document.getElementById("password-login-form");
     const signupForm = document.getElementById("signup-form");
     const verifySignupOtpButton = document.getElementById("verify-signup-otp");
+    const resendSignupOtpButton = document.getElementById("resend-signup-otp");
     let config = null;
     let user = null;
 
@@ -274,6 +276,22 @@
       window.setTimeout(() => {
         window.location.href = "./student.html";
       }, 700);
+    });
+
+    resendSignupOtpButton.addEventListener("click", async () => {
+      const email = signupForm.querySelector('input[name="email"]').value.trim();
+      if (!email) {
+        setStatus("Enter your email address first so we can resend the OTP.", "error");
+        return;
+      }
+
+      const { response, payload } = await sendJsonRequest("/api/auth/otp/request", { email });
+      if (!response.ok) {
+        setStatus(payload.message || "Unable to resend OTP right now.", "error");
+        return;
+      }
+
+      setStatus(payload.message || "A fresh OTP has been sent to your email.", "success");
     });
 
     logoutButton.addEventListener("click", async () => {
