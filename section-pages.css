@@ -61,9 +61,26 @@ img{max-width:100%;display:block}
   gap:.9rem;
   color:#fff;
 }
-.brand-logo{
-  width:120px;
-  background:transparent;
+.brand-mark{
+  display:flex;
+  flex-direction:column;
+  align-items:flex-start;
+  line-height:.88;
+  letter-spacing:.01em;
+  flex:0 0 auto;
+}
+.brand-mark-top{
+  font-family:"Merriweather",serif;
+  font-size:1.42rem;
+  color:#fff;
+  text-transform:lowercase;
+}
+.brand-mark-bottom{
+  font-size:1.75rem;
+  font-weight:800;
+  color:var(--gold-soft);
+  letter-spacing:.02em;
+  text-transform:uppercase;
 }
 .brand-copy strong{display:block}
 .brand-copy span{
@@ -289,4 +306,6 @@ footer{
   .topbar{display:none}
   .hero-inner,.card-grid,.plans-grid{grid-template-columns:1fr}
   .page-links{display:none}
+  .brand-mark-top{font-size:1.26rem}
+  .brand-mark-bottom{font-size:1.52rem}
 }

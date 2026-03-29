@@ -154,14 +154,29 @@ button,input{border:none}
   color:#fff;
   min-width:0;
 }
-.brand-logo{
-  width:172px;
-  max-width:36vw;
-  display:block;
-  background:transparent;
+.brand-mark{
+  display:flex;
+  flex-direction:column;
+  align-items:flex-start;
+  line-height:.88;
+  letter-spacing:.01em;
+  flex:0 0 auto;
   transition:transform .35s var(--slider-ease),opacity .35s var(--slider-ease);
 }
-.brand:hover .brand-logo{
+.brand-mark-top{
+  font-family:"Merriweather",serif;
+  font-size:1.85rem;
+  color:#fff;
+  text-transform:lowercase;
+}
+.brand-mark-bottom{
+  font-size:2.25rem;
+  font-weight:800;
+  color:var(--gold-soft);
+  letter-spacing:.02em;
+  text-transform:uppercase;
+}
+.brand:hover .brand-mark{
   transform:translateY(-2px);
   opacity:.96;
 }
@@ -1688,8 +1703,11 @@ footer{
   .nav-actions{
     margin-left:auto;
   }
-  .brand-logo{
-    width:120px;
+  .brand-mark-top{
+    font-size:1.5rem;
+  }
+  .brand-mark-bottom{
+    font-size:1.8rem;
   }
   .brand-copy span{
     display:none;
@@ -1815,7 +1833,7 @@ footer{
   .slide-background,
   .reveal,
   .slider-progress-bar,
-  .brand-logo,
+  .brand-mark,
   .quick-link,
   .info-card,
   .plan-card,
@@ -1851,7 +1869,10 @@ footer{
   <header class="mainnav">
     <div class="mainnav-inner">
       <a class="brand" href="./index.html" aria-label="IMBA Beacon home">
-        <img class="brand-logo" src="./assets/imba-beacon-logo.jpeg" alt="IMBA Beacon logo"/>
+        <div class="brand-mark" aria-hidden="true">
+          <span class="brand-mark-top">iMBA</span>
+          <span class="brand-mark-bottom">Beacon</span>
+        </div>
         <div class="brand-copy">
           <strong>IMBA Beacon</strong>
           <span>Structured preparation inspired by institutional portals</span>
