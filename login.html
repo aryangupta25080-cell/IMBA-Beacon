@@ -15,10 +15,10 @@
 .login-card{background:#fff;border:1px solid rgba(106,31,54,.1);border-radius:28px;padding:2rem;box-shadow:0 16px 44px rgba(106,31,54,.08)}
 .login-intro h1{font-family:"Merriweather",serif;font-size:clamp(2rem,4vw,3rem);line-height:1.15;margin-bottom:.8rem}
 .login-intro p{color:var(--muted);max-width:62ch}
-.auth-layout{display:grid;grid-template-columns:.88fr 1.12fr;gap:1.3rem;margin-top:1.6rem}
-.auth-panel,.auth-box{background:var(--surface-alt);border:1px solid rgba(106,31,54,.08);border-radius:24px;padding:1.3rem}
-.auth-box h2,.auth-panel h2{font-size:1rem;margin-bottom:.45rem}
-.auth-box p,.auth-panel p{color:var(--muted);font-size:.92rem}
+.auth-layout{display:grid;grid-template-columns:1fr;gap:1.3rem;margin-top:1.6rem}
+.auth-box{background:var(--surface-alt);border:1px solid rgba(106,31,54,.08);border-radius:24px;padding:1.3rem}
+.auth-box h2{font-size:1rem;margin-bottom:.45rem}
+.auth-box p{color:var(--muted);font-size:.92rem}
 .login-actions{display:flex;align-items:center;gap:.85rem;flex-wrap:wrap;margin:1rem 0 1.25rem}
 .login-user{display:flex;align-items:center;gap:.8rem;padding:.8rem 1rem;border-radius:18px;background:#fff;border:1px solid rgba(106,31,54,.08)}
 .login-user img{width:40px;height:40px;border-radius:50%;object-fit:cover}
@@ -39,7 +39,7 @@
 .small-note{font-size:.84rem;color:var(--muted);margin-top:.7rem}
 .link-row{display:flex;gap:.8rem;flex-wrap:wrap;margin-top:1.2rem}
 @media (max-width:920px){
-  .auth-layout,.auth-form-row{grid-template-columns:1fr}
+  .auth-form-row{grid-template-columns:1fr}
 }
 </style>
 </head>
@@ -55,23 +55,6 @@
       </div>
 
       <div class="auth-layout">
-        <aside class="auth-panel">
-          <h2>Google sign-in</h2>
-          <p>Fastest option for students whose Google account verification works smoothly.</p>
-          <div class="login-actions">
-            <div id="google-signin-slot"></div>
-            <div class="login-user" id="login-user" hidden>
-              <img id="login-avatar" alt="User avatar"/>
-              <div>
-                <strong id="login-name">Signed in</strong>
-                <div id="login-email" style="color:var(--muted);font-size:.88rem;"></div>
-              </div>
-            </div>
-            <button class="logout-btn auth-secondary" id="logout-btn" type="button" hidden>Logout</button>
-          </div>
-          <div class="small-note">If Google does not verify you properly, use the OTP panel on the right after creating or identifying your Beacon account.</div>
-        </aside>
-
         <section class="auth-box">
           <div class="tab-row">
             <button class="tab-btn active" type="button" data-tab="login">Login</button>
@@ -80,7 +63,18 @@
 
           <div class="tab-panel active" data-panel="login">
             <h2>Login with email and password</h2>
-            <p>Use your Beacon account credentials if you already signed up.</p>
+            <p>Use your Beacon account credentials if you already signed up, or continue with Google from the same tab.</p>
+            <div class="login-actions">
+              <div id="google-signin-slot"></div>
+              <div class="login-user" id="login-user" hidden>
+                <img id="login-avatar" alt="User avatar"/>
+                <div>
+                  <strong id="login-name">Signed in</strong>
+                  <div id="login-email" style="color:var(--muted);font-size:.88rem;"></div>
+                </div>
+              </div>
+              <button class="logout-btn auth-secondary" id="logout-btn" type="button" hidden>Logout</button>
+            </div>
             <form class="auth-form" id="password-login-form">
               <input type="email" name="email" placeholder="Enter your email address" required/>
               <input type="password" name="password" placeholder="Enter your password" required/>
@@ -88,6 +82,7 @@
                 <button type="submit">Login to Beacon</button>
               </div>
             </form>
+            <div class="small-note">Google sign-in is available above as an alternate sign-in method.</div>
           </div>
 
           <div class="tab-panel" data-panel="signup">
