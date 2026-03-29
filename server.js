@@ -722,7 +722,10 @@ async function handleBeaconSignup(request, response) {
       message: "Account created. We have sent an email OTP to verify your Beacon account."
     });
   } catch (error) {
-    sendJson(response, 400, { message: error.message || "Unable to create Beacon account." });
+    console.error("Beacon signup failed:", error);
+    sendJson(response, 400, {
+      message: error && error.message ? error.message : "Unable to create Beacon account."
+    });
   }
 }
 
@@ -794,7 +797,10 @@ async function handleRequestOtp(request, response) {
       message: "A verification OTP has been sent to your email."
     });
   } catch (error) {
-    sendJson(response, 400, { message: error.message || "Unable to send OTP right now." });
+    console.error("OTP request failed:", error);
+    sendJson(response, 400, {
+      message: error && error.message ? error.message : "Unable to send OTP right now."
+    });
   }
 }
 
@@ -837,7 +843,10 @@ async function handleVerifyOtp(request, response) {
       "Set-Cookie": createSessionCookie(request, sessionId)
     });
   } catch (error) {
-    sendJson(response, 400, { message: error.message || "Unable to verify OTP." });
+    console.error("OTP verification failed:", error);
+    sendJson(response, 400, {
+      message: error && error.message ? error.message : "Unable to verify OTP."
+    });
   }
 }
 
