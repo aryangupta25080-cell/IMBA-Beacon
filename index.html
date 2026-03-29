@@ -1559,6 +1559,13 @@ footer{
   .auth-panel{grid-template-columns:1fr}
 }
 @media (max-width:920px){
+  .topbar{
+    display:none;
+  }
+  .mainnav{
+    position:relative;
+    top:auto;
+  }
   .nav-menu{display:none}
   .split,.feature-split,.notice-wrap,.cta-shell{grid-template-columns:1fr;display:grid}
   .cta-shell{align-items:start}
@@ -1584,13 +1591,16 @@ footer{
     justify-content:center;
   }
   .mainnav-inner{
-    padding:.8rem 0;
+    padding:.7rem 0;
   }
   .brand-logo{
-    width:138px;
+    width:120px;
   }
   .brand-copy span{
     display:none;
+  }
+  .brand-copy strong{
+    font-size:.92rem;
   }
   .nav-cta{
     display:none;
@@ -1600,7 +1610,7 @@ footer{
   }
   .hero-overlay{
     min-height:auto;
-    padding:4.9rem 0 7rem;
+    padding:3.6rem 0 7rem;
   }
   .hero-title{
     font-size:clamp(2.2rem,10vw,3.2rem);
