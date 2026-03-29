@@ -63,8 +63,7 @@ img{max-width:100%;display:block}
 }
 .brand-logo{
   width:120px;
-  border-radius:12px;
-  box-shadow:var(--shadow);
+  background:transparent;
 }
 .brand-copy strong{display:block}
 .brand-copy span{
