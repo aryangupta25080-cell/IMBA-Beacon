@@ -298,8 +298,13 @@ function getPublicUser(user) {
     name: user.name,
     email: user.email,
     picture: user.picture,
+    phone: user.phone || "",
+    schoolPercentile: user.schoolPercentile ?? null,
+    category: user.category || "",
     provider: user.provider || "beacon",
-    emailVerified: Boolean(user.emailVerified)
+    emailVerified: Boolean(user.emailVerified),
+    createdAt: user.createdAt || "",
+    lastLoginAt: user.lastLoginAt || ""
   };
 }
 

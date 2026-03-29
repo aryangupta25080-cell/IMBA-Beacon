@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Student Profile | IMBA Beacon</title>
+<script src="./site-config.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Merriweather:wght@700&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="./section-pages.css"/>
+<style>
+.student-shell{width:min(1180px,calc(100% - 2rem));margin:0 auto;padding:3rem 0 5rem}
+.student-hero{display:grid;grid-template-columns:1.15fr .85fr;gap:1.25rem;align-items:stretch;margin-bottom:1.5rem}
+.student-welcome{background:linear-gradient(135deg,var(--maroon),#4d1125);color:#fff;border-radius:30px;padding:2rem;box-shadow:var(--shadow);position:relative;overflow:hidden}
+.student-welcome::after{content:"";position:absolute;inset:auto -120px -120px auto;width:260px;height:260px;border-radius:50%;background:radial-gradient(circle,rgba(255,255,255,.13),transparent 70%)}
+.student-welcome h1{font-family:"Merriweather",serif;font-size:clamp(2rem,4vw,3.3rem);line-height:1.08;margin:.8rem 0}
+.student-welcome p{max-width:58ch;color:rgba(255,255,255,.82)}
+.student-badges{display:flex;gap:.7rem;flex-wrap:wrap;margin-top:1.3rem}
+.student-badge{padding:.6rem .95rem;border-radius:999px;background:rgba(255,255,255,.09);border:1px solid rgba(255,255,255,.12);font-weight:700;font-size:.88rem}
+.student-summary{background:#fff;border:1px solid rgba(106,31,54,.08);border-radius:30px;padding:1.5rem;box-shadow:0 16px 44px rgba(106,31,54,.08)}
+.summary-head{display:flex;align-items:center;justify-content:space-between;gap:1rem;margin-bottom:1.2rem}
+.summary-head h2{font-size:1.05rem}
+.student-user{display:flex;align-items:center;gap:1rem}
+.student-avatar,.student-avatar-fallback{width:58px;height:58px;border-radius:18px;flex-shrink:0}
+.student-avatar{object-fit:cover}
+.student-avatar-fallback{display:grid;place-items:center;background:linear-gradient(135deg,var(--gold-soft),var(--gold));color:var(--maroon);font-weight:800;font-size:1.2rem}
+.student-meta{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.9rem}
+.meta-card{background:var(--surface-alt);border:1px solid rgba(106,31,54,.08);border-radius:20px;padding:1rem}
+.meta-label{display:block;color:#8c6a1d;font-size:.72rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase;margin-bottom:.35rem}
+.meta-value{font-weight:700;color:var(--ink)}
+.student-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:1rem}
+.portal-card{background:#fff;border:1px solid rgba(106,31,54,.08);border-radius:24px;padding:1.35rem;box-shadow:0 12px 32px rgba(106,31,54,.06)}
+.portal-card h3{font-size:1rem;margin-bottom:.55rem}
+.portal-card p{color:var(--muted);font-size:.92rem}
+.portal-list{list-style:none;display:grid;gap:.75rem;margin-top:1rem}
+.portal-list li{padding:.8rem .9rem;border-radius:16px;background:var(--surface-alt);border:1px solid rgba(106,31,54,.08)}
+.portal-actions{display:flex;gap:.8rem;flex-wrap:wrap;margin-top:1rem}
+.portal-link,.portal-secondary{display:inline-flex;align-items:center;justify-content:center;padding:.86rem 1.15rem;border-radius:999px;font-weight:800}
+.portal-link{background:linear-gradient(135deg,var(--gold-soft),var(--gold));color:var(--maroon)}
+.portal-secondary{background:rgba(106,31,54,.08);color:var(--maroon)}
+.student-section{margin-top:1.5rem}
+.section-grid-2{display:grid;grid-template-columns:1.1fr .9fr;gap:1rem}
+.status-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1rem}
+.status-tile{background:#fff;border:1px solid rgba(106,31,54,.08);border-radius:24px;padding:1.3rem;box-shadow:0 12px 32px rgba(106,31,54,.06)}
+.status-tile h3{font-size:1rem;margin-bottom:.55rem}
+.status-chip{display:inline-flex;align-items:center;padding:.45rem .8rem;border-radius:999px;font-size:.78rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase}
+.status-chip.gold{background:rgba(201,162,75,.18);color:#8c6a1d}
+.status-chip.soft{background:rgba(106,31,54,.08);color:var(--maroon)}
+.status-note{color:var(--muted);font-size:.92rem;margin-top:.75rem}
+.schedule-list,.quiz-list{list-style:none;display:grid;gap:.9rem;margin-top:1rem}
+.schedule-item,.quiz-item{background:var(--surface-alt);border:1px solid rgba(106,31,54,.08);border-radius:20px;padding:1rem}
+.schedule-item-head,.quiz-item-head{display:flex;align-items:flex-start;justify-content:space-between;gap:1rem}
+.schedule-title,.quiz-title{font-weight:800;color:var(--ink)}
+.schedule-meta,.quiz-meta{font-size:.88rem;color:var(--muted);margin-top:.25rem}
+.schedule-tag,.quiz-tag{display:inline-flex;align-items:center;padding:.36rem .7rem;border-radius:999px;font-size:.72rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase}
+.schedule-tag{background:rgba(201,162,75,.18);color:#8c6a1d}
+.quiz-tag{background:rgba(106,31,54,.08);color:var(--maroon)}
+.progress-card{background:linear-gradient(180deg,#fff,#fbf6f7);border:1px solid rgba(106,31,54,.08);border-radius:24px;padding:1.35rem;box-shadow:0 12px 32px rgba(106,31,54,.06)}
+.progress-overview{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:.9rem;margin-top:1rem}
+.progress-stat{padding:1rem;border-radius:18px;background:var(--surface-alt);border:1px solid rgba(106,31,54,.08)}
+.progress-stat strong{display:block;font-size:1.5rem;color:var(--maroon);font-family:"Merriweather",serif}
+.tracker-list{list-style:none;display:grid;gap:.85rem;margin-top:1rem}
+.tracker-item{display:grid;gap:.45rem}
+.tracker-row{display:flex;align-items:center;justify-content:space-between;gap:1rem}
+.tracker-label{font-weight:700}
+.tracker-bar{height:10px;border-radius:999px;background:rgba(106,31,54,.08);overflow:hidden}
+.tracker-fill{height:100%;border-radius:999px;background:linear-gradient(135deg,var(--gold-soft),var(--gold))}
+.student-status{min-height:1.5rem;color:var(--muted);margin-top:1rem}
+.student-status.error{color:#b33d4b}
+@media (max-width:980px){
+  .student-hero,.student-grid,.section-grid-2,.status-grid,.progress-overview{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+  <div class="topbar"><div class="topbar-inner"><div class="topbar-links"><a href="./index.html">Home</a><a href="./admissions.html">Admissions</a><a href="./contact.html">Contact</a></div><div class="topbar-meta"><span>Student Portal</span></div></div></div>
+  <header class="mainnav"><div class="mainnav-inner"><a class="brand" href="./index.html"><div class="brand-mark" aria-hidden="true"><span class="brand-mark-top">iMBA</span><span class="brand-mark-bottom">Beacon</span></div><div class="brand-copy"><strong>IMBA Beacon</strong><span>Student dashboard and admissions progress</span></div></a><nav class="page-links"><a href="./academics.html">Academics</a><a href="./updates.html">Updates</a><a href="./admissions.html">Admissions</a><a href="./contact.html">Contact</a></nav><button class="nav-cta" id="logout-btn" type="button">Logout</button></div></header>
+  <main class="student-shell">
+    <section class="student-hero">
+      <div class="student-welcome">
+        <div class="hero-label">Student Profile</div>
+        <h1 id="welcome-title">Welcome to your IMBA Beacon student space.</h1>
+        <p id="welcome-copy">This is your central place to review your application details, track account status, and move through the IMBA Beacon preparation journey with clarity.</p>
+        <div class="student-badges">
+          <span class="student-badge" id="badge-provider">Beacon Account</span>
+          <span class="student-badge" id="badge-verified">Verification Pending</span>
+          <span class="student-badge">Admissions-ready Portal</span>
+        </div>
+      </div>
+      <aside class="student-summary">
+        <div class="summary-head">
+          <h2>Your Profile Snapshot</h2>
+          <span class="hero-label" style="margin:0">Live</span>
+        </div>
+        <div class="student-user">
+          <img class="student-avatar" id="student-avatar" alt="Student avatar" hidden/>
+          <div class="student-avatar-fallback" id="student-avatar-fallback">IB</div>
+          <div>
+            <strong id="student-name">Student Name</strong>
+            <div id="student-email" style="color:var(--muted);font-size:.92rem">student@example.com</div>
+          </div>
+        </div>
+        <div class="student-meta" style="margin-top:1rem">
+          <div class="meta-card"><span class="meta-label">Phone</span><div class="meta-value" id="student-phone">Not added</div></div>
+          <div class="meta-card"><span class="meta-label">Category</span><div class="meta-value" id="student-category">To be completed</div></div>
+          <div class="meta-card"><span class="meta-label">School Percentile</span><div class="meta-value" id="student-percentile">Pending</div></div>
+          <div class="meta-card"><span class="meta-label">Account Created</span><div class="meta-value" id="student-created">Recently</div></div>
+        </div>
+      </aside>
+    </section>
+
+    <section class="student-grid">
+      <article class="portal-card">
+        <div class="eyebrow">Account Status</div>
+        <h3>Your verification and access state</h3>
+        <ul class="portal-list">
+          <li id="verification-item">Email verification is pending.</li>
+          <li id="provider-item">Your active sign-in method is Beacon account.</li>
+          <li id="login-item">Latest activity will appear here after sign-in.</li>
+        </ul>
+      </article>
+      <article class="portal-card">
+        <div class="eyebrow">Next Steps</div>
+        <h3>What to do next inside IMBA Beacon</h3>
+        <ul class="portal-list">
+          <li>Review the admissions page and compare `Basic` vs `Pro` prep support.</li>
+          <li>Go through academics and updates to understand the prep roadmap.</li>
+          <li>Keep your profile details accurate so the Beacon team can guide you better.</li>
+        </ul>
+        <div class="portal-actions">
+          <a class="portal-link" href="./admissions.html">Open Admissions</a>
+          <a class="portal-secondary" href="./academics.html">View Academics</a>
+        </div>
+      </article>
+      <article class="portal-card">
+        <div class="eyebrow">Help Desk</div>
+        <h3>Need support from the Beacon team?</h3>
+        <p>Use the contact page if you want help with onboarding, verification, or choosing the right preparation track.</p>
+        <div class="portal-actions">
+          <a class="portal-link" href="./contact.html">Contact IMBA Beacon</a>
+          <a class="portal-secondary" href="./updates.html">See Latest Updates</a>
+        </div>
+      </article>
+    </section>
+
+    <section class="student-section section-grid-2">
+      <article class="progress-card">
+        <div class="eyebrow">Progress Tracker</div>
+        <h3>Track your IMBA preparation readiness</h3>
+        <p>This dashboard gives you a simple view of how far along you are in the Beacon preparation cycle.</p>
+        <div class="progress-overview">
+          <div class="progress-stat">
+            <span class="meta-label">Readiness Score</span>
+            <strong id="readiness-score">42%</strong>
+          </div>
+          <div class="progress-stat">
+            <span class="meta-label">Quizzes Done</span>
+            <strong id="quizzes-done">2/5</strong>
+          </div>
+          <div class="progress-stat">
+            <span class="meta-label">Classes Attended</span>
+            <strong id="classes-done">1/4</strong>
+          </div>
+        </div>
+        <ul class="tracker-list">
+          <li class="tracker-item">
+            <div class="tracker-row"><span class="tracker-label">Profile Completion</span><span id="profile-progress-label">60%</span></div>
+            <div class="tracker-bar"><div class="tracker-fill" id="profile-progress" style="width:60%"></div></div>
+          </li>
+          <li class="tracker-item">
+            <div class="tracker-row"><span class="tracker-label">Interview Story Bank</span><span>35%</span></div>
+            <div class="tracker-bar"><div class="tracker-fill" style="width:35%"></div></div>
+          </li>
+          <li class="tracker-item">
+            <div class="tracker-row"><span class="tracker-label">Mock Interview Readiness</span><span>30%</span></div>
+            <div class="tracker-bar"><div class="tracker-fill" style="width:30%"></div></div>
+          </li>
+          <li class="tracker-item">
+            <div class="tracker-row"><span class="tracker-label">Communication Practice</span><span>45%</span></div>
+            <div class="tracker-bar"><div class="tracker-fill" style="width:45%"></div></div>
+          </li>
+        </ul>
+      </article>
+      <article class="portal-card">
+        <div class="eyebrow">Selected Pack</div>
+        <h3>Your current preparation pack status</h3>
+        <span class="status-chip gold" id="pack-chip">Pack Not Selected</span>
+        <p class="status-note" id="pack-note">You have not selected a preparation pack yet. Review `Basic` and `Pro` to decide the level of support you want.</p>
+        <div class="portal-actions">
+          <a class="portal-link" href="./admissions.html">Compare Packs</a>
+          <a class="portal-secondary" href="./contact.html">Talk to Support</a>
+        </div>
+      </article>
+    </section>
+
+    <section class="student-section status-grid">
+      <article class="status-tile">
+        <div class="eyebrow">Mentor Assigned</div>
+        <h3>Mentor status</h3>
+        <span class="status-chip soft" id="mentor-chip">Awaiting Assignment</span>
+        <p class="status-note" id="mentor-note">A mentor will be assigned after your onboarding is reviewed and your preparation track is finalized.</p>
+      </article>
+      <article class="status-tile">
+        <div class="eyebrow">Class Schedule</div>
+        <h3>Upcoming live classes</h3>
+        <ul class="schedule-list">
+          <li class="schedule-item">
+            <div class="schedule-item-head">
+              <div>
+                <div class="schedule-title">Intro to IMBA Interview Prep</div>
+                <div class="schedule-meta">Monday, 6:00 PM IST · 60 mins</div>
+              </div>
+              <span class="schedule-tag">Open</span>
+            </div>
+          </li>
+          <li class="schedule-item">
+            <div class="schedule-item-head">
+              <div>
+                <div class="schedule-title">Behavioral Q&A Deep Dive</div>
+                <div class="schedule-meta">Wednesday, 7:00 PM IST · 90 mins</div>
+              </div>
+              <span class="schedule-tag">Upcoming</span>
+            </div>
+          </li>
+          <li class="schedule-item">
+            <div class="schedule-item-head">
+              <div>
+                <div class="schedule-title">STAR Framework Practice Lab</div>
+                <div class="schedule-meta">Saturday, 5:30 PM IST · 75 mins</div>
+              </div>
+              <span class="schedule-tag">Scheduled</span>
+            </div>
+          </li>
+        </ul>
+      </article>
+    </section>
+
+    <section class="student-section">
+      <article class="portal-card">
+        <div class="eyebrow">Quizzes</div>
+        <h3>Practice quizzes and self-checks</h3>
+        <p>Use these quick self-check modules to strengthen your interview storytelling and communication foundation.</p>
+        <ul class="quiz-list">
+          <li class="quiz-item">
+            <div class="quiz-item-head">
+              <div>
+                <div class="quiz-title">Interview Basics Diagnostic</div>
+                <div class="quiz-meta">10 questions · Estimated time: 8 mins</div>
+              </div>
+              <span class="quiz-tag">Completed</span>
+            </div>
+          </li>
+          <li class="quiz-item">
+            <div class="quiz-item-head">
+              <div>
+                <div class="quiz-title">Story Bank Readiness Quiz</div>
+                <div class="quiz-meta">12 questions · Estimated time: 10 mins</div>
+              </div>
+              <span class="quiz-tag">Start Next</span>
+            </div>
+          </li>
+          <li class="quiz-item">
+            <div class="quiz-item-head">
+              <div>
+                <div class="quiz-title">Communication Confidence Check</div>
+                <div class="quiz-meta">8 questions · Estimated time: 6 mins</div>
+              </div>
+              <span class="quiz-tag">Locked</span>
+            </div>
+          </li>
+        </ul>
+      </article>
+    </section>
+    <p class="student-status" id="student-status" aria-live="polite"></p>
+  </main>
+  <footer><div class="footer-inner"><span>IMBA Beacon Student Portal</span><span><a href="./index.html">Back to Home</a></span></div></footer>
+  <script>
+  (function () {
+    const apiBase = (window.IMBA_SITE_CONFIG && window.IMBA_SITE_CONFIG.apiBaseUrl) || "";
+    const statusNode = document.getElementById("student-status");
+    const logoutButton = document.getElementById("logout-btn");
+
+    function setStatus(message, type) {
+      statusNode.textContent = message;
+      statusNode.className = "student-status" + (type ? " " + type : "");
+    }
+
+    function formatDate(value) {
+      if (!value) return "Recently";
+      const date = new Date(value);
+      if (Number.isNaN(date.getTime())) return "Recently";
+      return date.toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" });
+    }
+
+    function formatDateTime(value) {
+      if (!value) return "This is your current active session.";
+      const date = new Date(value);
+      if (Number.isNaN(date.getTime())) return "This is your current active session.";
+      return `Latest sign-in recorded on ${date.toLocaleString("en-IN", { dateStyle: "medium", timeStyle: "short" })}.`;
+    }
+
+    function renderUser(user) {
+      const hasApplicantProfile = Boolean(user.phone && user.category && user.schoolPercentile !== null && user.schoolPercentile !== undefined);
+      const inferredPack = user.schoolPercentile !== null && user.schoolPercentile !== undefined && Number(user.schoolPercentile) >= 85 ? "Pro Recommended" : "Basic Recommended";
+      const readinessScore = hasApplicantProfile ? 68 : 42;
+      const profileCompletion = hasApplicantProfile ? 100 : 60;
+
+      document.getElementById("welcome-title").textContent = `Welcome back, ${user.name || "student"}.`;
+      document.getElementById("welcome-copy").textContent = user.emailVerified
+        ? "Your Beacon account is active. Use this dashboard to move between admissions, academics, and support without losing track of your profile."
+        : "Your account has been created, but email verification is still pending. Complete verification to unlock a smoother student experience.";
+
+      document.getElementById("badge-provider").textContent = user.provider === "google" ? "Google Account" : "Beacon Account";
+      document.getElementById("badge-verified").textContent = user.emailVerified ? "Verified Account" : "Verification Pending";
+      document.getElementById("student-name").textContent = user.name || "Student";
+      document.getElementById("student-email").textContent = user.email || "";
+      document.getElementById("student-phone").textContent = user.phone || "Not added";
+      document.getElementById("student-category").textContent = user.category || "To be completed";
+      document.getElementById("student-percentile").textContent = user.schoolPercentile !== null && user.schoolPercentile !== undefined
+        ? `${user.schoolPercentile}%`
+        : "Pending";
+      document.getElementById("student-created").textContent = formatDate(user.createdAt);
+      document.getElementById("readiness-score").textContent = `${readinessScore}%`;
+      document.getElementById("profile-progress").style.width = `${profileCompletion}%`;
+      document.getElementById("profile-progress-label").textContent = `${profileCompletion}%`;
+      document.getElementById("pack-chip").textContent = hasApplicantProfile ? inferredPack : "Pack Not Selected";
+      document.getElementById("pack-note").textContent = hasApplicantProfile
+        ? `Based on your current profile, ${inferredPack.toLowerCase()} is the best starting point. Final selection can be confirmed with the Beacon team.`
+        : "You have not selected a preparation pack yet. Review `Basic` and `Pro` to decide the level of support you want.";
+      document.getElementById("mentor-chip").textContent = user.emailVerified ? "Assignment In Queue" : "Awaiting Assignment";
+      document.getElementById("mentor-note").textContent = user.emailVerified
+        ? "Your account is verified. A mentor can be assigned once your onboarding and pack selection are confirmed."
+        : "A mentor will be assigned after your onboarding is reviewed and your preparation track is finalized.";
+      document.getElementById("verification-item").textContent = user.emailVerified
+        ? "Your email is verified and your student access is active."
+        : "Your email verification is pending. Please use the OTP flow on the login page if needed.";
+      document.getElementById("provider-item").textContent = user.provider === "google"
+        ? "Your active sign-in method is Google."
+        : "Your active sign-in method is Beacon email and password.";
+      document.getElementById("login-item").textContent = formatDateTime(user.lastLoginAt);
+
+      const avatar = document.getElementById("student-avatar");
+      const fallback = document.getElementById("student-avatar-fallback");
+      if (user.picture) {
+        avatar.src = user.picture;
+        avatar.hidden = false;
+        fallback.hidden = true;
+      } else {
+        avatar.hidden = true;
+        fallback.hidden = false;
+        fallback.textContent = (user.name || "IB")
+          .split(" ")
+          .filter(Boolean)
+          .slice(0, 2)
+          .map((part) => part[0].toUpperCase())
+          .join("") || "IB";
+      }
+    }
+
+    async function init() {
+      try {
+        const response = await fetch(`${apiBase}/api/auth/session`, { credentials: "include" });
+        const payload = await response.json();
+        const user = payload.user || null;
+
+        if (!user) {
+          window.location.href = "./login.html";
+          return;
+        }
+
+        renderUser(user);
+      } catch (error) {
+        setStatus("Unable to load the student profile right now.", "error");
+      }
+    }
+
+    logoutButton.addEventListener("click", async () => {
+      await fetch(`${apiBase}/api/auth/logout`, { method: "POST", credentials: "include" });
+      window.location.href = "./login.html";
+    });
+
+    window.addEventListener("load", init);
+  })();
+  </script>
+</body>
+</html>

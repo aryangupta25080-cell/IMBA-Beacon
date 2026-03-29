@@ -51,7 +51,7 @@
       <div class="login-intro">
         <div class="hero-label">Login</div>
         <h1>Choose how you want to access your Beacon account.</h1>
-        <p>Google login remains available, and now students can also create a Beacon account with email and password. If direct verification becomes difficult, email OTP can help finish the sign-in flow.</p>
+        <p>Use the login tab to access your student profile, or create a new Beacon account with your applicant details and verify it through email OTP.</p>
       </div>
 
       <div class="auth-layout">
@@ -201,7 +201,10 @@
       }
       user = payload.user;
       syncUi();
-      setStatus(`Signed in as ${user.name}. You can now continue to admissions.`, "success");
+      setStatus(`Signed in as ${user.name}. Redirecting to your student profile...`, "success");
+      window.setTimeout(() => {
+        window.location.href = "./student.html";
+      }, 700);
     }
 
     async function init() {
@@ -239,6 +242,9 @@
       user = payload.user;
       syncUi();
       setStatus(payload.message || "Logged in successfully.", "success");
+      window.setTimeout(() => {
+        window.location.href = "./student.html";
+      }, 700);
     });
 
     signupForm.addEventListener("submit", async (event) => {
@@ -265,6 +271,9 @@
       user = payload.user;
       syncUi();
       setStatus(payload.message || "OTP verified successfully.", "success");
+      window.setTimeout(() => {
+        window.location.href = "./student.html";
+      }, 700);
     });
 
     logoutButton.addEventListener("click", async () => {
