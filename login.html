@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Login | IMBA Beacon</title>
+<script src="./site-config.js"></script>
+<script src="https://accounts.google.com/gsi/client" async defer></script>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Merriweather:wght@700&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="./section-pages.css"/>
+<style>
+.login-shell{
+  width:min(720px,calc(100% - 2rem));
+  margin:0 auto;
+  padding:4.5rem 0 5rem;
+}
+.login-card{
+  background:#fff;
+  border:1px solid rgba(106,31,54,.1);
+  border-radius:28px;
+  padding:2rem;
+  box-shadow:0 16px 44px rgba(106,31,54,.08);
+}
+.login-card h1{
+  font-family:"Merriweather",serif;
+  font-size:clamp(2rem,4vw,3rem);
+  line-height:1.15;
+  margin-bottom:.8rem;
+}
+.login-card p{
+  color:var(--muted);
+  margin-bottom:1.2rem;
+}
+.login-actions{
+  display:flex;
+  align-items:center;
+  gap:.85rem;
+  flex-wrap:wrap;
+  margin:1rem 0 1.25rem;
+}
+.login-user{
+  display:flex;
+  align-items:center;
+  gap:.8rem;
+  padding:.8rem 1rem;
+  border-radius:18px;
+  background:var(--surface-alt);
+  border:1px solid rgba(106,31,54,.08);
+}
+.login-user img{
+  width:40px;
+  height:40px;
+  border-radius:50%;
+  object-fit:cover;
+}
+.login-status{
+  min-height:1.6em;
+  color:var(--muted);
+}
+.login-status.error{color:#b33d4b}
+.login-status.success{color:#7f6a1b}
+.link-row{
+  display:flex;
+  gap:.8rem;
+  flex-wrap:wrap;
+  margin-top:1.2rem;
+}
+</style>
+</head>
+<body>
+  <div class="topbar"><div class="topbar-inner"><div class="topbar-links"><a href="./index.html">Home</a><a href="./admissions.html">Admissions</a><a href="./admin.html">Admin</a></div><div class="topbar-meta"><span>IIT Mandi Initiative</span></div></div></div>
+  <header class="mainnav"><div class="mainnav-inner"><a class="brand" href="./index.html"><img class="brand-logo" src="./assets/imba-beacon-logo.jpeg" alt="IMBA Beacon logo"/><div class="brand-copy"><strong>IMBA Beacon</strong><span>Structured preparation inspired by institutional portals</span></div></a><nav class="page-links"><a href="./academics.html">Academics</a><a href="./about.html">About</a><a href="./updates.html">Updates</a><a href="./campus-life.html">Campus Life</a><a href="./admissions.html">Admissions</a></nav><a class="nav-cta" href="./admissions.html#apply-now">Go to Admissions</a></div></header>
+  <main class="login-shell">
+    <section class="login-card">
+      <div class="hero-label">Login</div>
+      <h1>Sign in to continue with IMBA Beacon.</h1>
+      <p>Use Google sign-in to verify your identity. This keeps admissions interactions, plan interest, and future enrollment access aligned under one account.</p>
+      <div class="login-actions">
+        <div id="google-signin-slot"></div>
+        <div class="login-user" id="login-user" hidden>
+          <img id="login-avatar" alt="User avatar"/>
+          <div>
+            <strong id="login-name">Signed in</strong>
+            <div id="login-email" style="color:var(--muted);font-size:.88rem;"></div>
+          </div>
+        </div>
+        <button class="nav-login" id="logout-btn" type="button" hidden>Logout</button>
+      </div>
+      <p class="login-status" id="login-status" aria-live="polite"></p>
+      <div class="link-row">
+        <a class="nav-cta" href="./admissions.html#apply-now">Open Admissions Form</a>
+        <a class="nav-login" href="./index.html">Back to Home</a>
+      </div>
+    </section>
+  </main>
+  <footer><div class="footer-inner"><span>IMBA Beacon</span><span><a href="./index.html">Back to Home</a></span></div></footer>
+  <script>
+  (function () {
+    const apiBase = (window.IMBA_SITE_CONFIG && window.IMBA_SITE_CONFIG.apiBaseUrl) || "";
+    const googleContainer = document.getElementById("google-signin-slot");
+    const loginUser = document.getElementById("login-user");
+    const loginAvatar = document.getElementById("login-avatar");
+    const loginName = document.getElementById("login-name");
+    const loginEmail = document.getElementById("login-email");
+    const logoutButton = document.getElementById("logout-btn");
+    const status = document.getElementById("login-status");
+    let config = null;
+    let user = null;
+
+    function setStatus(message, type) {
+      status.textContent = message;
+      status.className = "login-status" + (type ? " " + type : "");
+    }
+
+    function syncUi() {
+      if (user) {
+        loginUser.hidden = false;
+        logoutButton.hidden = false;
+        googleContainer.style.display = "none";
+        loginAvatar.src = user.picture || "";
+        loginName.textContent = user.name || "Signed in";
+        loginEmail.textContent = user.email || "";
+      } else {
+        loginUser.hidden = true;
+        logoutButton.hidden = true;
+        googleContainer.style.display = "";
+      }
+    }
+
+    async function loadConfig() {
+      const response = await fetch(`${apiBase}/api/config`, { credentials: "include" });
+      config = await response.json();
+    }
+
+    async function loadSession() {
+      const response = await fetch(`${apiBase}/api/auth/session`, { credentials: "include" });
+      const payload = await response.json();
+      user = payload.user || null;
+    }
+
+    async function handleGoogleLogin(credential) {
+      const response = await fetch(`${apiBase}/api/auth/google`, {
+        method: "POST",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ credential })
+      });
+      const payload = await response.json();
+      if (!response.ok) {
+        setStatus(payload.message || "Google sign-in failed.", "error");
+        return;
+      }
+      user = payload.user;
+      syncUi();
+      setStatus(`Signed in as ${user.name}. You can now continue to admissions.`, "success");
+    }
+
+    async function init() {
+      try {
+        await loadConfig();
+        await loadSession();
+        if (!config.googleClientId) {
+          setStatus("Google sign-in is not configured yet.", "error");
+          return;
+        }
+        if (window.google?.accounts?.id) {
+          window.google.accounts.id.initialize({
+            client_id: config.googleClientId,
+            callback: (response) => handleGoogleLogin(response.credential)
+          });
+          window.google.accounts.id.renderButton(googleContainer, {
+            theme: "outline",
+            size: "large",
+            shape: "pill",
+            text: "signin_with",
+            width: 240
+          });
+        }
+        syncUi();
+      } catch (error) {
+        setStatus("Unable to initialize login right now.", "error");
+      }
+    }
+
+    logoutButton.addEventListener("click", async () => {
+      await fetch(`${apiBase}/api/auth/logout`, {
+        method: "POST",
+        credentials: "include"
+      });
+      user = null;
+      syncUi();
+      setStatus("Signed out successfully.", "success");
+    });
+
+    window.addEventListener("load", init);
+  })();
+  </script>
+</body>
+</html>

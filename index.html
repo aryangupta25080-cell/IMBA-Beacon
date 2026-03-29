@@ -331,6 +331,7 @@ button,input{border:none}
   transform:translateY(-6px) rotate(-45deg);
 }
 .nav-cta,
+.nav-login,
 .btn-primary,
 .btn-secondary,
 .plan-action,
@@ -347,6 +348,23 @@ button,input{border:none}
     background-color .28s var(--slider-ease),
     border-color .28s var(--slider-ease),
     color .28s var(--slider-ease);
+}
+.nav-actions{
+  display:flex;
+  align-items:center;
+  gap:.75rem;
+}
+.nav-login{
+  padding:.82rem 1.08rem;
+  border:1px solid rgba(255,255,255,.16);
+  background:rgba(255,255,255,.06);
+  color:#fff;
+  white-space:nowrap;
+}
+.nav-login:hover{
+  transform:translateY(-2px);
+  border-color:rgba(225,197,123,.34);
+  box-shadow:0 12px 28px rgba(74,16,34,.18);
 }
 .nav-cta{
   background:linear-gradient(135deg,var(--gold-soft),var(--gold));
@@ -887,6 +905,78 @@ button,input{border:none}
   position:relative;
   z-index:5;
   margin-top:-2.9rem;
+}
+.portal-posters{
+  padding:1.8rem 0 5rem;
+}
+.poster-head{
+  width:var(--container);
+  margin:0 auto 1.5rem;
+}
+.poster-grid{
+  width:var(--container);
+  margin:0 auto;
+  display:grid;
+  grid-template-columns:repeat(5,1fr);
+  gap:1rem;
+}
+.poster-card{
+  position:relative;
+  overflow:hidden;
+  min-height:250px;
+  border-radius:28px;
+  padding:1.35rem;
+  color:#fff;
+  display:flex;
+  flex-direction:column;
+  justify-content:space-between;
+  border:1px solid rgba(255,255,255,.08);
+  box-shadow:var(--shadow-md);
+  transform:translateY(var(--float-offset,0));
+  transition:transform .32s var(--slider-ease),box-shadow .32s var(--slider-ease);
+}
+.poster-card::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:linear-gradient(180deg,rgba(255,255,255,.06),transparent 38%,rgba(0,0,0,.24));
+  pointer-events:none;
+}
+.poster-card:hover{
+  transform:translateY(calc(var(--float-offset,0) - 6px));
+  box-shadow:var(--shadow-lg);
+}
+.poster-card:nth-child(1){background:linear-gradient(155deg,#6a1f36,#46101f);--float-offset:-10px}
+.poster-card:nth-child(2){background:linear-gradient(155deg,#8f5b1d,#5f3508);--float-offset:18px}
+.poster-card:nth-child(3){background:linear-gradient(155deg,#7c2d4d,#541630);--float-offset:-20px}
+.poster-card:nth-child(4){background:linear-gradient(155deg,#5c2339,#34101d);--float-offset:12px}
+.poster-card:nth-child(5){background:linear-gradient(155deg,#7a3248,#4a1727);--float-offset:-8px}
+.poster-card > *{position:relative;z-index:1}
+.poster-kicker{
+  font-size:.72rem;
+  letter-spacing:.14em;
+  text-transform:uppercase;
+  color:rgba(255,255,255,.76);
+  font-weight:800;
+}
+.poster-card h3{
+  font-family:"Merriweather",serif;
+  font-size:1.5rem;
+  line-height:1.16;
+  margin:.45rem 0 .65rem;
+}
+.poster-card p{
+  color:rgba(255,255,255,.82);
+  font-size:.9rem;
+  line-height:1.65;
+}
+.poster-link{
+  display:inline-flex;
+  align-items:center;
+  gap:.45rem;
+  color:var(--gold-soft);
+  font-weight:800;
+  font-size:.9rem;
 }
 .quick-links-grid{
   width:var(--container);
@@ -1567,6 +1657,9 @@ footer{
     top:auto;
   }
   .nav-menu{display:none}
+  .nav-actions{
+    gap:.55rem;
+  }
   .split,.feature-split,.notice-wrap,.cta-shell{grid-template-columns:1fr;display:grid}
   .cta-shell{align-items:start}
   .mobile-menu-toggle{display:inline-flex}
@@ -1593,6 +1686,9 @@ footer{
   .mainnav-inner{
     padding:.7rem 0;
   }
+  .nav-actions{
+    margin-left:auto;
+  }
   .brand-logo{
     width:120px;
   }
@@ -1604,6 +1700,10 @@ footer{
   }
   .nav-cta{
     display:none;
+  }
+  .nav-login{
+    padding:.72rem .9rem;
+    font-size:.88rem;
   }
   .hero{
     min-height:auto;
@@ -1631,6 +1731,7 @@ footer{
     margin-top:-1.6rem;
   }
   .quick-links-grid,
+  .poster-grid,
   .card-grid,
   .centre-grid,
   .feature-split,
@@ -1736,10 +1837,10 @@ footer{
   <div class="topbar">
     <div class="topbar-inner">
       <div class="topbar-links">
-        <a href="#notices">Notice Board</a>
-        <a href="#news">News &amp; Events</a>
-        <a href="#students">Student Corner</a>
-        <a href="#contact">Contact Us</a>
+        <a href="./updates.html#notices">Notice Board</a>
+        <a href="./updates.html#events">News &amp; Events</a>
+        <a href="./campus-life.html#student-corner">Student Corner</a>
+        <a href="./admissions.html#apply-now">Contact Us</a>
       </div>
       <div class="topbar-meta">
         <span class="pill">IIT Mandi Initiative</span>
@@ -1869,14 +1970,17 @@ footer{
           </div>
         </li>
       </ul>
-      <button class="mobile-menu-toggle" type="button" aria-expanded="false" aria-controls="mobile-menu" aria-label="Open navigation menu" data-mobile-menu-toggle>
-        <span class="menu-stack" aria-hidden="true">
-          <span class="menu-line"></span>
-          <span class="menu-line"></span>
-          <span class="menu-line"></span>
-        </span>
-      </button>
-      <a class="nav-cta" href="./admissions.html#apply-now">Apply for Early Access</a>
+      <div class="nav-actions">
+        <a class="nav-login" href="./login.html">Login</a>
+        <button class="mobile-menu-toggle" type="button" aria-expanded="false" aria-controls="mobile-menu" aria-label="Open navigation menu" data-mobile-menu-toggle>
+          <span class="menu-stack" aria-hidden="true">
+            <span class="menu-line"></span>
+            <span class="menu-line"></span>
+            <span class="menu-line"></span>
+          </span>
+        </button>
+        <a class="nav-cta" href="./admissions.html#apply-now">Apply for Early Access</a>
+      </div>
     </div>
     <div class="mobile-menu" id="mobile-menu" hidden>
       <div class="mobile-menu-panel">
@@ -1974,11 +2078,11 @@ footer{
       <div class="hero-layout">
         <div class="hero-content reveal">
           <div class="hero-label">Institutional Home Experience</div>
-          <h1 class="hero-title">IMBA interview preparation with a full campus-style homepage and premium top banner slider.</h1>
-          <p class="hero-sub">Built around the section flow you liked from the IIM Kashipur website: a strong top navigation, rotating hero banners, academic overview, leadership message, updates, student corner, and centre-style feature blocks.</p>
+          <h1 class="hero-title">IMBA interview preparation with a premium multi-page portal experience.</h1>
+          <p class="hero-sub">The homepage now acts as a focused entry point: a strong visual introduction, floating poster-style page cards, and clear navigation into dedicated sections for academics, updates, admissions, and campus life.</p>
           <div class="hero-actions">
-            <a class="btn-primary" href="#academics">Explore Academics</a>
-            <a class="btn-secondary" href="#apply">Join the Waitlist</a>
+            <a class="btn-primary" href="./academics.html">Explore Academics</a>
+            <a class="btn-secondary" href="./admissions.html#apply-now">Open Admissions</a>
           </div>
           <div class="hero-highlights">
             <div class="hero-chip">
@@ -2073,314 +2177,53 @@ footer{
     </div>
   </section>
 
-  <div class="quick-links">
-    <div class="quick-links-grid reveal">
-      <a class="quick-link" href="#academics">
-        <small>Academics</small>
-        <strong>Preparation Tracks</strong>
-        <span>Structured interview modules and mock programs</span>
-      </a>
-      <a class="quick-link" href="#news">
-        <small>Updates</small>
-        <strong>News &amp; Events</strong>
-        <span>Upcoming sessions, workshops, and student briefings</span>
-      </a>
-      <a class="quick-link" href="#notices">
-        <small>Information</small>
-        <strong>Notice Board</strong>
-        <span>Enrollment windows, schedules, and important announcements</span>
-      </a>
-      <a class="quick-link" href="#students">
-        <small>Community</small>
-        <strong>Student Corner</strong>
-        <span>Mentor voices, batch interactions, and resources</span>
-      </a>
+  <section class="portal-posters">
+    <div class="poster-head reveal">
+      <div class="eyebrow">Explore the Portal</div>
+      <h2 class="section-title">Open a focused page instead of scanning one long homepage.</h2>
+      <p class="section-copy">Each poster below opens a dedicated page with content related only to that area. The homepage stays clean, visual, and easy to navigate.</p>
     </div>
-    <div class="admissions-band reveal">
-      <article class="admission-card">
-        <small>Application Window</small>
-        <strong>Enrollment open for Basic and Pro plans</strong>
-        <span>Students can register now and receive onboarding, payment details, and first-session updates.</span>
-      </article>
-      <article class="admission-card">
-        <small>Upcoming Session</small>
-        <strong>Intro to IMBA Interview Prep on 28 March</strong>
-        <span>Open-format orientation session covering interview expectations, structure, and planning.</span>
-      </article>
-      <article class="admission-card">
-        <small>Mentor Access</small>
-        <strong>Batch interaction and guided mock scheduling</strong>
-        <span>Live support is arranged around practice intensity so students can prepare with accountability.</span>
-      </article>
-      <article class="admission-card">
-        <small>Student Support</small>
-        <strong>Recorded sessions, quizzes, and practice sheets included</strong>
-        <span>The site now reads more like an institute homepage while preserving your original prep offering.</span>
-      </article>
-    </div>
-  </div>
-
-  <section class="academics" id="academics">
-    <div class="section-inner">
-      <div class="section-head reveal">
-        <div class="eyebrow">Academics</div>
-        <h2 class="section-title">Preparation pathways designed around the IMBA interview journey.</h2>
-        <p class="section-copy">This section replaces your earlier course-style cards with a more institutional academic overview, similar to the program listing feel on the IIM Kashipur homepage.</p>
-      </div>
-      <div class="card-grid">
-        <article class="info-card reveal">
-          <span class="tag">Foundation</span>
-          <h3>Interview Readiness Bootcamp</h3>
-          <p>Clarify your profile, goals, and narrative before moving into structured practice and school-specific positioning.</p>
-          <a href="#apply">Read More</a>
-        </article>
-        <article class="info-card reveal">
-          <span class="tag">Core Prep</span>
-          <h3>Behavioral Question Mastery</h3>
-          <p>Build strong STAR-based responses for leadership, teamwork, conflict, failure, and motivation questions.</p>
-          <a href="#apply">Read More</a>
-        </article>
-        <article class="info-card reveal">
-          <span class="tag">Communication</span>
-          <h3>Verbal Communication Sessions</h3>
-          <p>Sharpen clarity, tone, pace, and confidence through guided speaking drills and real-time feedback.</p>
-          <a href="#apply">Read More</a>
-        </article>
-        <article class="info-card reveal">
-          <span class="tag">Mentoring</span>
-          <h3>Mock Interviews &amp; Batch Interaction</h3>
-          <p>Practice in realistic interview settings and learn directly from the current batch through interaction sessions.</p>
-          <a href="#apply">Read More</a>
-        </article>
-      </div>
-    </div>
-  </section>
-
-  <section class="greetings" id="greetings">
-    <div class="section-inner split">
-      <div class="message-panel reveal">
-        <div class="eyebrow">Greetings!</div>
-        <h2 class="section-title">A message for prospective IMBA candidates.</h2>
-        <p>IMBA Beacon is positioned as a focused preparation initiative to help students approach the IIT Mandi IMBA interview with clarity, confidence, and structure. The goal is not just practice, but a complete preparation ecosystem that mirrors the seriousness of an institutional platform.</p>
-        <p>With mock interviews, communication support, live classes, practice sheets, and interaction sessions, the platform is designed to help aspirants understand both the interview process and their own story more deeply.</p>
-        <strong>Team IMBA Beacon</strong>
-        <span>Student initiative for interview readiness and guided preparation</span>
-      </div>
-      <aside class="stats-panel reveal">
-        <h3>At a Glance</h3>
-        <div class="stats-list">
-          <div class="stat-box">
-            <strong>4</strong>
-            <span>Mock interviews in the Pro track</span>
-          </div>
-          <div class="stat-box">
-            <strong>3</strong>
-            <span>Verbal communication sessions</span>
-          </div>
-          <div class="stat-box">
-            <strong>2</strong>
-            <span>Current-batch interaction sessions</span>
-          </div>
-          <div class="stat-box">
-            <strong>24h</strong>
-            <span>Replay access target for recorded classes</span>
-          </div>
-        </div>
-      </aside>
-    </div>
-  </section>
-
-  <section class="showcase" id="news">
-    <div class="section-inner">
-      <div class="section-head reveal">
-        <div class="eyebrow">News &amp; Events</div>
-        <h2 class="section-title">Session updates and platform activity in a homepage showcase layout.</h2>
-        <p class="section-copy">These panels mirror the large visual content blocks used for updates and engagement on institutional homepages.</p>
-      </div>
-      <div class="feature-split">
-        <article class="media-card reveal" style="background-image:linear-gradient(135deg,rgba(122,36,64,.28),rgba(74,16,34,.18)),url('https://images.unsplash.com/photo-1516321165247-4aa89a48be28?auto=format&fit=crop&w=1200&q=80')">
-          <div class="media-card-content">
-            <h3>Behavioral Q&amp;A Deep Dive</h3>
-            <p>Weekly guided session focused on the most common IMBA interview themes, follow-up questions, and answer structuring.</p>
-            <a href="#apply">Read More</a>
-          </div>
-        </article>
-        <article class="media-card reveal" style="background-image:linear-gradient(135deg,rgba(154,114,32,.22),rgba(74,16,34,.2)),url('https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=1200&q=80')">
-          <div class="media-card-content">
-            <h3>Industry Connect Style Mentor Talks</h3>
-            <p>Conversation-led sessions where mentors and seniors decode expectations, mistakes to avoid, and interview mindset.</p>
-            <a href="#apply">Read More</a>
-          </div>
-        </article>
-      </div>
-    </div>
-  </section>
-
-  <section id="notices">
-    <div class="section-inner notice-wrap">
-      <div class="notice-panel reveal">
-        <div class="eyebrow">Notice Board</div>
-        <h2 class="section-title">Important announcements.</h2>
-        <div class="notice-item">
-          <small>Admission Update</small>
-          <strong>Basic and Pro plan enrollments are now open for the current intake cycle.</strong>
-          <p>Students can register interest and receive the upcoming session calendar, payment details, and onboarding steps.</p>
-        </div>
-        <div class="notice-item">
-          <small>Schedule Notice</small>
-          <strong>Intro to IMBA Interview Prep scheduled for 28 March at 6:00 PM IST.</strong>
-          <p>Open introductory class for aspirants who want a structured overview of the interview process and preparation plan.</p>
-        </div>
-        <div class="notice-item">
-          <small>Student Access</small>
-          <strong>Recorded live sessions will be made available to enrolled students after processing.</strong>
-          <p>Replay support is planned for students who miss a live session or want to revisit mentor feedback.</p>
-        </div>
-      </div>
-
-      <div class="student-panel reveal" id="students">
-        <div class="eyebrow">Student Corner</div>
-        <h2 class="section-title">Student life and peer learning.</h2>
-        <div class="student-item">
-          <small>Community</small>
-          <strong>Current batch interaction sessions</strong>
-          <p>Understand academics, expectations, and interview reflections directly from students already on the IMBA path.</p>
-        </div>
-        <div class="student-item">
-          <small>Resources</small>
-          <strong>Practice sheets and quizzes</strong>
-          <p>Self-paced resources help reinforce concepts between mock interviews and live classes.</p>
-        </div>
-        <div class="student-item">
-          <small>Mentorship</small>
-          <strong>1-on-1 and open group guidance</strong>
-          <p>Students can prepare in both personalized and community-driven formats depending on their plan.</p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <section class="plans" id="plans">
-    <div class="section-inner">
-      <div class="section-head reveal">
-        <div class="eyebrow">Plans &amp; Pricing</div>
-        <h2 class="section-title">Choose the preparation plan that fits your level of support.</h2>
-        <p class="section-copy">Your original ₹1,500 and ₹2,000 course plans are retained and now presented in a more premium institutional format.</p>
-      </div>
-      <div class="auth-panel reveal">
-        <div class="auth-copy">
-          <strong>Enrollment Access</strong>
-          <span>Sign in with Google to verify your identity and register your plan interest. Online payments are temporarily paused while the PhonePe checkout flow is being finalized.</span>
-        </div>
-        <div class="auth-actions">
-          <div id="google-signin-slot"></div>
-          <div class="auth-user" id="auth-user" hidden>
-            <img class="auth-avatar" id="auth-avatar" alt="User avatar"/>
-            <div class="auth-user-text">
-              <strong id="auth-name">Not signed in</strong>
-              <span id="auth-email"></span>
-            </div>
-          </div>
-          <button class="logout-btn" type="button" id="logout-btn" hidden>Logout</button>
-        </div>
-      </div>
-      <div class="plans-grid">
-        <article class="plan-card reveal">
-          <div class="plan-label">Basic</div>
-          <div class="plan-price">₹1,500</div>
-          <div class="plan-note">One-time fee per student</div>
-          <ul class="plan-list">
-            <li><span class="tick">✓</span><span>3 mock interviews</span></li>
-            <li><span class="tick">✓</span><span>Practice sheets</span></li>
-            <li><span class="tick">✓</span><span>1 verbal communication session</span></li>
-            <li><span class="tick">✓</span><span>Practice quizzes</span></li>
-            <li><span class="tick">✓</span><span>1 interaction session with current batch</span></li>
-          </ul>
-          <button class="plan-action" type="button" data-plan-id="basic">Join Basic Waitlist</button>
-        </article>
-
-        <article class="plan-card featured reveal">
-          <div class="plan-label">Pro</div>
-          <div class="plan-price">₹2,000</div>
-          <div class="plan-note">One-time fee per student</div>
-          <ul class="plan-list">
-            <li><span class="tick">✓</span><span>4 mock interviews</span></li>
-            <li><span class="tick">✓</span><span>Practice quizzes</span></li>
-            <li><span class="tick">✓</span><span>3 verbal communication sessions</span></li>
-            <li><span class="tick">✓</span><span>Practice sheets</span></li>
-            <li><span class="tick">✓</span><span>2 interaction sessions with current batch</span></li>
-            <li><span class="tick">✓</span><span>Live maths &amp; physics mentoring sessions</span></li>
-          </ul>
-          <button class="plan-action" type="button" data-plan-id="pro">Join Pro Waitlist</button>
-        </article>
-      </div>
-      <p class="purchase-status" id="purchase-status" aria-live="polite"></p>
-    </div>
-  </section>
-
-  <section class="centres" id="centres">
-    <div class="section-inner">
-      <div class="section-head reveal">
-        <div class="eyebrow">Centre of Excellence Style Blocks</div>
-        <h2 class="section-title">Feature pillars presented like institutional centres.</h2>
-        <p class="section-copy">This section borrows the “Center of Excellence” homepage idea and repurposes it for your platform’s core strengths.</p>
-      </div>
-      <div class="centre-grid">
-        <article class="centre-card reveal">
-          <div>
-            <small>Centre 01</small>
-            <h3>Interview Simulation Lab</h3>
-            <p>High-pressure mock interview practice with structured evaluation, delivery feedback, and repeat rehearsal.</p>
-          </div>
-          <a href="#apply">Explore More</a>
-        </article>
-        <article class="centre-card reveal">
-          <div>
-            <small>Centre 02</small>
-            <h3>Communication &amp; Storytelling Studio</h3>
-            <p>Improve answer flow, confidence, and story framing so each response feels credible and memorable.</p>
-          </div>
-          <a href="#apply">Explore More</a>
-        </article>
-        <article class="centre-card reveal">
-          <div>
-            <small>Centre 03</small>
-            <h3>Maths &amp; Physics Support Desk</h3>
-            <p>Targeted academic mentoring included in the higher plan for students who want extra subject confidence.</p>
-          </div>
-          <a href="#apply">Explore More</a>
-        </article>
-      </div>
-    </div>
-  </section>
-
-  <section class="cta" id="apply">
-    <div class="section-inner">
-      <div class="cta-shell reveal">
+    <div class="poster-grid">
+      <a class="poster-card reveal" href="./academics.html">
         <div>
-          <div class="eyebrow" style="color:var(--gold-soft)">Apply / Early Access</div>
-          <h2>Join the IMBA Beacon waitlist.</h2>
-          <p>Share your details to receive enrollment updates, mentoring batch announcements, and plan-specific guidance from the IMBA Beacon team.</p>
+          <div class="poster-kicker">Page 01</div>
+          <h3>Academics</h3>
+          <p>Preparation tracks, plans overview, and learning pillars in one focused academic page.</p>
         </div>
-        <form class="cta-form" id="waitlist-form">
-          <input type="text" name="name" placeholder="Enter your full name" autocomplete="name" required/>
-          <input type="email" name="email" placeholder="Enter your email address" autocomplete="email" required/>
-          <input type="tel" name="phone" placeholder="Enter your phone number" autocomplete="tel" inputmode="numeric" pattern="[0-9]{10}" maxlength="10" required/>
-          <input type="number" name="schoolPercentile" placeholder="Enter your school percentile" inputmode="decimal" min="0" max="100" step="0.01" required/>
-          <select name="category" required>
-            <option value="">Select candidate category</option>
-            <option value="General">General</option>
-            <option value="OBC">OBC</option>
-            <option value="SC">SC</option>
-            <option value="ST">ST</option>
-            <option value="EWS">EWS</option>
-            <option value="PwD">PwD</option>
-            <option value="Other">Other</option>
-          </select>
-          <button class="full-width" type="submit">Submit Details</button>
-        </form>
-        <p class="form-status" id="waitlist-status" aria-live="polite"></p>
-      </div>
+        <div class="poster-link"><span>Open page</span><span>↗</span></div>
+      </a>
+      <a class="poster-card reveal" href="./about.html">
+        <div>
+          <div class="poster-kicker">Page 02</div>
+          <h3>About</h3>
+          <p>Read the mission, message to aspirants, and the thinking behind IMBA Beacon.</p>
+        </div>
+        <div class="poster-link"><span>Open page</span><span>↗</span></div>
+      </a>
+      <a class="poster-card reveal" href="./updates.html">
+        <div>
+          <div class="poster-kicker">Page 03</div>
+          <h3>Updates</h3>
+          <p>Track notices, events, and upcoming schedule information without extra homepage clutter.</p>
+        </div>
+        <div class="poster-link"><span>Open page</span><span>↗</span></div>
+      </a>
+      <a class="poster-card reveal" href="./campus-life.html">
+        <div>
+          <div class="poster-kicker">Page 04</div>
+          <h3>Campus Life</h3>
+          <p>See student corner, peer learning, and mentor touchpoints in a separate experience page.</p>
+        </div>
+        <div class="poster-link"><span>Open page</span><span>↗</span></div>
+      </a>
+      <a class="poster-card reveal" href="./admissions.html">
+        <div>
+          <div class="poster-kicker">Page 05</div>
+          <h3>Admissions</h3>
+          <p>Open the admissions page for login, application details, and the applicant form.</p>
+        </div>
+        <div class="poster-link"><span>Open page</span><span>↗</span></div>
+      </a>
     </div>
   </section>
 
@@ -2388,14 +2231,14 @@ footer{
     <div class="footer-inner">
       <div class="footer-brand">
         <strong>IMBA Beacon</strong>
-        <span>Institutional-style landing page inspired by the information architecture of the IIM Kashipur homepage.</span>
+        <span>A focused multi-page preparation portal for IIT Mandi IMBA aspirants.</span>
       </div>
       <div class="footer-links">
-        <a href="#academics">Academics</a>
-        <a href="#notices">Notice Board</a>
-        <a href="#students">Student Corner</a>
-        <a href="#plans">Plans</a>
-        <a href="#apply">Apply</a>
+        <a href="./academics.html">Academics</a>
+        <a href="./updates.html">Updates</a>
+        <a href="./campus-life.html">Campus Life</a>
+        <a href="./admissions.html">Admissions</a>
+        <a href="./admin.html">Admin</a>
       </div>
     </div>
   </footer>
