@@ -252,6 +252,15 @@ function isValidEmail(value) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
 }
 
+function isValidPhone(value) {
+  return /^[6-9]\d{9}$/.test(value);
+}
+
+function isValidPercentile(value) {
+  const numericValue = Number(value);
+  return Number.isFinite(numericValue) && numericValue >= 0 && numericValue <= 100;
+}
+
 function getPublicUser(user) {
   if (!user) return null;
   return {
@@ -268,10 +277,34 @@ function getPaytmHost() {
 async function handleWaitlistSubmission(request, response) {
   try {
     const body = await parseRequestBody(request);
+    const name = String(body.name || "").trim();
     const email = String(body.email || "").trim().toLowerCase();
+    const phone = String(body.phone || "").trim();
+    const schoolPercentile = String(body.schoolPercentile || "").trim();
+    const category = String(body.category || "").trim();
+
+    if (name.length < 2) {
+      sendJson(response, 400, { message: "Please enter your full name." });
+      return;
+    }
 
     if (!isValidEmail(email)) {
       sendJson(response, 400, { message: "Please enter a valid email address." });
+      return;
+    }
+
+    if (!isValidPhone(phone)) {
+      sendJson(response, 400, { message: "Please enter a valid 10-digit phone number." });
+      return;
+    }
+
+    if (!isValidPercentile(schoolPercentile)) {
+      sendJson(response, 400, { message: "Please enter a valid school percentile between 0 and 100." });
+      return;
+    }
+
+    if (!category) {
+      sendJson(response, 400, { message: "Please select your candidate category." });
       return;
     }
 
@@ -284,14 +317,18 @@ async function handleWaitlistSubmission(request, response) {
     }
 
     waitlist.push({
+      name,
       email,
+      phone,
+      schoolPercentile: Number(schoolPercentile),
+      category,
       submittedAt: new Date().toISOString()
     });
 
     await writeJsonFile(WAITLIST_FILE, waitlist);
 
     sendJson(response, 201, {
-      message: "Thanks! You're on the IMBA Beacon waitlist now."
+      message: "Thanks! Your details have been received and you're on the IMBA Beacon waitlist now."
     });
   } catch (error) {
     sendJson(response, 400, { message: error.message || "Unable to process request." });
