@@ -647,6 +647,9 @@ async function handleBeaconSignup(request, response) {
     const email = normalizeEmail(body.email);
     const password = String(body.password || "");
     const confirmPassword = String(body.confirmPassword || "");
+    const phone = String(body.phone || "").trim();
+    const schoolPercentile = String(body.schoolPercentile || "").trim();
+    const category = String(body.category || "").trim();
 
     if (name.length < 2) {
       sendJson(response, 400, { message: "Please enter your full name." });
@@ -668,6 +671,21 @@ async function handleBeaconSignup(request, response) {
       return;
     }
 
+    if (!isValidPhone(phone)) {
+      sendJson(response, 400, { message: "Please enter a valid 10-digit phone number." });
+      return;
+    }
+
+    if (!isValidPercentile(schoolPercentile)) {
+      sendJson(response, 400, { message: "Please enter a valid school percentile between 0 and 100." });
+      return;
+    }
+
+    if (!category) {
+      sendJson(response, 400, { message: "Please select your candidate category." });
+      return;
+    }
+
     const existingUser = await findUserByEmail(email);
     if (existingUser) {
       sendJson(response, 409, { message: "An account already exists for this email. Please sign in instead." });
@@ -679,6 +697,9 @@ async function handleBeaconSignup(request, response) {
       name,
       email,
       passwordHash,
+      phone,
+      schoolPercentile: Number(schoolPercentile),
+      category,
       picture: "",
       provider: "beacon",
       emailVerified: false,
