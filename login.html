@@ -76,7 +76,6 @@
           <div class="tab-row">
             <button class="tab-btn active" type="button" data-tab="login">Login</button>
             <button class="tab-btn" type="button" data-tab="signup">Sign up</button>
-            <button class="tab-btn" type="button" data-tab="otp">Email OTP</button>
           </div>
 
           <div class="tab-panel active" data-panel="login">
@@ -87,14 +86,13 @@
               <input type="password" name="password" placeholder="Enter your password" required/>
               <div class="inline-actions">
                 <button type="submit">Login to Beacon</button>
-                <button class="auth-secondary" type="button" data-switch-tab="otp">Use email OTP instead</button>
               </div>
             </form>
           </div>
 
           <div class="tab-panel" data-panel="signup">
             <h2>Create your Beacon account</h2>
-            <p>Students without an account can sign up here, create a password, and verify via email OTP.</p>
+            <p>Students without an account can sign up here, create a password, and receive an email OTP for account verification.</p>
             <form class="auth-form" id="signup-form">
               <input type="text" name="name" placeholder="Enter your full name" required/>
               <input type="email" name="email" placeholder="Enter your email address" required/>
@@ -102,33 +100,13 @@
                 <input type="password" name="password" placeholder="Create a password" required/>
                 <input type="password" name="confirmPassword" placeholder="Confirm password" required/>
               </div>
+              <input type="text" name="otp" placeholder="Enter email OTP after signup" inputmode="numeric" maxlength="6"/>
               <div class="inline-actions">
                 <button type="submit">Create Beacon Account</button>
-                <button class="auth-secondary" type="button" data-switch-tab="otp">Already received OTP?</button>
+                <button class="auth-secondary" type="button" id="verify-signup-otp">Verify Signup OTP</button>
               </div>
             </form>
-          </div>
-
-          <div class="tab-panel" data-panel="otp">
-            <h2>Verify using email OTP</h2>
-            <p>Use this if your direct verification is not working or your Beacon account is waiting for email confirmation.</p>
-            <form class="auth-form" id="otp-request-form">
-              <input type="email" name="email" placeholder="Enter your email address" required/>
-              <div class="inline-actions">
-                <button type="submit">Send OTP to Email</button>
-              </div>
-            </form>
-            <div style="height:.85rem;"></div>
-            <form class="auth-form" id="otp-verify-form">
-              <div class="auth-form-row">
-                <input type="email" name="email" placeholder="Enter your email address" required/>
-                <input type="text" name="otp" placeholder="Enter 6-digit OTP" inputmode="numeric" maxlength="6" required/>
-              </div>
-              <div class="inline-actions">
-                <button type="submit">Verify OTP & Login</button>
-                <button class="auth-secondary" type="button" data-switch-tab="login">Back to login</button>
-              </div>
-            </form>
+            <div class="small-note">After sign up, an OTP will be sent to your email. Paste it here and click verify to activate your account.</div>
           </div>
         </section>
       </div>
@@ -153,11 +131,9 @@
     const status = document.getElementById("login-status");
     const tabButtons = Array.from(document.querySelectorAll("[data-tab]"));
     const tabPanels = Array.from(document.querySelectorAll("[data-panel]"));
-    const switchButtons = Array.from(document.querySelectorAll("[data-switch-tab]"));
     const passwordLoginForm = document.getElementById("password-login-form");
     const signupForm = document.getElementById("signup-form");
-    const otpRequestForm = document.getElementById("otp-request-form");
-    const otpVerifyForm = document.getElementById("otp-verify-form");
+    const verifySignupOtpButton = document.getElementById("verify-signup-otp");
     let config = null;
     let user = null;
 
@@ -243,15 +219,12 @@
     }
 
     tabButtons.forEach((button) => button.addEventListener("click", () => activateTab(button.dataset.tab)));
-    switchButtons.forEach((button) => button.addEventListener("click", () => activateTab(button.dataset.switchTab)));
-
     passwordLoginForm.addEventListener("submit", async (event) => {
       event.preventDefault();
       const formData = new FormData(passwordLoginForm);
       const { response, payload } = await sendJsonRequest("/api/auth/login/password", Object.fromEntries(formData.entries()));
       if (!response.ok) {
         setStatus(payload.message || "Unable to login.", "error");
-        if (response.status === 403) activateTab("otp");
         return;
       }
       user = payload.user;
@@ -262,35 +235,20 @@
     signupForm.addEventListener("submit", async (event) => {
       event.preventDefault();
       const formData = new FormData(signupForm);
-      const { response, payload } = await sendJsonRequest("/api/auth/signup", Object.fromEntries(formData.entries()));
+      const signupPayload = Object.fromEntries(formData.entries());
+      delete signupPayload.otp;
+      const { response, payload } = await sendJsonRequest("/api/auth/signup", signupPayload);
       if (!response.ok) {
         setStatus(payload.message || "Unable to create account.", "error");
         return;
       }
-      activateTab("otp");
-      const signupEmail = signupForm.querySelector('input[name="email"]').value;
-      otpRequestForm.querySelector('input[name="email"]').value = signupEmail;
-      otpVerifyForm.querySelector('input[name="email"]').value = signupEmail;
       setStatus(payload.message || "Account created successfully.", "success");
-      signupForm.reset();
     });
 
-    otpRequestForm.addEventListener("submit", async (event) => {
-      event.preventDefault();
-      const formData = new FormData(otpRequestForm);
-      const { response, payload } = await sendJsonRequest("/api/auth/otp/request", Object.fromEntries(formData.entries()));
-      if (!response.ok) {
-        setStatus(payload.message || "Unable to send OTP.", "error");
-        return;
-      }
-      otpVerifyForm.querySelector('input[name="email"]').value = otpRequestForm.querySelector('input[name="email"]').value;
-      setStatus(payload.message || "OTP sent successfully.", "success");
-    });
-
-    otpVerifyForm.addEventListener("submit", async (event) => {
-      event.preventDefault();
-      const formData = new FormData(otpVerifyForm);
-      const { response, payload } = await sendJsonRequest("/api/auth/otp/verify", Object.fromEntries(formData.entries()));
+    verifySignupOtpButton.addEventListener("click", async () => {
+      const email = signupForm.querySelector('input[name="email"]').value.trim();
+      const otp = signupForm.querySelector('input[name="otp"]').value.trim();
+      const { response, payload } = await sendJsonRequest("/api/auth/otp/verify", { email, otp });
       if (!response.ok) {
         setStatus(payload.message || "Unable to verify OTP.", "error");
         return;
