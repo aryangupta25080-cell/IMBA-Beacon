@@ -4,7 +4,9 @@ const { createReadStream, existsSync } = require("node:fs");
 const path = require("node:path");
 const crypto = require("node:crypto");
 const { URL } = require("node:url");
+const { promisify } = require("node:util");
 const { OAuth2Client } = require("google-auth-library");
+const nodemailer = require("nodemailer");
 
 const HOST = process.env.HOST || "0.0.0.0";
 const PORT = Number(process.env.PORT || 3000);
@@ -12,6 +14,8 @@ const ROOT_DIR = __dirname;
 const DATA_DIR = path.join(ROOT_DIR, "data");
 const WAITLIST_FILE = path.join(DATA_DIR, "waitlist.json");
 const PAYMENTS_FILE = path.join(DATA_DIR, "payments.json");
+const USERS_FILE = path.join(DATA_DIR, "users.json");
+const OTP_FILE = path.join(DATA_DIR, "otp-codes.json");
 const SESSION_COOKIE = "imba_session";
 const ENV_FILE = path.join(ROOT_DIR, ".env");
 
@@ -40,11 +44,30 @@ const PHONEPE_CLIENT_VERSION = process.env.PHONEPE_CLIENT_VERSION || "";
 const PHONEPE_ENV = process.env.PHONEPE_ENV || "sandbox";
 const PAYMENTS_ENABLED = process.env.PAYMENTS_ENABLED === "true";
 const ADMIN_ACCESS_KEY = process.env.ADMIN_ACCESS_KEY || "";
+const EMAIL_OTP_EXPIRY_MINUTES = Number(process.env.EMAIL_OTP_EXPIRY_MINUTES || 10);
+const SMTP_HOST = process.env.SMTP_HOST || "";
+const SMTP_PORT = Number(process.env.SMTP_PORT || 587);
+const SMTP_SECURE = process.env.SMTP_SECURE === "true";
+const SMTP_USER = process.env.SMTP_USER || "";
+const SMTP_PASS = process.env.SMTP_PASS || "";
+const EMAIL_FROM = process.env.EMAIL_FROM || SMTP_USER || "";
 const APP_BASE_URL = process.env.APP_BASE_URL || `http://127.0.0.1:${PORT}`;
 const FRONTEND_ORIGIN = process.env.FRONTEND_ORIGIN || "";
 
 const googleClient = GOOGLE_CLIENT_ID ? new OAuth2Client(GOOGLE_CLIENT_ID) : null;
 const sessionStore = new Map();
+const scryptAsync = promisify(crypto.scrypt);
+const otpTransporter = SMTP_HOST && SMTP_USER && SMTP_PASS
+  ? nodemailer.createTransport({
+      host: SMTP_HOST,
+      port: SMTP_PORT,
+      secure: SMTP_SECURE,
+      auth: {
+        user: SMTP_USER,
+        pass: SMTP_PASS
+      }
+    })
+  : null;
 
 const PLAN_CATALOG = {
   basic: {
@@ -85,6 +108,14 @@ async function ensureDataStore() {
 
   if (!existsSync(PAYMENTS_FILE)) {
     await fs.writeFile(PAYMENTS_FILE, "[]\n", "utf8");
+  }
+
+  if (!existsSync(USERS_FILE)) {
+    await fs.writeFile(USERS_FILE, "[]\n", "utf8");
+  }
+
+  if (!existsSync(OTP_FILE)) {
+    await fs.writeFile(OTP_FILE, "[]\n", "utf8");
   }
 }
 
@@ -266,8 +297,111 @@ function getPublicUser(user) {
   return {
     name: user.name,
     email: user.email,
-    picture: user.picture
+    picture: user.picture,
+    provider: user.provider || "beacon",
+    emailVerified: Boolean(user.emailVerified)
   };
+}
+
+function normalizeEmail(value) {
+  return String(value || "").trim().toLowerCase();
+}
+
+function isValidPassword(value) {
+  return typeof value === "string" && value.length >= 8;
+}
+
+function generateOtpCode() {
+  return String(Math.floor(100000 + Math.random() * 900000));
+}
+
+async function hashSecret(value) {
+  const salt = crypto.randomBytes(16).toString("hex");
+  const derivedKey = await scryptAsync(value, salt, 64);
+  return `${salt}:${derivedKey.toString("hex")}`;
+}
+
+async function verifySecret(value, storedHash) {
+  const [salt, key] = String(storedHash || "").split(":");
+  if (!salt || !key) return false;
+  const derivedKey = await scryptAsync(value, salt, 64);
+  return crypto.timingSafeEqual(Buffer.from(key, "hex"), derivedKey);
+}
+
+async function findUserByEmail(email) {
+  const users = await readJsonFile(USERS_FILE);
+  return users.find((entry) => entry.email === normalizeEmail(email)) || null;
+}
+
+async function upsertUser(nextUser) {
+  const users = await readJsonFile(USERS_FILE);
+  const email = normalizeEmail(nextUser.email);
+  const existingIndex = users.findIndex((entry) => entry.email === email);
+  if (existingIndex >= 0) {
+    users[existingIndex] = { ...users[existingIndex], ...nextUser, email };
+  } else {
+    users.push({ ...nextUser, email });
+  }
+  await writeJsonFile(USERS_FILE, users);
+  return users.find((entry) => entry.email === email);
+}
+
+async function createOtpRecord(email, purpose = "verify-email") {
+  const otpCode = generateOtpCode();
+  const otpHash = await hashSecret(otpCode);
+  const otpRecords = await readJsonFile(OTP_FILE);
+  const normalizedEmail = normalizeEmail(email);
+  const filteredRecords = otpRecords.filter((entry) => entry.email !== normalizedEmail);
+
+  filteredRecords.push({
+    email: normalizedEmail,
+    purpose,
+    otpHash,
+    expiresAt: new Date(Date.now() + EMAIL_OTP_EXPIRY_MINUTES * 60 * 1000).toISOString(),
+    createdAt: new Date().toISOString()
+  });
+
+  await writeJsonFile(OTP_FILE, filteredRecords);
+  return otpCode;
+}
+
+async function verifyOtpRecord(email, otp) {
+  const otpRecords = await readJsonFile(OTP_FILE);
+  const normalizedEmail = normalizeEmail(email);
+  const existingRecord = otpRecords.find((entry) => entry.email === normalizedEmail);
+
+  if (!existingRecord) {
+    return { ok: false, message: "No OTP request found for this email." };
+  }
+
+  if (new Date(existingRecord.expiresAt).getTime() < Date.now()) {
+    const remainingRecords = otpRecords.filter((entry) => entry.email !== normalizedEmail);
+    await writeJsonFile(OTP_FILE, remainingRecords);
+    return { ok: false, message: "This OTP has expired. Please request a fresh one." };
+  }
+
+  const isValid = await verifySecret(String(otp || ""), existingRecord.otpHash);
+  if (!isValid) {
+    return { ok: false, message: "Invalid OTP. Please try again." };
+  }
+
+  const remainingRecords = otpRecords.filter((entry) => entry.email !== normalizedEmail);
+  await writeJsonFile(OTP_FILE, remainingRecords);
+  return { ok: true, purpose: existingRecord.purpose };
+}
+
+async function sendOtpEmail(email, otpCode) {
+  if (!otpTransporter || !EMAIL_FROM) {
+    throw new Error("Email OTP is not configured yet. Add SMTP settings on the server.");
+  }
+
+  await otpTransporter.sendMail({
+    from: EMAIL_FROM,
+    to: email,
+    subject: "Your IMBA Beacon verification code",
+    text: `Your IMBA Beacon verification code is ${otpCode}. It will expire in ${EMAIL_OTP_EXPIRY_MINUTES} minutes.`,
+    html: `<p>Your IMBA Beacon verification code is <strong>${otpCode}</strong>.</p><p>It will expire in ${EMAIL_OTP_EXPIRY_MINUTES} minutes.</p>`
+  });
 }
 
 function getPhonePeHost() {
@@ -429,6 +563,11 @@ function handleConfig(response) {
     appBaseUrl: APP_BASE_URL,
     frontendOrigin: FRONTEND_ORIGIN,
     googleClientId: GOOGLE_CLIENT_ID,
+    authProviders: {
+      google: Boolean(GOOGLE_CLIENT_ID),
+      beaconPassword: true,
+      emailOtp: true
+    },
     paymentsEnabled: PAYMENTS_ENABLED,
     paymentProvider: "phonepe",
     phonepeClientId: PHONEPE_CLIENT_ID,
@@ -472,12 +611,18 @@ async function handleGoogleLogin(request, response) {
       return;
     }
 
-    const sessionId = createSession({
+    const persistedUser = await upsertUser({
       googleId: payload.sub,
       name: payload.name || payload.email,
       email: payload.email,
-      picture: payload.picture || ""
+      picture: payload.picture || "",
+      provider: "google",
+      emailVerified: true,
+      createdAt: new Date().toISOString(),
+      lastLoginAt: new Date().toISOString()
     });
+
+    const sessionId = createSession(persistedUser);
 
     sendJson(
       response,
@@ -492,6 +637,177 @@ async function handleGoogleLogin(request, response) {
     );
   } catch (error) {
     sendJson(response, 401, { message: "Unable to verify Google sign-in." });
+  }
+}
+
+async function handleBeaconSignup(request, response) {
+  try {
+    const body = await parseRequestBody(request);
+    const name = String(body.name || "").trim();
+    const email = normalizeEmail(body.email);
+    const password = String(body.password || "");
+    const confirmPassword = String(body.confirmPassword || "");
+
+    if (name.length < 2) {
+      sendJson(response, 400, { message: "Please enter your full name." });
+      return;
+    }
+
+    if (!isValidEmail(email)) {
+      sendJson(response, 400, { message: "Please enter a valid email address." });
+      return;
+    }
+
+    if (!isValidPassword(password)) {
+      sendJson(response, 400, { message: "Create a password with at least 8 characters." });
+      return;
+    }
+
+    if (password !== confirmPassword) {
+      sendJson(response, 400, { message: "Passwords do not match." });
+      return;
+    }
+
+    const existingUser = await findUserByEmail(email);
+    if (existingUser) {
+      sendJson(response, 409, { message: "An account already exists for this email. Please sign in instead." });
+      return;
+    }
+
+    const passwordHash = await hashSecret(password);
+    await upsertUser({
+      name,
+      email,
+      passwordHash,
+      picture: "",
+      provider: "beacon",
+      emailVerified: false,
+      createdAt: new Date().toISOString()
+    });
+
+    const otpCode = await createOtpRecord(email, "verify-email");
+    await sendOtpEmail(email, otpCode);
+
+    sendJson(response, 201, {
+      message: "Account created. We have sent an email OTP to verify your Beacon account."
+    });
+  } catch (error) {
+    sendJson(response, 400, { message: error.message || "Unable to create Beacon account." });
+  }
+}
+
+async function handlePasswordLogin(request, response) {
+  try {
+    const body = await parseRequestBody(request);
+    const email = normalizeEmail(body.email);
+    const password = String(body.password || "");
+
+    if (!isValidEmail(email) || !password) {
+      sendJson(response, 400, { message: "Please enter your email and password." });
+      return;
+    }
+
+    const user = await findUserByEmail(email);
+    if (!user || !user.passwordHash) {
+      sendJson(response, 401, { message: "No Beacon account found for this email." });
+      return;
+    }
+
+    const passwordOk = await verifySecret(password, user.passwordHash);
+    if (!passwordOk) {
+      sendJson(response, 401, { message: "Incorrect password." });
+      return;
+    }
+
+    if (!user.emailVerified) {
+      sendJson(response, 403, { message: "Your Beacon account is not verified yet. Request an email OTP to continue." });
+      return;
+    }
+
+    const persistedUser = await upsertUser({
+      ...user,
+      lastLoginAt: new Date().toISOString()
+    });
+
+    const sessionId = createSession(persistedUser);
+    sendJson(response, 200, {
+      message: "Logged in successfully.",
+      user: getPublicUser(persistedUser)
+    }, {
+      "Set-Cookie": createSessionCookie(request, sessionId)
+    });
+  } catch (error) {
+    sendJson(response, 400, { message: error.message || "Unable to log in." });
+  }
+}
+
+async function handleRequestOtp(request, response) {
+  try {
+    const body = await parseRequestBody(request);
+    const email = normalizeEmail(body.email);
+
+    if (!isValidEmail(email)) {
+      sendJson(response, 400, { message: "Please enter a valid email address." });
+      return;
+    }
+
+    const user = await findUserByEmail(email);
+    if (!user) {
+      sendJson(response, 404, { message: "No Beacon account found for this email. Please sign up first." });
+      return;
+    }
+
+    const otpCode = await createOtpRecord(email, user.emailVerified ? "login" : "verify-email");
+    await sendOtpEmail(email, otpCode);
+
+    sendJson(response, 200, {
+      message: "A verification OTP has been sent to your email."
+    });
+  } catch (error) {
+    sendJson(response, 400, { message: error.message || "Unable to send OTP right now." });
+  }
+}
+
+async function handleVerifyOtp(request, response) {
+  try {
+    const body = await parseRequestBody(request);
+    const email = normalizeEmail(body.email);
+    const otp = String(body.otp || "").trim();
+
+    if (!isValidEmail(email) || otp.length < 4) {
+      sendJson(response, 400, { message: "Enter a valid email and OTP." });
+      return;
+    }
+
+    const user = await findUserByEmail(email);
+    if (!user) {
+      sendJson(response, 404, { message: "No Beacon account found for this email." });
+      return;
+    }
+
+    const otpResult = await verifyOtpRecord(email, otp);
+    if (!otpResult.ok) {
+      sendJson(response, 401, { message: otpResult.message });
+      return;
+    }
+
+    const persistedUser = await upsertUser({
+      ...user,
+      emailVerified: true,
+      lastLoginAt: new Date().toISOString()
+    });
+
+    const sessionId = createSession(persistedUser);
+    sendJson(response, 200, {
+      message: otpResult.purpose === "verify-email"
+        ? "Email verified successfully. Your Beacon account is now active."
+        : "OTP verified successfully. You are now signed in.",
+      user: getPublicUser(persistedUser)
+    }, {
+      "Set-Cookie": createSessionCookie(request, sessionId)
+    });
+  } catch (error) {
+    sendJson(response, 400, { message: error.message || "Unable to verify OTP." });
   }
 }
 
@@ -514,7 +830,7 @@ function handleLogout(request, response) {
 function requireAuthenticatedUser(request, response) {
   const user = getSessionUser(request);
   if (!user) {
-    sendJson(response, 401, { message: "Please sign in with Google first." });
+    sendJson(response, 401, { message: "Please sign in to your Beacon account first." });
     return null;
   }
   return user;
@@ -675,6 +991,38 @@ async function requestHandler(request, response) {
 
   if (request.method === "POST" && pathname === "/api/auth/google") {
     await handleGoogleLogin(request, {
+      writeHead: (...args) => response.writeHead(args[0], { ...args[1], ...corsHeaders }),
+      end: (...args) => response.end(...args)
+    });
+    return;
+  }
+
+  if (request.method === "POST" && pathname === "/api/auth/signup") {
+    await handleBeaconSignup(request, {
+      writeHead: (...args) => response.writeHead(args[0], { ...args[1], ...corsHeaders }),
+      end: (...args) => response.end(...args)
+    });
+    return;
+  }
+
+  if (request.method === "POST" && pathname === "/api/auth/login/password") {
+    await handlePasswordLogin(request, {
+      writeHead: (...args) => response.writeHead(args[0], { ...args[1], ...corsHeaders }),
+      end: (...args) => response.end(...args)
+    });
+    return;
+  }
+
+  if (request.method === "POST" && pathname === "/api/auth/otp/request") {
+    await handleRequestOtp(request, {
+      writeHead: (...args) => response.writeHead(args[0], { ...args[1], ...corsHeaders }),
+      end: (...args) => response.end(...args)
+    });
+    return;
+  }
+
+  if (request.method === "POST" && pathname === "/api/auth/otp/verify") {
+    await handleVerifyOtp(request, {
       writeHead: (...args) => response.writeHead(args[0], { ...args[1], ...corsHeaders }),
       end: (...args) => response.end(...args)
     });
