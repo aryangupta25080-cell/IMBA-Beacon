@@ -2225,7 +2225,7 @@ footer{
       <div class="auth-panel reveal">
         <div class="auth-copy">
           <strong>Enrollment Access</strong>
-          <span>Sign in with Google to verify your identity before purchasing a plan. Once signed in, you can continue securely with Paytm checkout.</span>
+          <span>Sign in with Google to verify your identity and register your plan interest. Online payments are temporarily paused while enrollment is being finalized.</span>
         </div>
         <div class="auth-actions">
           <div id="google-signin-slot"></div>
@@ -2251,7 +2251,7 @@ footer{
             <li><span class="tick">✓</span><span>Practice quizzes</span></li>
             <li><span class="tick">✓</span><span>1 interaction session with current batch</span></li>
           </ul>
-          <button class="plan-action" type="button" data-plan-id="basic">Enroll in Basic</button>
+          <button class="plan-action" type="button" data-plan-id="basic">Join Basic Waitlist</button>
         </article>
 
         <article class="plan-card featured reveal">
@@ -2266,7 +2266,7 @@ footer{
             <li><span class="tick">✓</span><span>2 interaction sessions with current batch</span></li>
             <li><span class="tick">✓</span><span>Live maths &amp; physics mentoring sessions</span></li>
           </ul>
-          <button class="plan-action" type="button" data-plan-id="pro">Enroll in Pro</button>
+          <button class="plan-action" type="button" data-plan-id="pro">Join Pro Waitlist</button>
         </article>
       </div>
       <p class="purchase-status" id="purchase-status" aria-live="polite"></p>
@@ -2685,7 +2685,9 @@ footer{
     async initialize() {
       await this.loadConfig();
       await this.loadSession();
-      await this.loadPaytmScript();
+      if (this.config?.paymentsEnabled) {
+        await this.loadPaytmScript();
+      }
       this.bindEvents();
       this.renderGoogleButton();
       this.syncUi();
@@ -2806,7 +2808,7 @@ footer{
 
         this.user = payload.user;
         this.syncUi();
-        this.setStatus(`Signed in as ${this.user.name}. You can now continue to payment.`, "success");
+        this.setStatus(`Signed in as ${this.user.name}. You can now register your plan interest and we will contact you with enrollment details.`, "success");
       } catch (error) {
         this.setStatus("Unable to complete Google sign-in right now.", "error");
       }
@@ -2834,7 +2836,15 @@ footer{
 
     async startCheckout(planId, triggerButton) {
       if (!this.user) {
-        this.setStatus("Please sign in with Google before enrolling.", "error");
+        this.setStatus("Please sign in with Google before joining the waitlist.", "error");
+        return;
+      }
+
+      if (!this.config?.paymentsEnabled) {
+        const plan = this.getPlan(planId);
+        const planLabel = plan?.label || "selected";
+        document.getElementById("apply")?.scrollIntoView({ behavior: "smooth", block: "start" });
+        this.setStatus(`Online payments are temporarily paused. Join the waitlist below and mention your interest in the ${planLabel} plan.`, "success");
         return;
       }
 

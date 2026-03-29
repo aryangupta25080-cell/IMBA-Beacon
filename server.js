@@ -39,6 +39,7 @@ const PAYTM_MID = process.env.PAYTM_MID || "";
 const PAYTM_MERCHANT_KEY = process.env.PAYTM_MERCHANT_KEY || "";
 const PAYTM_WEBSITE = process.env.PAYTM_WEBSITE || "WEBSTAGING";
 const PAYTM_ENV = process.env.PAYTM_ENV || "staging";
+const PAYMENTS_ENABLED = process.env.PAYMENTS_ENABLED === "true";
 const APP_BASE_URL = process.env.APP_BASE_URL || `http://127.0.0.1:${PORT}`;
 const FRONTEND_ORIGIN = process.env.FRONTEND_ORIGIN || "";
 
@@ -314,6 +315,7 @@ function handleConfig(response) {
     appBaseUrl: APP_BASE_URL,
     frontendOrigin: FRONTEND_ORIGIN,
     googleClientId: GOOGLE_CLIENT_ID,
+    paymentsEnabled: PAYMENTS_ENABLED,
     paytmMid: PAYTM_MID,
     paytmHost: getPaytmHost(),
     plans: Object.values(PLAN_CATALOG).map((plan) => ({
@@ -451,6 +453,13 @@ async function handleCreateOrder(request, response) {
   const user = requireAuthenticatedUser(request, response);
   if (!user) return;
 
+  if (!PAYMENTS_ENABLED) {
+    sendJson(response, 503, {
+      message: "Online payments are temporarily disabled. Please join the waitlist and we will share enrollment details directly."
+    });
+    return;
+  }
+
   if (!PAYTM_MID || !PAYTM_MERCHANT_KEY) {
     sendJson(response, 503, {
       message: "Paytm is not configured yet. Add PAYTM_MID and PAYTM_MERCHANT_KEY."
@@ -516,6 +525,13 @@ async function fetchPaytmTransactionStatus(orderId) {
 async function handleVerifyPayment(request, response) {
   const user = requireAuthenticatedUser(request, response);
   if (!user) return;
+
+  if (!PAYMENTS_ENABLED) {
+    sendJson(response, 503, {
+      message: "Online payments are temporarily disabled."
+    });
+    return;
+  }
 
   if (!PAYTM_MID || !PAYTM_MERCHANT_KEY) {
     sendJson(response, 503, { message: "Paytm verification is not configured yet." });
@@ -589,6 +605,7 @@ async function requestHandler(request, response) {
       appBaseUrl: APP_BASE_URL,
       frontendOrigin: FRONTEND_ORIGIN,
       googleClientId: GOOGLE_CLIENT_ID,
+      paymentsEnabled: PAYMENTS_ENABLED,
       paytmMid: PAYTM_MID,
       paytmHost: getPaytmHost(),
       plans: Object.values(PLAN_CATALOG).map((plan) => ({
