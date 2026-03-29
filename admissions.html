@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Admissions | IMBA Beacon</title>
+<script src="./site-config.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Merriweather:wght@700&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="./section-pages.css"/>
+</head>
+<body>
+  <div class="topbar"><div class="topbar-inner"><div class="topbar-links"><a href="./academics.html">Academics</a><a href="./updates.html">Updates</a><a href="./campus-life.html">Campus Life</a></div><div class="topbar-meta"><span>IIT Mandi Initiative</span></div></div></div>
+  <header class="mainnav"><div class="mainnav-inner"><a class="brand" href="./index.html"><img class="brand-logo" src="./assets/imba-beacon-logo.jpeg" alt="IMBA Beacon logo"/><div class="brand-copy"><strong>IMBA Beacon</strong><span>Structured preparation inspired by institutional portals</span></div></a><nav class="page-links"><a href="./academics.html">Academics</a><a href="./about.html">About</a><a href="./updates.html">Updates</a><a href="./campus-life.html">Campus Life</a><a href="./admissions.html">Admissions</a></nav><a class="nav-cta" href="#apply-now">Apply for Early Access</a></div></header>
+  <section class="hero"><div class="hero-inner"><div><div class="hero-label">Admissions</div><h1>Review plan options and submit your details for the right prep path.</h1><p>This page is focused on entry, eligibility context, and the next action students should take to begin their IMBA Beacon journey.</p></div><aside class="hero-card"><h2>On this page</h2><ul><li><a href="#apply-now">Apply / Form</a></li><li><a href="#track-comparison">Track Comparison</a></li><li><a href="#eligibility">Eligibility & Details</a></li></ul></aside></div></section>
+  <section id="track-comparison"><div class="section-inner"><div class="section-head"><div class="eyebrow">Track Comparison</div><h2 class="section-title">Choose the support level that matches your preparation needs.</h2><p class="section-copy">Basic offers essential structured practice, while Pro expands mentoring volume and guided touchpoints.</p></div><div class="card-grid"><article class="info-card"><small>Basic</small><h3>₹1,500</h3><p>Includes 3 mock interviews, practice sheets, quizzes, and one verbal communication session.</p></article><article class="info-card"><small>Pro</small><h3>₹2,000</h3><p>Includes 4 mock interviews, 3 communication sessions, extra batch interaction, and more support.</p></article><article class="info-card"><small>Current Status</small><h3>Payments paused</h3><p>Students can still register interest now and receive follow-up directly from the IMBA Beacon team.</p></article></div></div></section>
+  <section id="eligibility"><div class="section-inner"><div class="section-head"><div class="eyebrow">Eligibility & Details</div><h2 class="section-title">Share the information needed for admissions follow-up.</h2><p class="section-copy">The current application flow collects basic contact and academic context to support onboarding.</p></div><div class="card-grid"><article class="info-card"><small>Detail 01</small><h3>Identity details</h3><p>Name, email, and phone number help the team contact you and align plan communication.</p></article><article class="info-card"><small>Detail 02</small><h3>Academic context</h3><p>School percentile and candidate category help the team understand your current application context.</p></article><article class="info-card"><small>Detail 03</small><h3>Next step</h3><p>After submitting the form, interested students can be contacted with relevant plan guidance and next actions.</p></article></div></div></section>
+  <section id="apply-now"><div class="section-inner"><div class="section-head"><div class="eyebrow">Apply Now</div><h2 class="section-title">Submit your details to join the IMBA Beacon waitlist.</h2><p class="section-copy">Use the admissions form below to register your interest. The same backend endpoint is used here for continuity.</p></div><div class="card-grid" style="grid-template-columns:1fr;"><article class="info-card"><form id="admissions-form" style="display:grid;grid-template-columns:repeat(2,minmax(220px,1fr));gap:.85rem;"><input type="text" name="name" placeholder="Enter your full name" required style="padding:1rem 1.1rem;border:1px solid var(--line);border-radius:16px;"><input type="email" name="email" placeholder="Enter your email address" required style="padding:1rem 1.1rem;border:1px solid var(--line);border-radius:16px;"><input type="tel" name="phone" placeholder="Enter your phone number" required style="padding:1rem 1.1rem;border:1px solid var(--line);border-radius:16px;"><input type="number" name="schoolPercentile" placeholder="Enter your school percentile" required style="padding:1rem 1.1rem;border:1px solid var(--line);border-radius:16px;"><select name="category" required style="padding:1rem 1.1rem;border:1px solid var(--line);border-radius:16px;"><option value="">Select candidate category</option><option value="General">General</option><option value="OBC">OBC</option><option value="SC">SC</option><option value="ST">ST</option><option value="EWS">EWS</option><option value="PwD">PwD</option><option value="Other">Other</option></select><button class="nav-cta" type="submit" style="border:none;justify-self:start;">Submit Details</button></form><p id="admissions-status" style="margin-top:1rem;color:var(--muted);"></p></article></div></div></section>
+  <footer><div class="footer-inner"><span>IMBA Beacon</span><span><a href="./index.html">Back to Home</a></span></div></footer>
+  <script>
+  (function () {
+    const form = document.getElementById("admissions-form");
+    const status = document.getElementById("admissions-status");
+    const apiBase = (window.IMBA_SITE_CONFIG && window.IMBA_SITE_CONFIG.apiBaseUrl) || "";
+    if (!form || !status) return;
+    form.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      const submitButton = form.querySelector("button");
+      const formData = new FormData(form);
+      submitButton.disabled = true;
+      submitButton.textContent = "Submitting...";
+      status.textContent = "";
+      try {
+        const response = await fetch(`${apiBase}/api/waitlist`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(Object.fromEntries(formData.entries()))
+        });
+        const payload = await response.json();
+        status.textContent = payload.message || (response.ok ? "Submitted successfully." : "Unable to submit.");
+        status.style.color = response.ok ? "#7f6a1b" : "#b33d4b";
+        if (response.ok) form.reset();
+      } catch (error) {
+        status.textContent = "Unable to connect right now.";
+        status.style.color = "#b33d4b";
+      } finally {
+        submitButton.disabled = false;
+        submitButton.textContent = "Submit Details";
+      }
+    });
+  })();
+  </script>
+</body>
+</html>
