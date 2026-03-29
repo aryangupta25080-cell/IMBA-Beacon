@@ -62,6 +62,10 @@ const otpTransporter = SMTP_HOST && SMTP_USER && SMTP_PASS
       host: SMTP_HOST,
       port: SMTP_PORT,
       secure: SMTP_SECURE,
+      family: 4,
+      connectionTimeout: 15000,
+      greetingTimeout: 15000,
+      socketTimeout: 20000,
       auth: {
         user: SMTP_USER,
         pass: SMTP_PASS
