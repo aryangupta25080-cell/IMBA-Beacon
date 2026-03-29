@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>IMBA Beacon Admin</title>
+<script src="./site-config.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --maroon:#6a1f36;
+  --maroon-2:#8a3b56;
+  --gold:#c9a24b;
+  --gold-soft:#e3c680;
+  --ink:#4a2933;
+  --muted:#86656f;
+  --surface:#ffffff;
+  --surface-alt:#fbf6f7;
+  --line:rgba(106,31,54,.1);
+  --shadow:0 22px 50px rgba(106,31,54,.12);
+}
+body{
+  font-family:"Manrope",sans-serif;
+  background:linear-gradient(180deg,#fcf7f8,#f6edef);
+  color:var(--ink);
+  line-height:1.6;
+  min-height:100vh;
+}
+.shell{
+  width:min(1180px,calc(100% - 2rem));
+  margin:0 auto;
+  padding:2rem 0 3rem;
+}
+.hero{
+  background:linear-gradient(135deg,var(--maroon),var(--maroon-2));
+  color:#fff;
+  border-radius:28px;
+  padding:2rem;
+  box-shadow:var(--shadow);
+  margin-bottom:1.5rem;
+}
+.hero h1{
+  font-size:clamp(2rem,4vw,3rem);
+  margin-bottom:.5rem;
+}
+.hero p{
+  color:rgba(255,255,255,.8);
+  max-width:60ch;
+}
+.panel{
+  background:var(--surface);
+  border:1px solid var(--line);
+  border-radius:24px;
+  padding:1.5rem;
+  box-shadow:0 14px 36px rgba(106,31,54,.07);
+}
+.controls{
+  display:grid;
+  grid-template-columns:minmax(240px,360px) auto auto;
+  gap:.9rem;
+  align-items:center;
+  margin-bottom:1rem;
+}
+input,button{
+  font:inherit;
+}
+input{
+  width:100%;
+  border:1px solid var(--line);
+  border-radius:16px;
+  padding:.95rem 1rem;
+  outline:none;
+}
+button{
+  border:none;
+  border-radius:999px;
+  padding:.95rem 1.2rem;
+  cursor:pointer;
+  font-weight:800;
+}
+.btn-primary{
+  background:linear-gradient(135deg,var(--gold-soft),var(--gold));
+  color:#4a2a10;
+}
+.btn-secondary{
+  background:rgba(106,31,54,.08);
+  color:var(--maroon);
+  border:1px solid rgba(106,31,54,.12);
+}
+.meta{
+  display:flex;
+  justify-content:space-between;
+  gap:1rem;
+  align-items:center;
+  flex-wrap:wrap;
+  margin-bottom:1rem;
+}
+.count{
+  font-size:.95rem;
+  color:var(--muted);
+}
+.status{
+  min-height:1.6em;
+  color:var(--muted);
+  margin-bottom:.8rem;
+}
+.status.error{color:#b33d4b}
+.status.success{color:#7f6a1b}
+.table-wrap{
+  overflow:auto;
+  border:1px solid var(--line);
+  border-radius:18px;
+}
+table{
+  width:100%;
+  border-collapse:collapse;
+  min-width:860px;
+  background:#fff;
+}
+th,td{
+  text-align:left;
+  padding:.9rem 1rem;
+  border-bottom:1px solid var(--line);
+  vertical-align:top;
+  font-size:.92rem;
+}
+th{
+  background:var(--surface-alt);
+  color:var(--maroon);
+  font-size:.8rem;
+  text-transform:uppercase;
+  letter-spacing:.08em;
+}
+tbody tr:hover{
+  background:#fffaf3;
+}
+.empty{
+  padding:1.5rem;
+  color:var(--muted);
+}
+@media (max-width:860px){
+  .controls{
+    grid-template-columns:1fr;
+  }
+}
+</style>
+</head>
+<body>
+  <main class="shell">
+    <section class="hero">
+      <h1>IMBA Beacon Admin</h1>
+      <p>View applicant submissions and export them as CSV. Use your admin access key to unlock the dashboard.</p>
+    </section>
+
+    <section class="panel">
+      <div class="controls">
+        <input id="access-key" type="password" placeholder="Enter admin access key"/>
+        <button class="btn-primary" id="load-data" type="button">Load Applications</button>
+        <button class="btn-secondary" id="download-csv" type="button">Download CSV</button>
+      </div>
+      <div class="meta">
+        <div class="count" id="entry-count">No data loaded yet.</div>
+      </div>
+      <p class="status" id="admin-status" aria-live="polite"></p>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Email</th>
+              <th>Phone</th>
+              <th>School Percentile</th>
+              <th>Category</th>
+              <th>Submitted At</th>
+            </tr>
+          </thead>
+          <tbody id="admin-table-body">
+            <tr>
+              <td class="empty" colspan="6">Enter your admin access key and load the dashboard to view submissions.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+
+<script>
+(function () {
+  const apiBase = (window.IMBA_SITE_CONFIG && window.IMBA_SITE_CONFIG.apiBaseUrl) || "";
+  const keyInput = document.getElementById("access-key");
+  const loadButton = document.getElementById("load-data");
+  const csvButton = document.getElementById("download-csv");
+  const status = document.getElementById("admin-status");
+  const entryCount = document.getElementById("entry-count");
+  const tableBody = document.getElementById("admin-table-body");
+  const storageKey = "imba_admin_access_key";
+
+  keyInput.value = sessionStorage.getItem(storageKey) || "";
+
+  function setStatus(message, type) {
+    status.textContent = message;
+    status.className = "status" + (type ? " " + type : "");
+  }
+
+  function getAccessKey() {
+    const accessKey = keyInput.value.trim();
+    if (accessKey) {
+      sessionStorage.setItem(storageKey, accessKey);
+    }
+    return accessKey;
+  }
+
+  function formatTimestamp(value) {
+    const date = new Date(value);
+    if (Number.isNaN(date.getTime())) return value || "-";
+    return date.toLocaleString("en-IN", {
+      dateStyle: "medium",
+      timeStyle: "short"
+    });
+  }
+
+  function renderRows(entries) {
+    if (!entries.length) {
+      tableBody.innerHTML = '<tr><td class="empty" colspan="6">No submissions yet.</td></tr>';
+      return;
+    }
+
+    tableBody.innerHTML = entries.map((entry) => `
+      <tr>
+        <td>${entry.name || "-"}</td>
+        <td>${entry.email || "-"}</td>
+        <td>${entry.phone || "-"}</td>
+        <td>${entry.schoolPercentile ?? "-"}</td>
+        <td>${entry.category || "-"}</td>
+        <td>${formatTimestamp(entry.submittedAt)}</td>
+      </tr>
+    `).join("");
+  }
+
+  async function loadEntries() {
+    const accessKey = getAccessKey();
+    if (!accessKey) {
+      setStatus("Enter the admin access key first.", "error");
+      return;
+    }
+
+    loadButton.disabled = true;
+    setStatus("Loading submissions...", "");
+
+    try {
+      const response = await fetch(`${apiBase}/api/admin/waitlist?accessKey=${encodeURIComponent(accessKey)}`);
+      const payload = await response.json();
+
+      if (!response.ok) {
+        setStatus(payload.message || "Unable to load submissions.", "error");
+        return;
+      }
+
+      renderRows(payload.entries || []);
+      entryCount.textContent = `${payload.count || 0} application${payload.count === 1 ? "" : "s"} loaded`;
+      setStatus("Admin dashboard loaded successfully.", "success");
+    } catch (error) {
+      setStatus("Unable to connect to the admin endpoint right now.", "error");
+    } finally {
+      loadButton.disabled = false;
+    }
+  }
+
+  function downloadCsv() {
+    const accessKey = getAccessKey();
+    if (!accessKey) {
+      setStatus("Enter the admin access key first.", "error");
+      return;
+    }
+
+    window.location.href = `${apiBase}/api/admin/waitlist.csv?accessKey=${encodeURIComponent(accessKey)}`;
+  }
+
+  loadButton.addEventListener("click", loadEntries);
+  csvButton.addEventListener("click", downloadCsv);
+})();
+</script>
+</body>
+</html>

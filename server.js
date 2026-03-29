@@ -40,6 +40,7 @@ const PAYTM_MERCHANT_KEY = process.env.PAYTM_MERCHANT_KEY || "";
 const PAYTM_WEBSITE = process.env.PAYTM_WEBSITE || "WEBSTAGING";
 const PAYTM_ENV = process.env.PAYTM_ENV || "staging";
 const PAYMENTS_ENABLED = process.env.PAYMENTS_ENABLED === "true";
+const ADMIN_ACCESS_KEY = process.env.ADMIN_ACCESS_KEY || "";
 const APP_BASE_URL = process.env.APP_BASE_URL || `http://127.0.0.1:${PORT}`;
 const FRONTEND_ORIGIN = process.env.FRONTEND_ORIGIN || "";
 
@@ -274,6 +275,49 @@ function getPaytmHost() {
   return PAYTM_ENV === "production" ? "https://securegw.paytm.in" : "https://securegw-stage.paytm.in";
 }
 
+function getAdminAccessKey(request, url) {
+  const authHeader = request.headers.authorization || "";
+  if (authHeader.startsWith("Bearer ")) {
+    return authHeader.slice("Bearer ".length).trim();
+  }
+
+  const headerKey = request.headers["x-admin-key"];
+  if (headerKey) {
+    return String(headerKey).trim();
+  }
+
+  return String(url.searchParams.get("accessKey") || "").trim();
+}
+
+function requireAdminAccess(request, response, url, corsHeaders = {}) {
+  if (!ADMIN_ACCESS_KEY) {
+    sendJson(response, 503, { message: "Admin access is not configured yet." }, corsHeaders);
+    return false;
+  }
+
+  const providedKey = getAdminAccessKey(request, url);
+  if (!providedKey || providedKey !== ADMIN_ACCESS_KEY) {
+    sendJson(response, 401, { message: "Invalid admin access key." }, corsHeaders);
+    return false;
+  }
+
+  return true;
+}
+
+function escapeCsvValue(value) {
+  const stringValue = String(value ?? "");
+  if (/[",\n]/.test(stringValue)) {
+    return `"${stringValue.replace(/"/g, "\"\"")}"`;
+  }
+  return stringValue;
+}
+
+function createWaitlistCsv(entries) {
+  const columns = ["name", "email", "phone", "schoolPercentile", "category", "submittedAt"];
+  const rows = entries.map((entry) => columns.map((column) => escapeCsvValue(entry[column])).join(","));
+  return [columns.join(","), ...rows].join("\n");
+}
+
 async function handleWaitlistSubmission(request, response) {
   try {
     const body = await parseRequestBody(request);
@@ -344,6 +388,38 @@ async function handleWaitlistList(response) {
     });
   } catch (error) {
     sendJson(response, 500, { message: "Unable to read waitlist data." });
+  }
+}
+
+async function handleAdminWaitlist(request, response, url, corsHeaders) {
+  if (!requireAdminAccess(request, response, url, corsHeaders)) return;
+
+  try {
+    const waitlist = await readJsonFile(WAITLIST_FILE);
+    sendJson(response, 200, {
+      count: waitlist.length,
+      entries: waitlist
+    }, corsHeaders);
+  } catch (error) {
+    sendJson(response, 500, { message: "Unable to read waitlist data." }, corsHeaders);
+  }
+}
+
+async function handleAdminWaitlistCsv(request, response, url, corsHeaders) {
+  if (!requireAdminAccess(request, response, url, corsHeaders)) return;
+
+  try {
+    const waitlist = await readJsonFile(WAITLIST_FILE);
+    const csv = createWaitlistCsv(waitlist);
+    response.writeHead(200, {
+      "Content-Type": "text/csv; charset=utf-8",
+      "Content-Disposition": 'attachment; filename="imba-beacon-waitlist.csv"',
+      "Cache-Control": "no-store",
+      ...corsHeaders
+    });
+    response.end(csv);
+  } catch (error) {
+    sendJson(response, 500, { message: "Unable to export waitlist CSV." }, corsHeaders);
   }
 }
 
@@ -714,6 +790,16 @@ async function requestHandler(request, response) {
       count: waitlist.length,
       entries: waitlist
     }, corsHeaders);
+    return;
+  }
+
+  if (request.method === "GET" && pathname === "/api/admin/waitlist") {
+    await handleAdminWaitlist(request, response, url, corsHeaders);
+    return;
+  }
+
+  if (request.method === "GET" && pathname === "/api/admin/waitlist.csv") {
+    await handleAdminWaitlistCsv(request, response, url, corsHeaders);
     return;
   }
 
