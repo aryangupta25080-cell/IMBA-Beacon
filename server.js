@@ -45,12 +45,14 @@ const PHONEPE_ENV = process.env.PHONEPE_ENV || "sandbox";
 const PAYMENTS_ENABLED = process.env.PAYMENTS_ENABLED === "true";
 const ADMIN_ACCESS_KEY = process.env.ADMIN_ACCESS_KEY || "";
 const EMAIL_OTP_EXPIRY_MINUTES = Number(process.env.EMAIL_OTP_EXPIRY_MINUTES || 10);
+const RESEND_API_KEY = process.env.RESEND_API_KEY || "";
+const RESEND_FROM = process.env.RESEND_FROM || "";
 const SMTP_HOST = process.env.SMTP_HOST || "";
 const SMTP_PORT = Number(process.env.SMTP_PORT || 587);
 const SMTP_SECURE = process.env.SMTP_SECURE === "true";
 const SMTP_USER = process.env.SMTP_USER || "";
 const SMTP_PASS = process.env.SMTP_PASS || "";
-const EMAIL_FROM = process.env.EMAIL_FROM || SMTP_USER || "";
+const EMAIL_FROM = process.env.EMAIL_FROM || RESEND_FROM || SMTP_USER || "";
 const APP_BASE_URL = process.env.APP_BASE_URL || `http://127.0.0.1:${PORT}`;
 const FRONTEND_ORIGIN = process.env.FRONTEND_ORIGIN || "";
 
@@ -400,16 +402,45 @@ async function verifyOtpRecord(email, otp) {
 }
 
 async function sendOtpEmail(email, otpCode) {
+  const subject = "Your IMBA Beacon verification code";
+  const text = `Your IMBA Beacon verification code is ${otpCode}. It will expire in ${EMAIL_OTP_EXPIRY_MINUTES} minutes.`;
+  const html = `<p>Your IMBA Beacon verification code is <strong>${otpCode}</strong>.</p><p>It will expire in ${EMAIL_OTP_EXPIRY_MINUTES} minutes.</p>`;
+
+  if (RESEND_API_KEY && (RESEND_FROM || EMAIL_FROM)) {
+    const resendResponse = await fetch("https://api.resend.com/emails", {
+      method: "POST",
+      headers: {
+        "Authorization": `Bearer ${RESEND_API_KEY}`,
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        from: RESEND_FROM || EMAIL_FROM,
+        to: [email],
+        subject,
+        text,
+        html
+      })
+    });
+
+    const resendPayload = await resendResponse.json().catch(() => null);
+    if (!resendResponse.ok) {
+      const resendMessage = resendPayload?.message || resendPayload?.error || "Unable to send OTP using Resend.";
+      throw new Error(resendMessage);
+    }
+
+    return;
+  }
+
   if (!otpTransporter || !EMAIL_FROM) {
-    throw new Error("Email OTP is not configured yet. Add SMTP settings on the server.");
+    throw new Error("Email OTP is not configured yet. Add RESEND_API_KEY and RESEND_FROM, or valid SMTP settings on the server.");
   }
 
   await otpTransporter.sendMail({
     from: EMAIL_FROM,
     to: email,
-    subject: "Your IMBA Beacon verification code",
-    text: `Your IMBA Beacon verification code is ${otpCode}. It will expire in ${EMAIL_OTP_EXPIRY_MINUTES} minutes.`,
-    html: `<p>Your IMBA Beacon verification code is <strong>${otpCode}</strong>.</p><p>It will expire in ${EMAIL_OTP_EXPIRY_MINUTES} minutes.</p>`
+    subject,
+    text,
+    html
   });
 }
 
