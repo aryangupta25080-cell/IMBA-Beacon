@@ -922,14 +922,30 @@ button,input{border:none}
 .poster-grid{
   width:var(--container);
   margin:0 auto;
-  display:grid;
-  grid-template-columns:repeat(5,1fr);
+  display:flex;
   gap:1rem;
+  overflow-x:auto;
+  overflow-y:hidden;
+  padding:.35rem .1rem .9rem;
+  scroll-snap-type:x proximity;
+  scrollbar-width:thin;
 }
-.poster-card{
+.poster-grid::-webkit-scrollbar{
+  height:10px;
+}
+.poster-grid::-webkit-scrollbar-thumb{
+  background:rgba(106,31,54,.26);
+  border-radius:999px;
+}
+.poster-grid::-webkit-scrollbar-track{
+  background:rgba(106,31,54,.08);
+  border-radius:999px;
+}
+.mentor-card{
   position:relative;
   overflow:hidden;
-  min-height:250px;
+  min-height:318px;
+  flex:0 0 260px;
   border-radius:28px;
   padding:1.35rem;
   color:#fff;
@@ -940,24 +956,27 @@ button,input{border:none}
   box-shadow:var(--shadow-md);
   transform:translateY(var(--float-offset,0));
   transition:transform .32s var(--slider-ease),box-shadow .32s var(--slider-ease);
+  scroll-snap-align:start;
 }
-.poster-card::before{
+.mentor-card::before{
   content:"";
   position:absolute;
   inset:0;
   background:linear-gradient(180deg,rgba(255,255,255,.06),transparent 38%,rgba(0,0,0,.24));
   pointer-events:none;
 }
-.poster-card:hover{
+.mentor-card:hover{
   transform:translateY(calc(var(--float-offset,0) - 6px));
   box-shadow:var(--shadow-lg);
 }
-.poster-card:nth-child(1){background:linear-gradient(155deg,#6a1f36,#46101f);--float-offset:-10px}
-.poster-card:nth-child(2){background:linear-gradient(155deg,#8f5b1d,#5f3508);--float-offset:18px}
-.poster-card:nth-child(3){background:linear-gradient(155deg,#7c2d4d,#541630);--float-offset:-20px}
-.poster-card:nth-child(4){background:linear-gradient(155deg,#5c2339,#34101d);--float-offset:12px}
-.poster-card:nth-child(5){background:linear-gradient(155deg,#7a3248,#4a1727);--float-offset:-8px}
-.poster-card > *{position:relative;z-index:1}
+.mentor-card:nth-child(1){background:linear-gradient(155deg,#6a1f36,#46101f);--float-offset:-10px}
+.mentor-card:nth-child(2){background:linear-gradient(155deg,#8f5b1d,#5f3508);--float-offset:18px}
+.mentor-card:nth-child(3){background:linear-gradient(155deg,#7c2d4d,#541630);--float-offset:-20px}
+.mentor-card:nth-child(4){background:linear-gradient(155deg,#5c2339,#34101d);--float-offset:12px}
+.mentor-card:nth-child(5){background:linear-gradient(155deg,#7a3248,#4a1727);--float-offset:-8px}
+.mentor-card:nth-child(6){background:linear-gradient(155deg,#6d213d,#42111f);--float-offset:14px}
+.mentor-card:nth-child(7){background:linear-gradient(155deg,#92611e,#603a0f);--float-offset:-12px}
+.mentor-card > *{position:relative;z-index:1}
 .poster-kicker{
   font-size:.72rem;
   letter-spacing:.14em;
@@ -965,24 +984,28 @@ button,input{border:none}
   color:rgba(255,255,255,.76);
   font-weight:800;
 }
-.poster-card h3{
+.mentor-card h3{
   font-family:"Merriweather",serif;
   font-size:1.5rem;
   line-height:1.16;
   margin:.45rem 0 .65rem;
 }
-.poster-card p{
+.mentor-card p{
   color:rgba(255,255,255,.82);
   font-size:.9rem;
   line-height:1.65;
 }
-.poster-link{
-  display:inline-flex;
-  align-items:center;
-  gap:.45rem;
-  color:var(--gold-soft);
-  font-weight:800;
-  font-size:.9rem;
+.mentor-poster-box{
+  min-height:178px;
+  border-radius:20px;
+  border:1px dashed rgba(255,255,255,.3);
+  background:rgba(255,255,255,.08);
+  display:grid;
+  place-items:center;
+  text-align:center;
+  color:rgba(255,255,255,.82);
+  padding:1rem;
+  font-weight:700;
 }
 .quick-links-grid{
   width:var(--container);
@@ -1734,7 +1757,6 @@ footer{
     margin-top:-1.6rem;
   }
   .quick-links-grid,
-  .poster-grid,
   .card-grid,
   .centre-grid,
   .feature-split,
@@ -1742,6 +1764,14 @@ footer{
   .plans-grid,
   .admissions-band{
     grid-template-columns:1fr;
+  }
+  .poster-grid{
+    width:calc(100% - 1.2rem);
+    padding-bottom:.8rem;
+  }
+  .mentor-card{
+    flex-basis:82vw;
+    min-height:286px;
   }
   .quick-link{
     border-right:none;
@@ -2160,51 +2190,67 @@ footer{
 
   <section class="portal-posters">
     <div class="poster-head reveal">
-      <div class="eyebrow">Explore the Portal</div>
-      <h2 class="section-title">Open a focused page instead of scanning one long homepage.</h2>
-      <p class="section-copy">Each poster below opens a dedicated page with content related only to that area. The homepage stays clean, visual, and easy to navigate.</p>
+      <div class="eyebrow">Mentor Showcase</div>
+      <h2 class="section-title">Know your mentors.</h2>
+      <p class="section-copy">Scroll through the mentor showcase below. These seven boxes are ready for your mentor intro posters.</p>
     </div>
     <div class="poster-grid">
-      <a class="poster-card reveal" href="./academics.html">
+      <div class="mentor-card reveal">
         <div>
-          <div class="poster-kicker">Page 01</div>
-          <h3>Academics</h3>
-          <p>Preparation tracks, plans overview, and learning pillars in one focused academic page.</p>
+          <div class="poster-kicker">Mentor 01</div>
+          <h3>Mentor Poster</h3>
+          <p>Add your first mentor introduction poster here.</p>
         </div>
-        <div class="poster-link"><span>Open page</span><span>↗</span></div>
-      </a>
-      <a class="poster-card reveal" href="./about.html">
+        <div class="mentor-poster-box">Poster placeholder</div>
+      </div>
+      <div class="mentor-card reveal">
         <div>
-          <div class="poster-kicker">Page 02</div>
-          <h3>About</h3>
-          <p>Read the mission, message to aspirants, and the thinking behind IMBA Beacon.</p>
+          <div class="poster-kicker">Mentor 02</div>
+          <h3>Mentor Poster</h3>
+          <p>Add your second mentor introduction poster here.</p>
         </div>
-        <div class="poster-link"><span>Open page</span><span>↗</span></div>
-      </a>
-      <a class="poster-card reveal" href="./updates.html">
+        <div class="mentor-poster-box">Poster placeholder</div>
+      </div>
+      <div class="mentor-card reveal">
         <div>
-          <div class="poster-kicker">Page 03</div>
-          <h3>Updates</h3>
-          <p>Track notices, events, and upcoming schedule information without extra homepage clutter.</p>
+          <div class="poster-kicker">Mentor 03</div>
+          <h3>Mentor Poster</h3>
+          <p>Add your third mentor introduction poster here.</p>
         </div>
-        <div class="poster-link"><span>Open page</span><span>↗</span></div>
-      </a>
-      <a class="poster-card reveal" href="./campus-life.html">
+        <div class="mentor-poster-box">Poster placeholder</div>
+      </div>
+      <div class="mentor-card reveal">
         <div>
-          <div class="poster-kicker">Page 04</div>
-          <h3>Campus Life</h3>
-          <p>See student corner, peer learning, and mentor touchpoints in a separate experience page.</p>
+          <div class="poster-kicker">Mentor 04</div>
+          <h3>Mentor Poster</h3>
+          <p>Add your fourth mentor introduction poster here.</p>
         </div>
-        <div class="poster-link"><span>Open page</span><span>↗</span></div>
-      </a>
-      <a class="poster-card reveal" href="./admissions.html">
+        <div class="mentor-poster-box">Poster placeholder</div>
+      </div>
+      <div class="mentor-card reveal">
         <div>
-          <div class="poster-kicker">Page 05</div>
-          <h3>Admissions</h3>
-          <p>Open the admissions page for login, application details, and the applicant form.</p>
+          <div class="poster-kicker">Mentor 05</div>
+          <h3>Mentor Poster</h3>
+          <p>Add your fifth mentor introduction poster here.</p>
         </div>
-        <div class="poster-link"><span>Open page</span><span>↗</span></div>
-      </a>
+        <div class="mentor-poster-box">Poster placeholder</div>
+      </div>
+      <div class="mentor-card reveal">
+        <div>
+          <div class="poster-kicker">Mentor 06</div>
+          <h3>Mentor Poster</h3>
+          <p>Add your sixth mentor introduction poster here.</p>
+        </div>
+        <div class="mentor-poster-box">Poster placeholder</div>
+      </div>
+      <div class="mentor-card reveal">
+        <div>
+          <div class="poster-kicker">Mentor 07</div>
+          <h3>Mentor Poster</h3>
+          <p>Add your seventh mentor introduction poster here.</p>
+        </div>
+        <div class="mentor-poster-box">Poster placeholder</div>
+      </div>
     </div>
   </section>
 
