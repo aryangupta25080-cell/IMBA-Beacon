@@ -135,25 +135,25 @@ button,input{border:none}
   position:sticky;
   top:0;
   z-index:60;
-  background:rgba(74,16,34,.84);
-  backdrop-filter:blur(18px) saturate(140%);
+  background:linear-gradient(180deg,var(--navy-2),var(--navy));
   border-bottom:1px solid rgba(255,255,255,.06);
-  box-shadow:0 6px 24px rgba(0,0,0,.08);
+  box-shadow:0 8px 24px rgba(74,16,34,.12);
 }
 .mainnav-inner{
   display:flex;
   align-items:center;
   justify-content:flex-start;
-  gap:1.1rem;
-  padding:.92rem 0;
+  gap:1.35rem;
+  padding:1rem 0;
 }
 .brand{
   display:flex;
   align-items:center;
-  gap:.4rem;
+  gap:.7rem;
   color:#fff;
   min-width:0;
   flex:0 0 auto;
+  margin-left:.35rem;
 }
 .brand-mark{
   display:flex;
@@ -166,12 +166,12 @@ button,input{border:none}
 }
 .brand-mark-top{
   font-family:"Merriweather",serif;
-  font-size:1.85rem;
+  font-size:2.05rem;
   color:#fff;
   text-transform:lowercase;
 }
 .brand-mark-bottom{
-  font-size:2.25rem;
+  font-size:2.65rem;
   font-weight:800;
   color:var(--gold-soft);
   letter-spacing:.02em;
@@ -186,10 +186,10 @@ button,input{border:none}
   display:flex;
   gap:1.35rem;
   color:#fff;
-  font-size:.93rem;
+  font-size:1.01rem;
   font-weight:700;
   align-items:center;
-  margin-left:.55rem;
+  margin-left:1.2rem;
   margin-right:auto;
 }
 .nav-item{
@@ -361,11 +361,12 @@ button,input{border:none}
   margin-left:auto;
 }
 .nav-login{
-  padding:.9rem 1.22rem;
+  padding:.94rem 1.28rem;
   background:linear-gradient(135deg,var(--gold-soft),var(--gold));
   color:var(--navy);
   white-space:nowrap;
   box-shadow:0 14px 30px rgba(197,155,61,.2);
+  font-size:.97rem;
 }
 .nav-login:hover{
   transform:translateY(-2px);
@@ -1689,29 +1690,23 @@ footer{
     justify-content:center;
   }
   .mainnav-inner{
-    padding:.7rem 0;
+    padding:.78rem 0;
   }
   .nav-actions{
     margin-left:auto;
   }
   .brand-mark-top{
-    font-size:1.5rem;
+    font-size:1.62rem;
   }
   .brand-mark-bottom{
-    font-size:1.8rem;
-  }
-  .brand-copy span{
-    display:none;
-  }
-  .brand-copy strong{
-    font-size:.92rem;
+    font-size:1.95rem;
   }
   .nav-cta{
     display:none;
   }
   .nav-login{
-    padding:.72rem .9rem;
-    font-size:.88rem;
+    padding:.78rem .98rem;
+    font-size:.9rem;
   }
   .hero{
     min-height:auto;
