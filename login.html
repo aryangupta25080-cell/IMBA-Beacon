@@ -21,6 +21,7 @@
 .auth-box p{color:var(--muted);font-size:.92rem}
 .login-actions{display:flex;align-items:center;gap:.85rem;flex-wrap:wrap;margin:1rem 0 1.25rem}
 .login-user{display:flex;align-items:center;gap:.8rem;padding:.8rem 1rem;border-radius:18px;background:#fff;border:1px solid rgba(106,31,54,.08)}
+.login-user[hidden],.logout-btn[hidden]{display:none!important}
 .login-user img{width:40px;height:40px;border-radius:50%;object-fit:cover}
 .tab-row{display:flex;gap:.65rem;flex-wrap:wrap;margin-bottom:1rem}
 .tab-btn{padding:.78rem 1rem;border-radius:999px;border:1px solid rgba(106,31,54,.12);background:#fff;color:var(--maroon);font-weight:800;cursor:pointer}
@@ -50,8 +51,7 @@
     <section class="login-card">
       <div class="login-intro">
         <div class="hero-label">Login</div>
-        <h1>Choose how you want to access your Beacon account.</h1>
-        <p>Use the login tab to access your student profile, or create a new Beacon account with your applicant details and verify it through email OTP.</p>
+        <p>Use the login or sign up tab to continue into your Beacon account.</p>
       </div>
 
       <div class="auth-layout">
@@ -63,7 +63,6 @@
 
           <div class="tab-panel active" data-panel="login">
             <h2>Login with email and password</h2>
-            <p>Use your Beacon account credentials if you already signed up, or continue with Google from the same tab.</p>
             <div class="login-actions">
               <div id="google-signin-slot"></div>
               <div class="login-user" id="login-user" hidden>
@@ -82,7 +81,6 @@
                 <button type="submit">Login to Beacon</button>
               </div>
             </form>
-            <div class="small-note">Google sign-in is available above as an alternate sign-in method.</div>
           </div>
 
           <div class="tab-panel" data-panel="signup">
