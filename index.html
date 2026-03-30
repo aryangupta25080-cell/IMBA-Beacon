@@ -143,16 +143,17 @@ button,input{border:none}
 .mainnav-inner{
   display:flex;
   align-items:center;
-  justify-content:space-between;
-  gap:1.5rem;
+  justify-content:flex-start;
+  gap:1.1rem;
   padding:.92rem 0;
 }
 .brand{
   display:flex;
   align-items:center;
-  gap:.95rem;
+  gap:.4rem;
   color:#fff;
   min-width:0;
+  flex:0 0 auto;
 }
 .brand-mark{
   display:flex;
@@ -180,18 +181,6 @@ button,input{border:none}
   transform:translateY(-2px);
   opacity:.96;
 }
-.brand-copy strong{
-  display:block;
-  font-size:1rem;
-  letter-spacing:.01em;
-  line-height:1.2;
-}
-.brand-copy span{
-  display:block;
-  font-size:.79rem;
-  color:rgba(255,255,255,.72);
-  line-height:1.35;
-}
 .nav-menu{
   list-style:none;
   display:flex;
@@ -200,6 +189,8 @@ button,input{border:none}
   font-size:.93rem;
   font-weight:700;
   align-items:center;
+  margin-left:.55rem;
+  margin-right:auto;
 }
 .nav-item{
   position:relative;
@@ -367,18 +358,18 @@ button,input{border:none}
   display:flex;
   align-items:center;
   gap:.75rem;
+  margin-left:auto;
 }
 .nav-login{
-  padding:.82rem 1.08rem;
-  border:1px solid rgba(255,255,255,.16);
-  background:rgba(255,255,255,.06);
-  color:#fff;
+  padding:.9rem 1.22rem;
+  background:linear-gradient(135deg,var(--gold-soft),var(--gold));
+  color:var(--navy);
   white-space:nowrap;
+  box-shadow:0 14px 30px rgba(197,155,61,.2);
 }
 .nav-login:hover{
   transform:translateY(-2px);
-  border-color:rgba(225,197,123,.34);
-  box-shadow:0 12px 28px rgba(74,16,34,.18);
+  box-shadow:0 18px 34px rgba(197,155,61,.26);
 }
 .nav-cta{
   background:linear-gradient(135deg,var(--gold-soft),var(--gold));
@@ -1873,10 +1864,6 @@ footer{
           <span class="brand-mark-top">iMBA</span>
           <span class="brand-mark-bottom">Beacon</span>
         </div>
-        <div class="brand-copy">
-          <strong>IMBA Beacon</strong>
-          <span>Structured preparation inspired by institutional portals</span>
-        </div>
       </a>
       <ul class="nav-menu">
         <li class="nav-item">
@@ -1991,7 +1978,7 @@ footer{
         </li>
       </ul>
       <div class="nav-actions">
-        <a class="nav-login" href="./login.html">Login</a>
+        <a class="nav-login" href="./login.html">Log in / Sign Up</a>
         <button class="mobile-menu-toggle" type="button" aria-expanded="false" aria-controls="mobile-menu" aria-label="Open navigation menu" data-mobile-menu-toggle>
           <span class="menu-stack" aria-hidden="true">
             <span class="menu-line"></span>
@@ -1999,7 +1986,6 @@ footer{
             <span class="menu-line"></span>
           </span>
         </button>
-        <a class="nav-cta" href="./admissions.html#apply-now">Apply for Early Access</a>
       </div>
     </div>
     <div class="mobile-menu" id="mobile-menu" hidden>
@@ -2057,7 +2043,7 @@ footer{
           </li>
         </ul>
         <div class="mobile-menu-cta">
-          <a class="nav-cta" href="./admissions.html#apply-now">Apply for Early Access</a>
+          <a class="nav-cta" href="./login.html">Log in / Sign Up</a>
         </div>
       </div>
     </div>
