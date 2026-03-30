@@ -733,7 +733,7 @@ async function handleBeaconSignup(request, response) {
     }
 
     const passwordHash = await hashSecret(password);
-    await upsertUser({
+    const persistedUser = await upsertUser({
       name,
       email,
       passwordHash,
@@ -742,15 +742,16 @@ async function handleBeaconSignup(request, response) {
       category,
       picture: "",
       provider: "beacon",
-      emailVerified: false,
-      createdAt: new Date().toISOString()
+      emailVerified: true,
+      createdAt: new Date().toISOString(),
+      lastLoginAt: new Date().toISOString()
     });
-
-    const otpCode = await createOtpRecord(email, "verify-email");
-    await sendOtpEmail(email, otpCode);
-
+    const sessionId = createSession(persistedUser);
     sendJson(response, 201, {
-      message: "Account created. We have sent an email OTP to verify your Beacon account."
+      message: "Beacon account created successfully.",
+      user: getPublicUser(persistedUser)
+    }, {
+      "Set-Cookie": createSessionCookie(request, sessionId)
     });
   } catch (error) {
     console.error("Beacon signup failed:", error);

@@ -46,7 +46,7 @@
 </head>
 <body>
   <div class="topbar"><div class="topbar-inner"><div class="topbar-links"><a href="./index.html">Home</a><a href="./admissions.html">Admissions</a><a href="./admin.html">Admin</a></div><div class="topbar-meta"><span>IIT Mandi Initiative</span></div></div></div>
-  <header class="mainnav"><div class="mainnav-inner"><a class="brand" href="./index.html"><div class="brand-mark" aria-hidden="true"><span class="brand-mark-top">iMBA</span><span class="brand-mark-bottom">Beacon</span></div><div class="brand-copy"><strong>IMBA Beacon</strong><span>Structured preparation inspired by institutional portals</span></div></a><nav class="page-links"><a href="./student.html">Dashboard</a><a href="./academics.html">Academics</a><a href="./about.html">About</a><a href="./updates.html">Updates</a><a href="./campus-life.html">Campus Life</a><a href="./admissions.html">Admissions</a></nav><a class="nav-cta" href="./student.html">Back to Dashboard</a></div></header>
+  <header class="mainnav"><div class="mainnav-inner"><a class="brand" href="./index.html"><div class="brand-mark" aria-hidden="true"><span class="brand-mark-top">iMBA</span><span class="brand-mark-bottom">Beacon</span></div><div class="brand-copy"><strong>IMBA Beacon</strong><span>Structured preparation inspired by institutional portals</span></div></a><nav class="page-links"><a href="./portal-home.html">Home</a><a href="./academics.html">Academics</a><a href="./about.html">About</a><a href="./updates.html">Updates</a><a href="./campus-life.html">Campus Life</a><a href="./admissions.html">Admissions</a></nav><a class="nav-cta" href="./portal-home.html">Student Home</a></div></header>
   <main class="login-shell">
     <section class="login-card">
       <div class="login-intro">
@@ -85,7 +85,7 @@
 
           <div class="tab-panel" data-panel="signup">
             <h2>Create your Beacon account</h2>
-            <p>Students without an account can sign up here, create a password, and submit their applicant details in the same first-time onboarding flow.</p>
+            <p>Create your account once and continue directly to your student home.</p>
             <form class="auth-form" id="signup-form">
               <input type="text" name="name" placeholder="Enter your full name" required/>
               <input type="email" name="email" placeholder="Enter your email address" required/>
@@ -107,14 +107,11 @@
                 <input type="password" name="password" placeholder="Create a password" required/>
                 <input type="password" name="confirmPassword" placeholder="Confirm password" required/>
               </div>
-              <input type="text" name="otp" placeholder="Enter email OTP after signup" inputmode="numeric" maxlength="6"/>
               <div class="inline-actions">
                 <button type="submit">Create Beacon Account</button>
-                <button class="auth-secondary" type="button" id="verify-signup-otp">Verify Signup OTP</button>
-                <button class="auth-secondary" type="button" id="resend-signup-otp">Resend OTP</button>
               </div>
             </form>
-            <div class="small-note">After sign up, an OTP will be sent to your email. Paste it here and click verify to activate your account.</div>
+            <div class="small-note">This account is for students who want to browse courses and manage their profile before purchasing any program.</div>
           </div>
         </section>
       </div>
@@ -141,8 +138,6 @@
     const tabPanels = Array.from(document.querySelectorAll("[data-panel]"));
     const passwordLoginForm = document.getElementById("password-login-form");
     const signupForm = document.getElementById("signup-form");
-    const verifySignupOtpButton = document.getElementById("verify-signup-otp");
-    const resendSignupOtpButton = document.getElementById("resend-signup-otp");
     let config = null;
     let user = null;
 
@@ -201,9 +196,9 @@
       }
       user = payload.user;
       syncUi();
-      setStatus(`Signed in as ${user.name}. Redirecting to your student profile...`, "success");
+      setStatus(`Signed in as ${user.name}. Redirecting to your student home...`, "success");
       window.setTimeout(() => {
-        window.location.href = "./student.html";
+        window.location.href = "./portal-home.html";
       }, 700);
     }
 
@@ -243,7 +238,7 @@
       syncUi();
       setStatus(payload.message || "Logged in successfully.", "success");
       window.setTimeout(() => {
-        window.location.href = "./student.html";
+        window.location.href = "./portal-home.html";
       }, 700);
     });
 
@@ -251,45 +246,17 @@
       event.preventDefault();
       const formData = new FormData(signupForm);
       const signupPayload = Object.fromEntries(formData.entries());
-      delete signupPayload.otp;
       const { response, payload } = await sendJsonRequest("/api/auth/signup", signupPayload);
       if (!response.ok) {
         setStatus(payload.message || "Unable to create account.", "error");
         return;
       }
-      setStatus(payload.message || "Account created successfully.", "success");
-    });
-
-    verifySignupOtpButton.addEventListener("click", async () => {
-      const email = signupForm.querySelector('input[name="email"]').value.trim();
-      const otp = signupForm.querySelector('input[name="otp"]').value.trim();
-      const { response, payload } = await sendJsonRequest("/api/auth/otp/verify", { email, otp });
-      if (!response.ok) {
-        setStatus(payload.message || "Unable to verify OTP.", "error");
-        return;
-      }
       user = payload.user;
       syncUi();
-      setStatus(payload.message || "OTP verified successfully.", "success");
+      setStatus(payload.message || "Account created successfully.", "success");
       window.setTimeout(() => {
-        window.location.href = "./student.html";
+        window.location.href = "./portal-home.html";
       }, 700);
-    });
-
-    resendSignupOtpButton.addEventListener("click", async () => {
-      const email = signupForm.querySelector('input[name="email"]').value.trim();
-      if (!email) {
-        setStatus("Enter your email address first so we can resend the OTP.", "error");
-        return;
-      }
-
-      const { response, payload } = await sendJsonRequest("/api/auth/otp/request", { email });
-      if (!response.ok) {
-        setStatus(payload.message || "Unable to resend OTP right now.", "error");
-        return;
-      }
-
-      setStatus(payload.message || "A fresh OTP has been sent to your email.", "success");
     });
 
     logoutButton.addEventListener("click", async () => {
