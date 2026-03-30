@@ -10,66 +10,74 @@
 <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Merriweather:wght@700&display=swap" rel="stylesheet"/>
 <link rel="stylesheet" href="./section-pages.css"/>
 <style>
-.student-shell{width:min(1180px,calc(100% - 2rem));margin:0 auto;padding:3rem 0 5rem}
-.student-hero{display:grid;grid-template-columns:1.15fr .85fr;gap:1.25rem;align-items:stretch;margin-bottom:1.5rem}
-.student-welcome{background:linear-gradient(135deg,var(--maroon),#4d1125);color:#fff;border-radius:30px;padding:2rem;box-shadow:var(--shadow);position:relative;overflow:hidden}
+.student-shell{width:min(1180px,calc(100% - 2rem));margin:0 auto;padding:2rem 0 3.5rem}
+.student-hero{display:grid;grid-template-columns:1.15fr .85fr;gap:1rem;align-items:stretch;margin-bottom:1rem}
+.student-welcome{background:linear-gradient(135deg,var(--maroon),#4d1125);color:#fff;border-radius:28px;padding:1.55rem;box-shadow:var(--shadow);position:relative;overflow:hidden}
 .student-welcome::after{content:"";position:absolute;inset:auto -120px -120px auto;width:260px;height:260px;border-radius:50%;background:radial-gradient(circle,rgba(255,255,255,.13),transparent 70%)}
-.student-welcome h1{font-family:"Merriweather",serif;font-size:clamp(2rem,4vw,3.3rem);line-height:1.08;margin:.8rem 0}
+.student-welcome h1{font-family:"Merriweather",serif;font-size:clamp(1.8rem,3.6vw,2.9rem);line-height:1.08;margin:.55rem 0}
 .student-welcome p{max-width:58ch;color:rgba(255,255,255,.82)}
-.student-badges{display:flex;gap:.7rem;flex-wrap:wrap;margin-top:1.3rem}
-.student-badge{padding:.6rem .95rem;border-radius:999px;background:rgba(255,255,255,.09);border:1px solid rgba(255,255,255,.12);font-weight:700;font-size:.88rem}
-.student-summary{background:#fff;border:1px solid rgba(106,31,54,.08);border-radius:30px;padding:1.5rem;box-shadow:0 16px 44px rgba(106,31,54,.08)}
-.summary-head{display:flex;align-items:center;justify-content:space-between;gap:1rem;margin-bottom:1.2rem}
+.student-badges{display:flex;gap:.6rem;flex-wrap:wrap;margin-top:1rem}
+.student-badge{padding:.52rem .82rem;border-radius:999px;background:rgba(255,255,255,.09);border:1px solid rgba(255,255,255,.12);font-weight:700;font-size:.82rem}
+.student-summary{background:#fff;border:1px solid rgba(106,31,54,.08);border-radius:28px;padding:1.2rem;box-shadow:0 16px 44px rgba(106,31,54,.08)}
+.summary-head{display:flex;align-items:center;justify-content:space-between;gap:1rem;margin-bottom:.9rem}
 .summary-head h2{font-size:1.05rem}
-.student-user{display:flex;align-items:center;gap:1rem}
-.student-avatar,.student-avatar-fallback{width:58px;height:58px;border-radius:18px;flex-shrink:0}
+.student-user{display:flex;align-items:center;gap:.85rem}
+.student-avatar,.student-avatar-fallback{width:54px;height:54px;border-radius:16px;flex-shrink:0}
 .student-avatar{object-fit:cover}
 .student-avatar-fallback{display:grid;place-items:center;background:linear-gradient(135deg,var(--gold-soft),var(--gold));color:var(--maroon);font-weight:800;font-size:1.2rem}
-.student-meta{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.9rem}
-.meta-card{background:var(--surface-alt);border:1px solid rgba(106,31,54,.08);border-radius:20px;padding:1rem}
+.student-meta{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.7rem}
+.meta-card{background:var(--surface-alt);border:1px solid rgba(106,31,54,.08);border-radius:18px;padding:.9rem}
 .meta-label{display:block;color:#8c6a1d;font-size:.72rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase;margin-bottom:.35rem}
 .meta-value{font-weight:700;color:var(--ink)}
-.student-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:1rem}
-.portal-card{background:#fff;border:1px solid rgba(106,31,54,.08);border-radius:24px;padding:1.35rem;box-shadow:0 12px 32px rgba(106,31,54,.06)}
+.student-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:.85rem}
+.portal-card{background:#fff;border:1px solid rgba(106,31,54,.08);border-radius:22px;padding:1.1rem;box-shadow:0 12px 32px rgba(106,31,54,.06)}
 .portal-card h3{font-size:1rem;margin-bottom:.55rem}
 .portal-card p{color:var(--muted);font-size:.92rem}
-.portal-list{list-style:none;display:grid;gap:.75rem;margin-top:1rem}
-.portal-list li{padding:.8rem .9rem;border-radius:16px;background:var(--surface-alt);border:1px solid rgba(106,31,54,.08)}
-.portal-actions{display:flex;gap:.8rem;flex-wrap:wrap;margin-top:1rem}
-.portal-link,.portal-secondary{display:inline-flex;align-items:center;justify-content:center;padding:.86rem 1.15rem;border-radius:999px;font-weight:800}
+.portal-list{list-style:none;display:grid;gap:.65rem;margin-top:.85rem}
+.portal-list li{padding:.72rem .82rem;border-radius:15px;background:var(--surface-alt);border:1px solid rgba(106,31,54,.08)}
+.portal-actions{display:flex;gap:.7rem;flex-wrap:wrap;margin-top:.9rem}
+.portal-link,.portal-secondary{display:inline-flex;align-items:center;justify-content:center;padding:.78rem 1rem;border-radius:999px;font-weight:800}
 .portal-link{background:linear-gradient(135deg,var(--gold-soft),var(--gold));color:var(--maroon)}
 .portal-secondary{background:rgba(106,31,54,.08);color:var(--maroon)}
-.student-section{margin-top:1.5rem}
-.section-grid-2{display:grid;grid-template-columns:1.1fr .9fr;gap:1rem}
-.status-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1rem}
-.status-tile{background:#fff;border:1px solid rgba(106,31,54,.08);border-radius:24px;padding:1.3rem;box-shadow:0 12px 32px rgba(106,31,54,.06)}
+.student-section{margin-top:1rem}
+.section-grid-2{display:grid;grid-template-columns:1.1fr .9fr;gap:.85rem}
+.status-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.85rem}
+.status-tile{background:#fff;border:1px solid rgba(106,31,54,.08);border-radius:22px;padding:1.1rem;box-shadow:0 12px 32px rgba(106,31,54,.06)}
 .status-tile h3{font-size:1rem;margin-bottom:.55rem}
 .status-chip{display:inline-flex;align-items:center;padding:.45rem .8rem;border-radius:999px;font-size:.78rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase}
 .status-chip.gold{background:rgba(201,162,75,.18);color:#8c6a1d}
 .status-chip.soft{background:rgba(106,31,54,.08);color:var(--maroon)}
 .status-note{color:var(--muted);font-size:.92rem;margin-top:.75rem}
-.schedule-list,.quiz-list{list-style:none;display:grid;gap:.9rem;margin-top:1rem}
-.schedule-item,.quiz-item{background:var(--surface-alt);border:1px solid rgba(106,31,54,.08);border-radius:20px;padding:1rem}
+.schedule-list,.quiz-list{list-style:none;display:grid;gap:.75rem;margin-top:.85rem}
+.schedule-item,.quiz-item{background:var(--surface-alt);border:1px solid rgba(106,31,54,.08);border-radius:18px;padding:.88rem}
 .schedule-item-head,.quiz-item-head{display:flex;align-items:flex-start;justify-content:space-between;gap:1rem}
 .schedule-title,.quiz-title{font-weight:800;color:var(--ink)}
 .schedule-meta,.quiz-meta{font-size:.88rem;color:var(--muted);margin-top:.25rem}
 .schedule-tag,.quiz-tag{display:inline-flex;align-items:center;padding:.36rem .7rem;border-radius:999px;font-size:.72rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase}
 .schedule-tag{background:rgba(201,162,75,.18);color:#8c6a1d}
 .quiz-tag{background:rgba(106,31,54,.08);color:var(--maroon)}
-.progress-card{background:linear-gradient(180deg,#fff,#fbf6f7);border:1px solid rgba(106,31,54,.08);border-radius:24px;padding:1.35rem;box-shadow:0 12px 32px rgba(106,31,54,.06)}
-.progress-overview{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:.9rem;margin-top:1rem}
-.progress-stat{padding:1rem;border-radius:18px;background:var(--surface-alt);border:1px solid rgba(106,31,54,.08)}
+.progress-card{background:linear-gradient(180deg,#fff,#fbf6f7);border:1px solid rgba(106,31,54,.08);border-radius:22px;padding:1.1rem;box-shadow:0 12px 32px rgba(106,31,54,.06)}
+.progress-overview{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:.75rem;margin-top:.85rem}
+.progress-stat{padding:.85rem;border-radius:16px;background:var(--surface-alt);border:1px solid rgba(106,31,54,.08)}
 .progress-stat strong{display:block;font-size:1.5rem;color:var(--maroon);font-family:"Merriweather",serif}
-.tracker-list{list-style:none;display:grid;gap:.85rem;margin-top:1rem}
+.tracker-list{list-style:none;display:grid;gap:.75rem;margin-top:.85rem}
 .tracker-item{display:grid;gap:.45rem}
 .tracker-row{display:flex;align-items:center;justify-content:space-between;gap:1rem}
 .tracker-label{font-weight:700}
 .tracker-bar{height:10px;border-radius:999px;background:rgba(106,31,54,.08);overflow:hidden}
 .tracker-fill{height:100%;border-radius:999px;background:linear-gradient(135deg,var(--gold-soft),var(--gold))}
-.student-status{min-height:1.5rem;color:var(--muted);margin-top:1rem}
+.student-status{min-height:1.5rem;color:var(--muted);margin-top:.75rem}
 .student-status.error{color:#b33d4b}
 @media (max-width:980px){
   .student-hero,.student-grid,.section-grid-2,.status-grid,.progress-overview{grid-template-columns:1fr}
+}
+@media (max-width:720px){
+  .student-shell{padding:1.35rem 0 2.4rem}
+  .student-welcome,.student-summary,.portal-card,.progress-card,.status-tile{padding:1rem}
+  .student-welcome h1{font-size:clamp(1.6rem,8vw,2.2rem)}
+  .student-badges{margin-top:.8rem}
+  .portal-actions{flex-direction:column}
+  .portal-link,.portal-secondary{width:100%}
 }
 </style>
 </head>
