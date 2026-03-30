@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Premium Dashboard | IMBA Beacon</title>
+<title>Student Dashboard | IMBA Beacon</title>
 <script src="./site-config.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
@@ -13,28 +13,28 @@
 body{
   min-height:100vh;
   background:
-    radial-gradient(circle at top left, rgba(106,31,54,.14), transparent 26%),
-    linear-gradient(180deg,#eff4f9 0%,#e8eef5 100%);
+    radial-gradient(circle at top left, rgba(106,31,54,.16), transparent 26%),
+    linear-gradient(180deg,#eef2f7 0%,#e8edf4 100%);
   color:#203248;
 }
 .student-shell{
-  width:min(1460px,calc(100% - 1.5rem));
-  margin:.75rem auto;
+  width:min(1380px,calc(100% - 1.4rem));
+  margin:.8rem auto;
 }
 .student-app{
   display:grid;
-  grid-template-columns:220px minmax(0,1fr);
-  min-height:calc(100vh - 1.5rem);
-  background:#f9fbfd;
+  grid-template-columns:228px minmax(0,1fr);
+  min-height:calc(100vh - 1.6rem);
+  background:#fbfdff;
   border:1px solid rgba(31,55,82,.08);
   border-radius:28px;
   overflow:hidden;
   box-shadow:0 24px 60px rgba(23,37,63,.12);
 }
 .student-sidebar{
-  background:linear-gradient(180deg,#111825 0%,#0f1622 100%);
+  background:linear-gradient(180deg,#151b29 0%,#101724 100%);
   color:#fff;
-  padding:1rem .9rem;
+  padding:1rem .95rem;
   display:flex;
   flex-direction:column;
   gap:1rem;
@@ -43,7 +43,7 @@ body{
   display:flex;
   align-items:center;
   gap:.8rem;
-  padding:.4rem .35rem 1rem;
+  padding:.35rem .35rem 1rem;
   border-bottom:1px solid rgba(255,255,255,.08);
 }
 .sidebar-brand-badge{
@@ -59,12 +59,12 @@ body{
 }
 .sidebar-brand-copy strong{
   display:block;
-  font-size:.98rem;
+  font-size:1rem;
 }
 .sidebar-brand-copy span{
   display:block;
   color:rgba(255,255,255,.56);
-  font-size:.76rem;
+  font-size:.77rem;
 }
 .sidebar-nav{
   display:grid;
@@ -80,8 +80,8 @@ body{
   font-weight:700;
 }
 .sidebar-link.active{
-  background:linear-gradient(135deg,rgba(57,126,221,.24),rgba(34,101,191,.16));
-  box-shadow:inset 0 0 0 1px rgba(116,173,255,.16);
+  background:linear-gradient(135deg,rgba(106,31,54,.46),rgba(67,18,32,.88));
+  box-shadow:inset 0 0 0 1px rgba(227,198,128,.12);
   color:#fff;
 }
 .sidebar-link:hover{
@@ -100,14 +100,11 @@ body{
 }
 .sidebar-foot{
   margin-top:auto;
-  display:flex;
-  gap:.8rem;
-  flex-wrap:wrap;
+  display:grid;
+  gap:.55rem;
   padding:.2rem .3rem 0;
-}
-.sidebar-mini{
-  font-size:.76rem;
   color:rgba(255,255,255,.48);
+  font-size:.78rem;
 }
 .student-main{
   padding:1rem;
@@ -120,123 +117,91 @@ body{
   background:#fff;
   border:1px solid rgba(31,55,82,.08);
   border-radius:20px;
-  padding:.95rem 1rem;
+  padding:1rem 1.05rem;
   box-shadow:0 10px 30px rgba(31,55,82,.06);
 }
 .topbar-title h1{
-  font-size:1.7rem;
+  font-size:1.75rem;
   line-height:1.05;
   margin-bottom:.15rem;
 }
 .topbar-title p{
   color:#738399;
-  font-size:.9rem;
+  font-size:.92rem;
 }
 .topbar-tools{
   display:flex;
   align-items:center;
   gap:.7rem;
 }
-.search-shell{
-  display:flex;
+.profile-chip,
+.logout-btn{
+  display:inline-flex;
   align-items:center;
-  gap:.55rem;
-  min-width:240px;
-  padding:.72rem .9rem;
-  border-radius:14px;
-  border:1px solid rgba(31,55,82,.1);
-  background:#f6f9fd;
+  justify-content:center;
+  border-radius:999px;
+  font-weight:800;
 }
-.search-shell input{
-  border:none;
-  outline:none;
-  background:transparent;
-  font:inherit;
-  width:100%;
+.profile-chip{
+  padding:.46rem .82rem;
+  background:rgba(106,31,54,.08);
+  color:var(--maroon);
+  font-size:.8rem;
 }
-.tool-btn,
-.avatar-chip{
-  width:42px;
-  height:42px;
-  border-radius:14px;
+.logout-btn{
+  padding:.82rem 1rem;
   border:1px solid rgba(31,55,82,.1);
   background:#fff;
-  display:grid;
-  place-items:center;
-  color:#5b6d84;
-}
-.tool-btn{
+  color:#586b82;
   cursor:pointer;
-}
-.avatar-chip{
-  overflow:hidden;
-}
-.avatar-chip img{
-  width:100%;
-  height:100%;
-  object-fit:cover;
-}
-.avatar-fallback{
-  font-weight:800;
-  color:var(--maroon);
 }
 .dashboard-grid{
   display:grid;
-  grid-template-columns:repeat(12,minmax(0,1fr));
+  grid-template-columns:1.05fr .95fr;
   gap:1rem;
   margin-top:1rem;
 }
-.col-4{grid-column:span 4;}
-.col-6{grid-column:span 6;}
-.col-8{grid-column:span 8;}
+.stack{
+  display:grid;
+  gap:1rem;
+}
 .card{
   background:#fff;
   border:1px solid rgba(31,55,82,.08);
-  border-radius:20px;
-  padding:1rem;
+  border-radius:22px;
+  padding:1.1rem;
   box-shadow:0 12px 28px rgba(31,55,82,.06);
 }
-.card-head{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:1rem;
-  margin-bottom:.7rem;
-}
-.card h3{
-  font-size:1rem;
-}
 .welcome-card{
-  min-height:178px;
   color:#fff;
   background:
     radial-gradient(circle at top right, rgba(255,255,255,.16), transparent 30%),
-    linear-gradient(135deg,#8f4dd7 0%,#2f73c9 52%,#23bb87 100%);
+    linear-gradient(135deg,#7f3858 0%,#5b1830 56%,#c29643 100%);
 }
-.welcome-label{
+.welcome-top{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:1rem;
+}
+.welcome-label,
+.locked-tag{
   display:inline-flex;
   align-items:center;
-  padding:.38rem .72rem;
+  padding:.4rem .75rem;
   border-radius:999px;
-  background:rgba(255,255,255,.16);
   font-size:.74rem;
   font-weight:800;
   letter-spacing:.08em;
   text-transform:uppercase;
 }
-.welcome-meta{
-  display:flex;
-  justify-content:space-between;
-  gap:1rem;
-  align-items:flex-start;
+.welcome-label{
+  background:rgba(255,255,255,.14);
 }
-.welcome-chip{
-  padding:.4rem .7rem;
-  border-radius:999px;
-  background:rgba(255,255,255,.16);
-  font-size:.76rem;
-  font-weight:800;
-  white-space:nowrap;
+.welcome-top p{
+  color:rgba(255,255,255,.84);
+  margin-top:.55rem;
+  max-width:32rem;
 }
 .welcome-profile{
   display:flex;
@@ -244,200 +209,199 @@ body{
   gap:1rem;
   margin-top:1rem;
 }
-.welcome-avatar,
-.welcome-avatar-fallback{
+.avatar,
+.avatar-fallback{
   width:76px;
   height:76px;
   border-radius:22px;
-  border:2px solid rgba(255,255,255,.28);
-  background:rgba(255,255,255,.18);
-  flex:0 0 auto;
-}
-.welcome-avatar{
+  border:2px solid rgba(255,255,255,.2);
+  background:rgba(255,255,255,.14);
   object-fit:cover;
 }
-.welcome-avatar-fallback{
+.avatar-fallback{
   display:grid;
   place-items:center;
   font-weight:800;
-  font-size:1.35rem;
+  font-size:1.3rem;
 }
 .welcome-name{
   font-family:"Merriweather",serif;
   font-size:2rem;
   line-height:1;
 }
-.welcome-copy{
-  color:rgba(255,255,255,.84);
+.welcome-email{
+  color:rgba(255,255,255,.82);
   margin-top:.35rem;
-  max-width:32ch;
 }
 .welcome-stats{
   display:grid;
   grid-template-columns:repeat(3,minmax(0,1fr));
-  gap:.7rem;
+  gap:.75rem;
   margin-top:1rem;
 }
 .welcome-stat{
+  padding:.8rem .85rem;
+  border-radius:16px;
   background:rgba(255,255,255,.1);
-  border-radius:14px;
-  padding:.72rem .8rem;
 }
 .welcome-stat strong{
   display:block;
-  font-size:1.08rem;
+  font-size:1.02rem;
 }
 .welcome-stat span{
   display:block;
-  color:rgba(255,255,255,.74);
+  color:rgba(255,255,255,.72);
   font-size:.76rem;
   margin-top:.15rem;
 }
-.class-list{
-  display:grid;
-  gap:.55rem;
-}
-.class-row{
-  display:grid;
-  grid-template-columns:62px 70px 1fr;
-  gap:.65rem;
-  padding:.68rem .8rem;
-  border-radius:14px;
-  background:#f5f8fc;
-  border:1px solid rgba(31,55,82,.06);
-  font-size:.88rem;
-}
-.status-timeline,
-.list-stack{
-  list-style:none;
-  display:grid;
-  gap:.6rem;
-}
-.timeline-item,
-.list-item{
-  padding:.72rem .8rem;
-  border-radius:14px;
-  background:#f7faff;
-  border:1px solid rgba(31,55,82,.08);
-}
-.chip-row{
+.card-head{
   display:flex;
-  flex-wrap:wrap;
-  gap:.5rem;
-  margin-top:.65rem;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:1rem;
+  margin-bottom:.8rem;
 }
-.chip{
-  display:inline-flex;
-  align-items:center;
-  padding:.34rem .65rem;
-  border-radius:999px;
-  font-size:.72rem;
-  font-weight:800;
+.card-head h2{
+  font-size:1.05rem;
 }
-.chip.blue{background:#e0ecfd;color:#2c66b2;}
-.chip.green{background:#dff5eb;color:#1d915d;}
-.chip.gray{background:#eef2f6;color:#65788f;}
-.metric-grid{
+.card-head p{
+  color:#738399;
+  font-size:.88rem;
+  margin-top:.2rem;
+}
+.profile-grid{
+  display:grid;
+  gap:.7rem;
+}
+.profile-row{
+  display:flex;
+  justify-content:space-between;
+  gap:1rem;
+  padding:.82rem .92rem;
+  border-radius:16px;
+  background:#f7faff;
+  border:1px solid rgba(31,55,82,.06);
+}
+.profile-row span{
+  color:#74859b;
+}
+.profile-row strong{
+  text-align:right;
+}
+.feature-grid{
   display:grid;
   grid-template-columns:repeat(2,minmax(0,1fr));
   gap:1rem;
 }
-.metric-card{
+.feature-card{
+  position:relative;
+  min-height:194px;
+  overflow:hidden;
+}
+.locked-tag{
+  background:rgba(201,162,75,.14);
+  color:#8f6512;
+}
+.feature-card::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:linear-gradient(180deg,rgba(255,255,255,.08),rgba(244,247,251,.72));
+  pointer-events:none;
+}
+.feature-card h3{
+  font-size:1.02rem;
+  margin-bottom:.35rem;
+}
+.feature-card p{
+  color:#738399;
+  font-size:.9rem;
+  line-height:1.65;
+  max-width:30ch;
+}
+.lock-glyph{
+  width:48px;
+  height:48px;
+  border-radius:16px;
+  display:grid;
+  place-items:center;
+  background:linear-gradient(135deg,rgba(106,31,54,.12),rgba(201,162,75,.16));
+  color:var(--maroon);
+  font-size:1.15rem;
+  margin-bottom:.9rem;
+}
+.feature-card > *{
+  position:relative;
+  z-index:1;
+}
+.feature-actions{
   display:flex;
-  flex-direction:column;
-  gap:.6rem;
+  gap:.7rem;
+  flex-wrap:wrap;
+  margin-top:1rem;
 }
-.donut-wrap{
-  --track:#e7edf5;
-  width:132px;
-  height:132px;
-  margin:.25rem auto;
-  border-radius:50%;
-  background:conic-gradient(#3279d5 var(--value), var(--track) 0);
-  display:grid;
-  place-items:center;
-}
-.donut-wrap.green{
-  background:conic-gradient(#2fb47c var(--value), var(--track) 0);
-}
-.donut-inner{
-  width:96px;
-  height:96px;
-  border-radius:50%;
-  background:#fff;
-  display:grid;
-  place-items:center;
-  font-size:1.65rem;
-  font-weight:800;
-  color:#203248;
-}
-.small-caption{
-  color:#74849a;
-  font-size:.84rem;
-}
-.action-stack{
-  display:grid;
-  gap:.6rem;
-  margin-top:.8rem;
-}
-.action-btn{
+.lock-btn,
+.view-btn{
   display:inline-flex;
   align-items:center;
   justify-content:center;
-  padding:.82rem 1rem;
+  padding:.86rem 1rem;
   border-radius:14px;
   font-weight:800;
+  cursor:pointer;
 }
-.action-btn.primary{background:#3279d5;color:#fff;}
-.action-btn.secondary{background:#eaf2fd;color:#2d67b5;}
-.action-btn.ghost{background:#f4f7fb;color:#44576d;}
-.summary-list{
-  list-style:none;
-  display:grid;
-  gap:.55rem;
-  margin-top:.8rem;
+.lock-btn{
+  background:linear-gradient(135deg,var(--gold-soft),var(--gold));
+  color:var(--maroon);
+  border:none;
 }
-.summary-item{
-  display:flex;
-  justify-content:space-between;
-  gap:1rem;
-  padding:.68rem .78rem;
-  border-radius:14px;
-  background:#f7faff;
+.view-btn{
+  background:#f3f6fa;
+  color:#51657d;
   border:1px solid rgba(31,55,82,.08);
 }
-.summary-item span{color:#77869b;font-size:.86rem;}
-.summary-item strong{color:#22384f;}
+.helper-note{
+  margin-top:1rem;
+  padding:1rem 1.05rem;
+  border-radius:18px;
+  background:linear-gradient(135deg,rgba(106,31,54,.08),rgba(201,162,75,.12));
+  border:1px solid rgba(106,31,54,.08);
+}
+.helper-note h3{
+  font-size:1rem;
+  margin-bottom:.35rem;
+}
+.helper-note p{
+  color:#6d5c62;
+  font-size:.92rem;
+}
 .student-status{
-  min-height:1.4rem;
+  min-height:1.5rem;
   color:#738399;
-  margin-top:.8rem;
+  margin-top:.9rem;
 }
 .student-status.error{
   color:#b33d4b;
 }
-@media (max-width:1260px){
-  .col-8,.col-6,.col-4{grid-column:span 6;}
-  .welcome-card{grid-column:span 12;}
+.student-status.success{
+  color:#8a6710;
 }
-@media (max-width:980px){
-  .student-app{grid-template-columns:1fr;}
-  .student-sidebar{
-    padding-bottom:.8rem;
-  }
-  .dashboard-grid,
-  .metric-grid{
+@media (max-width:1080px){
+  .dashboard-grid,.feature-grid{
     grid-template-columns:1fr;
   }
-  .col-8,.col-6,.col-4,.welcome-card{
-    grid-column:span 12;
+}
+@media (max-width:980px){
+  .student-app{
+    grid-template-columns:1fr;
   }
   .topbar-shell{
     flex-direction:column;
-    align-items:stretch;
+    align-items:flex-start;
   }
-  .search-shell{
-    min-width:0;
+  .topbar-tools{
+    width:100%;
+    justify-content:flex-start;
   }
 }
 @media (max-width:720px){
@@ -448,18 +412,8 @@ body{
   .student-main{
     padding:.75rem;
   }
-  .topbar-tools{
-    width:100%;
-    justify-content:space-between;
-  }
-  .welcome-profile{
-    align-items:flex-start;
-  }
   .welcome-stats{
     grid-template-columns:1fr 1fr;
-  }
-  .class-row{
-    grid-template-columns:1fr;
   }
 }
 </style>
@@ -477,163 +431,158 @@ body{
         </div>
         <nav class="sidebar-nav">
           <a class="sidebar-link active" href="./student.html"><span class="sidebar-icon">■</span><span>Dashboard</span></a>
-          <a class="sidebar-link" href="./admissions.html"><span class="sidebar-icon">●</span><span>Profile</span></a>
-          <a class="sidebar-link" href="./academics.html"><span class="sidebar-icon">▲</span><span>Courses</span></a>
-          <a class="sidebar-link" href="./updates.html"><span class="sidebar-icon">◆</span><span>Timeline</span></a>
+          <a class="sidebar-link" href="#profile"><span class="sidebar-icon">●</span><span>Profile</span></a>
+          <a class="sidebar-link" href="#courses"><span class="sidebar-icon">▲</span><span>Courses</span></a>
           <a class="sidebar-link" href="./contact.html"><span class="sidebar-icon">?</span><span>Support</span></a>
         </nav>
         <div class="sidebar-foot">
-          <div class="sidebar-mini">Privacy</div>
-          <div class="sidebar-mini">Terms</div>
-          <div class="sidebar-mini">Help</div>
+          <div>All students see one dashboard.</div>
+          <div>Paid students unlock premium features.</div>
         </div>
       </aside>
+
       <main class="student-main">
         <div class="topbar-shell">
           <div class="topbar-title">
-            <h1>Premium Dashboard</h1>
-            <p>This dashboard is intended for students who have already purchased an IMBA Beacon course.</p>
+            <h1>Dashboard</h1>
+            <p>Profile details stay visible, while premium features unlock after course purchase.</p>
           </div>
           <div class="topbar-tools">
-            <label class="search-shell">
-              <span>⌕</span>
-              <input type="text" placeholder="Search..."/>
-            </label>
-            <button class="tool-btn" type="button" aria-label="Apps">▦</button>
-            <button class="tool-btn" type="button" aria-label="Alerts">◔</button>
-            <button class="tool-btn" id="logout-btn" type="button" aria-label="Logout">⇥</button>
-            <div class="avatar-chip">
-              <img id="student-avatar" alt="Student avatar" hidden/>
-              <div class="avatar-fallback" id="student-avatar-fallback">IB</div>
-            </div>
+            <span class="profile-chip" id="account-chip">Beacon Account</span>
+            <button class="logout-btn" id="logout-btn" type="button">Logout</button>
           </div>
         </div>
 
         <section class="dashboard-grid">
-          <article class="card welcome-card col-4">
-            <div class="welcome-meta">
-              <div>
-                <span class="welcome-label">Welcome</span>
-                <p class="welcome-copy" id="welcome-copy">Your student dashboard is ready.</p>
+          <div class="stack">
+            <article class="card welcome-card">
+              <div class="welcome-top">
+                <div>
+                  <span class="welcome-label">Student Access</span>
+                  <p id="welcome-copy">Your IMBA Beacon account is active. Explore courses, keep your profile ready, and unlock premium tools after purchase.</p>
+                </div>
+                <span class="welcome-label" id="account-state">Not Purchased</span>
               </div>
-              <span class="welcome-chip" id="badge-provider">Beacon Account</span>
-            </div>
-            <div class="welcome-profile">
-              <img class="welcome-avatar" id="welcome-avatar" alt="Student avatar" hidden/>
-              <div class="welcome-avatar-fallback" id="welcome-avatar-fallback">IB</div>
-              <div>
-                <div class="welcome-name" id="student-name">ARYAN</div>
-                <div class="welcome-copy" id="student-email">student@example.com</div>
+              <div class="welcome-profile">
+                <img class="avatar" id="student-avatar" alt="Student avatar" hidden/>
+                <div class="avatar-fallback" id="student-avatar-fallback">IB</div>
+                <div>
+                  <div class="welcome-name" id="student-name">Student</div>
+                  <div class="welcome-email" id="student-email">student@example.com</div>
+                </div>
               </div>
-            </div>
-            <div class="welcome-stats">
-              <div class="welcome-stat">
-                <strong id="student-category">General</strong>
-                <span>Category</span>
+              <div class="welcome-stats">
+                <div class="welcome-stat">
+                  <strong id="student-category">General</strong>
+                  <span>Category</span>
+                </div>
+                <div class="welcome-stat">
+                  <strong id="student-created">Recently</strong>
+                  <span>Joined</span>
+                </div>
+                <div class="welcome-stat">
+                  <strong>Locked</strong>
+                  <span>Premium tools</span>
+                </div>
               </div>
-              <div class="welcome-stat">
-                <strong id="student-created">30 Mar</strong>
-                <span>Joined</span>
+            </article>
+
+            <article class="card" id="courses">
+              <div class="card-head">
+                <div>
+                  <h2>Available Courses</h2>
+                  <p>These are the preparation options currently visible on your dashboard.</p>
+                </div>
               </div>
-              <div class="welcome-stat">
-                <strong id="readiness-score">42%</strong>
-                <span>Preparation</span>
+              <div class="feature-grid">
+                <div class="feature-card card">
+                  <div class="lock-glyph">01</div>
+                  <h3>Basic Course</h3>
+                  <p>Essential IMBA interview preparation with mock interviews, quizzes, practice sheets, and communication support.</p>
+                  <div class="feature-actions">
+                    <button class="lock-btn" type="button" data-locked-action>Purchase your course</button>
+                  </div>
+                </div>
+                <div class="feature-card card">
+                  <div class="lock-glyph">02</div>
+                  <h3>Pro Course</h3>
+                  <p>Deeper support with more mocks, more guided sessions, interaction rounds, and stronger mentoring coverage.</p>
+                  <div class="feature-actions">
+                    <button class="lock-btn" type="button" data-locked-action>Purchase your course</button>
+                  </div>
+                </div>
               </div>
-            </div>
-          </article>
+            </article>
+          </div>
 
-          <article class="card col-4">
-            <div class="card-head">
-              <h3>Upcoming Classes</h3>
-              <span class="chip gray">Schedule</span>
-            </div>
-            <div class="class-list">
-              <div class="class-row"><strong>Mar 30</strong><span>06:00 PM</span><span>Intro to IMBA Interview Prep</span></div>
-              <div class="class-row"><strong>Apr 02</strong><span>07:00 PM</span><span>Behavioral Q&amp;A Deep Dive</span></div>
-              <div class="class-row"><strong>Apr 05</strong><span>05:30 PM</span><span>STAR Framework Practice Lab</span></div>
-            </div>
-          </article>
+          <div class="stack">
+            <article class="card" id="profile">
+              <div class="card-head">
+                <div>
+                  <h2>Your Profile</h2>
+                  <p>These are the details you filled while creating your Beacon account.</p>
+                </div>
+              </div>
+              <div class="profile-grid">
+                <div class="profile-row"><span>Full Name</span><strong id="profile-name">Student</strong></div>
+                <div class="profile-row"><span>Email</span><strong id="profile-email">student@example.com</strong></div>
+                <div class="profile-row"><span>Phone</span><strong id="profile-phone">Not provided</strong></div>
+                <div class="profile-row"><span>School Percentile</span><strong id="profile-percentile">Not provided</strong></div>
+                <div class="profile-row"><span>Category</span><strong id="profile-category">Not provided</strong></div>
+                <div class="profile-row"><span>Account Type</span><strong id="profile-provider">Beacon Account</strong></div>
+              </div>
+            </article>
 
-          <article class="card col-4">
-            <div class="card-head">
-              <h3>Application Status</h3>
-              <span class="chip blue" id="badge-verified">Pending</span>
-            </div>
-            <ul class="status-timeline">
-              <li class="timeline-item" id="verification-item">Application profile created.</li>
-              <li class="timeline-item" id="provider-item">Sign-in method will appear here.</li>
-              <li class="timeline-item" id="login-item">Latest activity will appear here after sign-in.</li>
-            </ul>
-          </article>
-
-          <article class="card col-4 metric-card">
-            <h3>Profile Completion</h3>
-            <div class="donut-wrap" id="profile-donut" style="--value:60%">
-              <div class="donut-inner" id="profile-progress-label">60%</div>
-            </div>
-            <p class="small-caption">Keep your applicant profile complete for smoother onboarding and mentor allocation.</p>
-          </article>
-
-          <article class="card col-4 metric-card">
-            <h3>Preparation Readiness</h3>
-            <div class="donut-wrap green" id="readiness-donut" style="--value:42%">
-              <div class="donut-inner" id="readiness-donut-label">42%</div>
-            </div>
-            <p class="small-caption">A compact readiness indicator based on your current profile and preparation status.</p>
-          </article>
-
-          <article class="card col-4">
-            <h3>Preparation Status</h3>
-            <div class="chip-row">
-              <span class="chip blue" id="pack-chip">Pack Pending</span>
-              <span class="chip green" id="mentor-chip">Mentor Queue</span>
-              <span class="chip gray">Forms</span>
-              <span class="chip blue">Schedule</span>
-              <span class="chip green">Profile</span>
-              <span class="chip gray">Quizzes</span>
-            </div>
-            <p class="small-caption" id="pack-note" style="margin-top:.8rem">Your selected preparation pack will appear here once onboarding is finalized.</p>
-            <p class="small-caption" id="mentor-note" style="margin-top:.4rem">Mentor allocation status will update after verification.</p>
-          </article>
-
-          <article class="card col-4">
-            <h3>Profile Controls</h3>
-            <div class="action-stack">
-              <a class="action-btn primary" href="./admissions.html">Update Profile</a>
-              <a class="action-btn secondary" href="./academics.html">View Courses</a>
-              <a class="action-btn ghost" href="./contact.html">Talk to Support</a>
-            </div>
-            <ul class="summary-list">
-              <li class="summary-item"><span>Phone</span><strong id="student-phone">Not added</strong></li>
-              <li class="summary-item"><span>School Percentile</span><strong id="student-percentile">Pending</strong></li>
-              <li class="summary-item"><span>Email</span><strong id="summary-email">student@example.com</strong></li>
-            </ul>
-          </article>
-
-          <article class="card col-4">
-            <div class="card-head">
-              <h3>Activity Timeline</h3>
-              <span class="chip gray">Filter</span>
-            </div>
-            <ul class="list-stack">
-              <li class="list-item">Interview log created after account activation.</li>
-              <li class="list-item">Class attendance markers will appear here as sessions begin.</li>
-              <li class="list-item">Quiz completions and milestones will be recorded in sequence.</li>
-            </ul>
-          </article>
-
-          <article class="card col-4">
-            <div class="card-head">
-              <h3>Logs &amp; Checks</h3>
-              <span class="chip blue">Checks</span>
-            </div>
-            <ul class="list-stack">
-              <li class="list-item">Checklist and onboarding details will appear here.</li>
-              <li class="list-item">Application verification checkpoints will be tracked here.</li>
-              <li class="list-item">Preparation documents and support notes can be added later.</li>
-            </ul>
-          </article>
+            <article class="card">
+              <div class="card-head">
+                <div>
+                  <h2>Premium Features</h2>
+                  <p>These tools stay visible, but they unlock only after course purchase.</p>
+                </div>
+                <span class="locked-tag">Locked</span>
+              </div>
+              <div class="feature-grid">
+                <div class="feature-card">
+                  <div class="lock-glyph">⌕</div>
+                  <h3>Classes &amp; Schedule</h3>
+                  <p>See live classes, session calendar, and preparation schedule after enrolling in a course.</p>
+                  <div class="feature-actions">
+                    <button class="lock-btn" type="button" data-locked-action>Purchase your course</button>
+                  </div>
+                </div>
+                <div class="feature-card">
+                  <div class="lock-glyph">M</div>
+                  <h3>Mentor Access</h3>
+                  <p>Mentor assignment, interaction windows, and guidance status unlock after your plan is active.</p>
+                  <div class="feature-actions">
+                    <button class="lock-btn" type="button" data-locked-action>Purchase your course</button>
+                  </div>
+                </div>
+                <div class="feature-card">
+                  <div class="lock-glyph">%</div>
+                  <h3>Progress Tracker</h3>
+                  <p>Track your preparation milestones, completion status, and interview readiness once enrolled.</p>
+                  <div class="feature-actions">
+                    <button class="lock-btn" type="button" data-locked-action>Purchase your course</button>
+                  </div>
+                </div>
+                <div class="feature-card">
+                  <div class="lock-glyph">Q</div>
+                  <h3>Quiz Center</h3>
+                  <p>Practice quizzes, assessments, and improvement logs become available after course purchase.</p>
+                  <div class="feature-actions">
+                    <button class="lock-btn" type="button" data-locked-action>Purchase your course</button>
+                  </div>
+                </div>
+              </div>
+              <div class="helper-note">
+                <h3>Unlock the full experience</h3>
+                <p>Purchase your IMBA Beacon course to unlock classes, mentor support, quizzes, schedule, and detailed progress tools from the same dashboard.</p>
+              </div>
+            </article>
+          </div>
         </section>
+
         <p class="student-status" id="student-status" aria-live="polite"></p>
       </main>
     </div>
@@ -643,6 +592,7 @@ body{
     const apiBase = (window.IMBA_SITE_CONFIG && window.IMBA_SITE_CONFIG.apiBaseUrl) || "";
     const statusNode = document.getElementById("student-status");
     const logoutButton = document.getElementById("logout-btn");
+    const lockedButtons = Array.from(document.querySelectorAll("[data-locked-action]"));
 
     function setStatus(message, type) {
       statusNode.textContent = message;
@@ -656,79 +606,30 @@ body{
       return date.toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" });
     }
 
-    function formatDateTime(value) {
-      if (!value) return "This is your current active session.";
-      const date = new Date(value);
-      if (Number.isNaN(date.getTime())) return "This is your current active session.";
-      return `Latest sign-in recorded on ${date.toLocaleString("en-IN", { dateStyle: "medium", timeStyle: "short" })}.`;
-    }
-
     function renderUser(user) {
-      const hasApplicantProfile = Boolean(user.phone && user.category && user.schoolPercentile !== null && user.schoolPercentile !== undefined);
-      const inferredPack = user.schoolPercentile !== null && user.schoolPercentile !== undefined && Number(user.schoolPercentile) >= 85 ? "Pro Recommended" : "Basic Recommended";
-      const readinessScore = hasApplicantProfile ? 68 : 42;
-      const profileCompletion = hasApplicantProfile ? 100 : 60;
-
-      document.getElementById("welcome-copy").textContent = user.emailVerified
-        ? "Your Beacon account is active. Use this dashboard to move between admissions, academics, and support without losing track of your profile."
-        : "Your account has been created, but email verification is still pending. Complete verification to unlock a smoother student experience.";
-
-      document.getElementById("badge-provider").textContent = user.provider === "google" ? "Google Account" : "Beacon Account";
-      document.getElementById("badge-verified").textContent = user.emailVerified ? "Verified" : "Pending";
       document.getElementById("student-name").textContent = user.name || "Student";
       document.getElementById("student-email").textContent = user.email || "";
-      document.getElementById("summary-email").textContent = user.email || "";
-      document.getElementById("student-phone").textContent = user.phone || "Not added";
-      document.getElementById("student-category").textContent = user.category || "To be completed";
-      document.getElementById("student-percentile").textContent = user.schoolPercentile !== null && user.schoolPercentile !== undefined
-        ? `${user.schoolPercentile}%`
-        : "Pending";
+      document.getElementById("student-category").textContent = user.category || "Not provided";
       document.getElementById("student-created").textContent = formatDate(user.createdAt);
-      document.getElementById("readiness-score").textContent = `${readinessScore}%`;
-      document.getElementById("readiness-donut-label").textContent = `${readinessScore}%`;
-      document.getElementById("profile-progress-label").textContent = `${profileCompletion}%`;
-      document.getElementById("profile-donut").style.setProperty("--value", `${profileCompletion}%`);
-      document.getElementById("readiness-donut").style.setProperty("--value", `${readinessScore}%`);
-      document.getElementById("pack-chip").textContent = hasApplicantProfile ? inferredPack : "Pack Not Selected";
-      document.getElementById("pack-note").textContent = hasApplicantProfile
-        ? `Based on your current profile, ${inferredPack.toLowerCase()} is the best starting point. Final selection can be confirmed with the Beacon team.`
-        : "You have not selected a preparation pack yet. Review `Basic` and `Pro` to decide the level of support you want.";
-      document.getElementById("mentor-chip").textContent = user.emailVerified ? "Assignment In Queue" : "Awaiting Assignment";
-      document.getElementById("mentor-note").textContent = user.emailVerified
-        ? "Your account is verified. A mentor can be assigned once your onboarding and pack selection are confirmed."
-        : "A mentor will be assigned after your onboarding is reviewed and your preparation track is finalized.";
-      document.getElementById("verification-item").textContent = user.emailVerified
-        ? "Your email is verified and your student access is active."
-        : "Your email verification is pending. Please use the OTP flow on the login page if needed.";
-      document.getElementById("provider-item").textContent = user.provider === "google"
-        ? "Your active sign-in method is Google."
-        : "Your active sign-in method is Beacon email and password.";
-      document.getElementById("login-item").textContent = formatDateTime(user.lastLoginAt);
+      document.getElementById("profile-name").textContent = user.name || "Student";
+      document.getElementById("profile-email").textContent = user.email || "";
+      document.getElementById("profile-phone").textContent = user.phone || "Not provided";
+      document.getElementById("profile-percentile").textContent = user.schoolPercentile !== null && user.schoolPercentile !== undefined ? `${user.schoolPercentile}%` : "Not provided";
+      document.getElementById("profile-category").textContent = user.category || "Not provided";
+      document.getElementById("profile-provider").textContent = user.provider === "google" ? "Google Account" : "Beacon Account";
+      document.getElementById("account-chip").textContent = user.provider === "google" ? "Google Account" : "Beacon Account";
 
-      const headerAvatar = document.getElementById("student-avatar");
-      const headerFallback = document.getElementById("student-avatar-fallback");
-      const welcomeAvatar = document.getElementById("welcome-avatar");
-      const welcomeFallback = document.getElementById("welcome-avatar-fallback");
+      const avatar = document.getElementById("student-avatar");
+      const fallback = document.getElementById("student-avatar-fallback");
       if (user.picture) {
-        headerAvatar.src = user.picture;
-        headerAvatar.hidden = false;
-        headerFallback.hidden = true;
-        welcomeAvatar.src = user.picture;
-        welcomeAvatar.hidden = false;
-        welcomeFallback.hidden = true;
+        avatar.src = user.picture;
+        avatar.hidden = false;
+        fallback.hidden = true;
       } else {
-        const initials = (user.name || "IB")
-          .split(" ")
-          .filter(Boolean)
-          .slice(0, 2)
-          .map((part) => part[0].toUpperCase())
-          .join("") || "IB";
-        headerAvatar.hidden = true;
-        headerFallback.hidden = false;
-        headerFallback.textContent = initials;
-        welcomeAvatar.hidden = true;
-        welcomeFallback.hidden = false;
-        welcomeFallback.textContent = initials;
+        const initials = (user.name || "IB").split(" ").filter(Boolean).slice(0, 2).map((part) => part[0].toUpperCase()).join("") || "IB";
+        avatar.hidden = true;
+        fallback.hidden = false;
+        fallback.textContent = initials;
       }
     }
 
@@ -745,9 +646,15 @@ body{
 
         renderUser(user);
       } catch (error) {
-        setStatus("Unable to load the student profile right now.", "error");
+        setStatus("Unable to load your dashboard right now.", "error");
       }
     }
+
+    lockedButtons.forEach((button) => {
+      button.addEventListener("click", () => {
+        setStatus("Purchase your course to unlock this dashboard feature.", "success");
+      });
+    });
 
     logoutButton.addEventListener("click", async () => {
       await fetch(`${apiBase}/api/auth/logout`, { method: "POST", credentials: "include" });
