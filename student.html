@@ -293,6 +293,53 @@ body{
   grid-template-columns:repeat(2,minmax(0,1fr));
   gap:1rem;
 }
+.mini-stack{
+  display:grid;
+  gap:.8rem;
+}
+.feedback-item,
+.leaderboard-row,
+.progress-row{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:1rem;
+  padding:.82rem .92rem;
+  border-radius:16px;
+  background:#f7faff;
+  border:1px solid rgba(31,55,82,.06);
+}
+.feedback-copy strong,
+.leaderboard-copy strong,
+.progress-copy strong{
+  display:block;
+  font-size:.94rem;
+}
+.feedback-copy span,
+.leaderboard-copy span,
+.progress-copy span{
+  display:block;
+  color:#74859b;
+  font-size:.82rem;
+  margin-top:.18rem;
+}
+.leaderboard-rank{
+  width:34px;
+  height:34px;
+  border-radius:12px;
+  display:grid;
+  place-items:center;
+  background:linear-gradient(135deg,rgba(106,31,54,.12),rgba(201,162,75,.16));
+  color:var(--maroon);
+  font-weight:800;
+  flex:0 0 auto;
+}
+.leaderboard-score,
+.progress-count{
+  font-weight:800;
+  color:#22384f;
+  white-space:nowrap;
+}
 .feature-card{
   position:relative;
   min-height:194px;
@@ -516,6 +563,121 @@ body{
           </div>
 
           <div class="stack">
+            <article class="card">
+              <div class="card-head">
+                <div>
+                  <h2>Mentor Feedback</h2>
+                  <p>Mentor reviews will appear here after you purchase a course and complete guided sessions.</p>
+                </div>
+                <span class="locked-tag">Locked</span>
+              </div>
+              <div class="mini-stack">
+                <div class="feedback-item">
+                  <div class="feedback-copy">
+                    <strong>Mock Interview Review</strong>
+                    <span>Detailed mentor comments unlock after your first paid mock interview.</span>
+                  </div>
+                  <button class="lock-btn" type="button" data-locked-action>Purchase your course</button>
+                </div>
+                <div class="feedback-item">
+                  <div class="feedback-copy">
+                    <strong>Communication Feedback</strong>
+                    <span>Delivery, confidence, and clarity notes will appear here.</span>
+                  </div>
+                  <button class="lock-btn" type="button" data-locked-action>Purchase your course</button>
+                </div>
+                <div class="feedback-item">
+                  <div class="feedback-copy">
+                    <strong>Mentor Improvement Plan</strong>
+                    <span>Your personalized action points unlock after mentor allocation.</span>
+                  </div>
+                  <button class="lock-btn" type="button" data-locked-action>Purchase your course</button>
+                </div>
+              </div>
+            </article>
+
+            <article class="card">
+              <div class="card-head">
+                <div>
+                  <h2>Quiz Leaderboard</h2>
+                  <p>A quiz-based leaderboard can be shown here once your course and quizzes are active.</p>
+                </div>
+                <span class="locked-tag">Locked</span>
+              </div>
+              <div class="mini-stack">
+                <div class="leaderboard-row">
+                  <div style="display:flex;align-items:center;gap:.8rem;">
+                    <div class="leaderboard-rank">1</div>
+                    <div class="leaderboard-copy">
+                      <strong>Top Quiz Performer</strong>
+                      <span>Leaderboard activates after quiz participation starts.</span>
+                    </div>
+                  </div>
+                  <div class="leaderboard-score">-- pts</div>
+                </div>
+                <div class="leaderboard-row">
+                  <div style="display:flex;align-items:center;gap:.8rem;">
+                    <div class="leaderboard-rank">2</div>
+                    <div class="leaderboard-copy">
+                      <strong>Your Rank</strong>
+                      <span>Your live quiz standing will appear here.</span>
+                    </div>
+                  </div>
+                  <div class="leaderboard-score">Locked</div>
+                </div>
+                <div class="feature-actions">
+                  <button class="lock-btn" type="button" data-locked-action>Purchase your course</button>
+                </div>
+              </div>
+            </article>
+
+            <article class="card">
+              <div class="card-head">
+                <div>
+                  <h2>Progress Tracker</h2>
+                  <p>Track exactly how much of your course you have completed once your course is active.</p>
+                </div>
+                <span class="locked-tag">Locked</span>
+              </div>
+              <div class="mini-stack">
+                <div class="progress-row">
+                  <div class="progress-copy">
+                    <strong>Video Lectures</strong>
+                    <span>Completed lectures out of total assigned lectures.</span>
+                  </div>
+                  <div class="progress-count">0 / 12</div>
+                </div>
+                <div class="progress-row">
+                  <div class="progress-copy">
+                    <strong>Quizzes</strong>
+                    <span>Total quizzes attempted and completed by you.</span>
+                  </div>
+                  <div class="progress-count">0 / 8</div>
+                </div>
+                <div class="progress-row">
+                  <div class="progress-copy">
+                    <strong>Mock Interviews</strong>
+                    <span>Your completed mock interviews will be counted here.</span>
+                  </div>
+                  <div class="progress-count">0 / 4</div>
+                </div>
+                <div class="progress-row">
+                  <div class="progress-copy">
+                    <strong>Practice Sheets</strong>
+                    <span>Your completed practice sheets progress appears here.</span>
+                  </div>
+                  <div class="progress-count">0 / 10</div>
+                </div>
+                <div class="feature-actions">
+                  <button class="lock-btn" type="button" data-locked-action>Purchase your course</button>
+                </div>
+              </div>
+              <div class="helper-note">
+                <h3>Unlock the full experience</h3>
+                <p>Purchase your IMBA Beacon course to unlock mentor feedback, quiz leaderboard, video lecture progress, mock interview progress, quizzes, and practice sheet tracking in this same dashboard.</p>
+              </div>
+            </article>
+
             <article class="card" id="profile">
               <div class="card-head">
                 <div>
@@ -530,54 +692,6 @@ body{
                 <div class="profile-row"><span>School Percentile</span><strong id="profile-percentile">Not provided</strong></div>
                 <div class="profile-row"><span>Category</span><strong id="profile-category">Not provided</strong></div>
                 <div class="profile-row"><span>Account Type</span><strong id="profile-provider">Beacon Account</strong></div>
-              </div>
-            </article>
-
-            <article class="card">
-              <div class="card-head">
-                <div>
-                  <h2>Premium Features</h2>
-                  <p>These tools stay visible, but they unlock only after course purchase.</p>
-                </div>
-                <span class="locked-tag">Locked</span>
-              </div>
-              <div class="feature-grid">
-                <div class="feature-card">
-                  <div class="lock-glyph">⌕</div>
-                  <h3>Classes &amp; Schedule</h3>
-                  <p>See live classes, session calendar, and preparation schedule after enrolling in a course.</p>
-                  <div class="feature-actions">
-                    <button class="lock-btn" type="button" data-locked-action>Purchase your course</button>
-                  </div>
-                </div>
-                <div class="feature-card">
-                  <div class="lock-glyph">M</div>
-                  <h3>Mentor Access</h3>
-                  <p>Mentor assignment, interaction windows, and guidance status unlock after your plan is active.</p>
-                  <div class="feature-actions">
-                    <button class="lock-btn" type="button" data-locked-action>Purchase your course</button>
-                  </div>
-                </div>
-                <div class="feature-card">
-                  <div class="lock-glyph">%</div>
-                  <h3>Progress Tracker</h3>
-                  <p>Track your preparation milestones, completion status, and interview readiness once enrolled.</p>
-                  <div class="feature-actions">
-                    <button class="lock-btn" type="button" data-locked-action>Purchase your course</button>
-                  </div>
-                </div>
-                <div class="feature-card">
-                  <div class="lock-glyph">Q</div>
-                  <h3>Quiz Center</h3>
-                  <p>Practice quizzes, assessments, and improvement logs become available after course purchase.</p>
-                  <div class="feature-actions">
-                    <button class="lock-btn" type="button" data-locked-action>Purchase your course</button>
-                  </div>
-                </div>
-              </div>
-              <div class="helper-note">
-                <h3>Unlock the full experience</h3>
-                <p>Purchase your IMBA Beacon course to unlock classes, mentor support, quizzes, schedule, and detailed progress tools from the same dashboard.</p>
               </div>
             </article>
           </div>
