@@ -636,6 +636,24 @@ button,input{border:none}
   align-items:center;
   padding:6rem 0 4.4rem;
 }
+.hero-scenes{
+  position:relative;
+}
+.hero-scene{
+  position:absolute;
+  inset:0;
+  opacity:0;
+  visibility:hidden;
+  transform:translateX(22px);
+  transition:opacity .55s var(--slider-ease),transform .55s var(--slider-ease),visibility 0s linear .55s;
+}
+.hero-scene.active{
+  position:relative;
+  opacity:1;
+  visibility:visible;
+  transform:translateX(0);
+  transition:opacity .55s var(--slider-ease),transform .55s var(--slider-ease),visibility 0s linear 0s;
+}
 .hero-layout{
   display:grid;
   grid-template-columns:minmax(0,1.16fr) minmax(300px,.62fr);
@@ -2102,73 +2120,219 @@ footer{
     </div>
 
     <div class="hero-overlay">
-      <div class="hero-layout">
-        <div class="hero-content reveal">
-          <div class="hero-label">Institutional Home Experience</div>
-          <h1 class="hero-title">From the very first question to the final offer, our guided IMBA interview preparation program equips you with structure, mentorship, and confidence to succeed.</h1>
-          <p class="hero-sub">The homepage now acts as a focused entry point: a strong visual introduction, floating poster-style page cards, and clear navigation into dedicated sections for academics, updates, admissions, and campus life.</p>
-          <div class="hero-actions">
-            <a class="btn-primary" href="./academics.html">Explore Academics</a>
-            <a class="btn-secondary" href="./admissions.html#apply-now">Open Admissions</a>
-          </div>
-          <div class="hero-highlights">
-            <div class="hero-chip">
-              <strong>3 Plans</strong>
-              <span>Mock interviews, practice, verbal coaching</span>
+      <div class="hero-scenes">
+        <div class="hero-scene active" data-hero-scene>
+          <div class="hero-layout">
+            <div class="hero-content reveal">
+              <div class="hero-label">Interview Preparation</div>
+              <h1 class="hero-title">From the very first question to the final offer, our guided IMBA interview preparation program equips you with structure, mentorship, and confidence to succeed.</h1>
+              <p class="hero-sub">Start with a focused introduction to the IMBA Beacon experience and move into academics, admissions, and guided preparation with one clear institutional-style homepage flow.</p>
+              <div class="hero-actions">
+                <a class="btn-primary" href="./academics.html">Explore Academics</a>
+                <a class="btn-secondary" href="./admissions.html#apply-now">Open Admissions</a>
+              </div>
+              <div class="hero-highlights">
+                <div class="hero-chip">
+                  <strong>Structured Prep</strong>
+                  <span>Mock interviews, practice, verbal coaching</span>
+                </div>
+                <div class="hero-chip">
+                  <strong>Live Sessions</strong>
+                  <span>Interactive classes and open Q&amp;A formats</span>
+                </div>
+              </div>
             </div>
-            <div class="hero-chip">
-              <strong>Live Sessions</strong>
-              <span>Interactive classes and open Q&amp;A formats</span>
-            </div>
+
+            <aside class="hero-aside reveal">
+              <div class="hero-panel">
+                <div class="hero-panel-head">
+                  <strong>Admissions Snapshot</strong>
+                  <span>2026 Cycle</span>
+                </div>
+                <div class="hero-board">
+                  <div class="hero-board-item">
+                    <strong>Interview readiness roadmap now open for new aspirants</strong>
+                    <span>Foundation, storytelling, communication, and mock interview sequencing in one structured track.</span>
+                  </div>
+                  <div class="hero-board-item">
+                    <strong>Live mentor sessions and batch interactions scheduled weekly</strong>
+                    <span>Students get guided practice, real discussion, and program-facing insights in one place.</span>
+                  </div>
+                  <div class="hero-board-item">
+                    <strong>Premium prep designed specifically for IIT Mandi IMBA applicants</strong>
+                    <span>Built to feel serious, organized, and closer to an institutional student experience.</span>
+                  </div>
+                </div>
+              </div>
+              <div class="hero-panel">
+                <div class="hero-panel-head">
+                  <strong>At a Glance</strong>
+                  <span>Highlights</span>
+                </div>
+                <div class="hero-mini-grid">
+                  <div class="hero-mini-stat">
+                    <strong>4</strong>
+                    <span>Mock interviews in the Pro plan</span>
+                  </div>
+                  <div class="hero-mini-stat">
+                    <strong>3</strong>
+                    <span>Communication-focused guided sessions</span>
+                  </div>
+                  <div class="hero-mini-stat">
+                    <strong>1</strong>
+                    <span>Current-batch interaction sessions</span>
+                  </div>
+                  <div class="hero-mini-stat">
+                    <strong>10hrs+</strong>
+                    <span>Guidance and mentor support access</span>
+                  </div>
+                </div>
+              </div>
+            </aside>
           </div>
         </div>
 
-        <aside class="hero-aside reveal">
-          <div class="hero-panel">
-            <div class="hero-panel-head">
-              <strong>Admissions Snapshot</strong>
-              <span>2026 Cycle</span>
+        <div class="hero-scene" data-hero-scene>
+          <div class="hero-layout">
+            <div class="hero-content reveal">
+              <div class="hero-label">Course Tracks</div>
+              <h1 class="hero-title">Choose between our Basic and Pro preparation tracks based on the depth of mentoring, mock practice, and guided support you need.</h1>
+              <p class="hero-sub">This slide is focused on the programs we are selling, so students can immediately understand the difference between a compact structured plan and a deeper premium support route.</p>
+              <div class="hero-actions">
+                <a class="btn-primary" href="./admissions.html#track-comparison">Compare Courses</a>
+                <a class="btn-secondary" href="./student.html#courses">View Student Dashboard</a>
+              </div>
+              <div class="hero-highlights">
+                <div class="hero-chip">
+                  <strong>Basic</strong>
+                  <span>Core preparation with mocks, quizzes, and practice support</span>
+                </div>
+                <div class="hero-chip">
+                  <strong>Pro</strong>
+                  <span>Broader mentoring, more mock rounds, and stronger premium tools</span>
+                </div>
+              </div>
             </div>
-            <div class="hero-board">
-              <div class="hero-board-item">
-                <strong>Interview readiness roadmap now open for new aspirants</strong>
-                <span>Foundation, storytelling, communication, and mock interview sequencing in one structured track.</span>
+
+            <aside class="hero-aside reveal">
+              <div class="hero-panel">
+                <div class="hero-panel-head">
+                  <strong>Course Snapshot</strong>
+                  <span>Plans</span>
+                </div>
+                <div class="hero-board">
+                  <div class="hero-board-item">
+                    <strong>Basic Course</strong>
+                    <span>Structured interview preparation with 3 mock interviews, quizzes, sheets, and verbal coaching support.</span>
+                  </div>
+                  <div class="hero-board-item">
+                    <strong>Pro Course</strong>
+                    <span>Expanded support with 4 mock interviews, more mentor touchpoints, and deeper preparation coverage.</span>
+                  </div>
+                  <div class="hero-board-item">
+                    <strong>Single dashboard unlock model</strong>
+                    <span>Students see one dashboard first, and premium tools unlock after purchase inside the same experience.</span>
+                  </div>
+                </div>
               </div>
-              <div class="hero-board-item">
-                <strong>Live mentor sessions and batch interactions scheduled weekly</strong>
-                <span>Students get guided practice, real discussion, and program-facing insights in one place.</span>
+              <div class="hero-panel">
+                <div class="hero-panel-head">
+                  <strong>What Changes</strong>
+                  <span>After Purchase</span>
+                </div>
+                <div class="hero-mini-grid">
+                  <div class="hero-mini-stat">
+                    <strong>Feedback</strong>
+                    <span>Mentor review desk unlocks</span>
+                  </div>
+                  <div class="hero-mini-stat">
+                    <strong>Quizzes</strong>
+                    <span>Leaderboard and attempts activate</span>
+                  </div>
+                  <div class="hero-mini-stat">
+                    <strong>Progress</strong>
+                    <span>Video, quiz, mock, and sheet tracking</span>
+                  </div>
+                  <div class="hero-mini-stat">
+                    <strong>Access</strong>
+                    <span>More guided support across the portal</span>
+                  </div>
+                </div>
               </div>
-              <div class="hero-board-item">
-                <strong>Premium prep designed specifically for IIT Mandi IMBA applicants</strong>
-                <span>Built to feel serious, organized, and closer to an institutional student experience.</span>
-              </div>
-            </div>
+            </aside>
           </div>
-          <div class="hero-panel">
-            <div class="hero-panel-head">
-              <strong>At a Glance</strong>
-              <span>Highlights</span>
+        </div>
+
+        <div class="hero-scene" data-hero-scene>
+          <div class="hero-layout">
+            <div class="hero-content reveal">
+              <div class="hero-label">Mentorship & Results</div>
+              <h1 class="hero-title">Build consistency through mentor feedback, current-batch interaction, live guidance, and repeated practice in one serious preparation system.</h1>
+              <p class="hero-sub">The third slide focuses on what makes the platform feel premium: mentor-written feedback, guided improvement, dashboard tracking, and a stronger sense of direction for aspirants.</p>
+              <div class="hero-actions">
+                <a class="btn-primary" href="./campus-life.html#mentor-touchpoints">Meet the Mentors</a>
+                <a class="btn-secondary" href="./contact.html">Contact the Team</a>
+              </div>
+              <div class="hero-highlights">
+                <div class="hero-chip">
+                  <strong>Mentor Reviews</strong>
+                  <span>Session-wise comments, concern areas, and next-step action points</span>
+                </div>
+                <div class="hero-chip">
+                  <strong>Student Portal</strong>
+                  <span>Courses, support, leaderboard, and progress in one dashboard shell</span>
+                </div>
+              </div>
             </div>
-            <div class="hero-mini-grid">
-              <div class="hero-mini-stat">
-                <strong>4</strong>
-                <span>Mock interviews in the Pro plan</span>
+
+            <aside class="hero-aside reveal">
+              <div class="hero-panel">
+                <div class="hero-panel-head">
+                  <strong>Why It Feels Premium</strong>
+                  <span>System</span>
+                </div>
+                <div class="hero-board">
+                  <div class="hero-board-item">
+                    <strong>Mentor feedback desk inside the dashboard</strong>
+                    <span>Students do not just buy sessions; they unlock written observations and guided improvement notes.</span>
+                  </div>
+                  <div class="hero-board-item">
+                    <strong>Clear course-path visibility before purchase</strong>
+                    <span>Aspirants can compare support depth before choosing the track that fits them.</span>
+                  </div>
+                  <div class="hero-board-item">
+                    <strong>Support remains accessible from the same portal</strong>
+                    <span>Students can reach the team for admissions, account, or onboarding help without leaving the dashboard flow.</span>
+                  </div>
+                </div>
               </div>
-              <div class="hero-mini-stat">
-                <strong>3</strong>
-                <span>Communication-focused guided sessions</span>
+              <div class="hero-panel">
+                <div class="hero-panel-head">
+                  <strong>Portal Layers</strong>
+                  <span>Experience</span>
+                </div>
+                <div class="hero-mini-grid">
+                  <div class="hero-mini-stat">
+                    <strong>Courses</strong>
+                    <span>Visible before purchase</span>
+                  </div>
+                  <div class="hero-mini-stat">
+                    <strong>Support</strong>
+                    <span>Same-page student help desk</span>
+                  </div>
+                  <div class="hero-mini-stat">
+                    <strong>Mentors</strong>
+                    <span>Guided feedback and action notes</span>
+                  </div>
+                  <div class="hero-mini-stat">
+                    <strong>Progress</strong>
+                    <span>Locked tools become active after access</span>
+                  </div>
+                </div>
               </div>
-              <div class="hero-mini-stat">
-                <strong>1</strong>
-                <span>Current-batch interaction sessions</span>
-              </div>
-              <div class="hero-mini-stat">
-                <strong>10hrs+</strong>
-                <span>Guidance and mentor support access</span>
-              </div>
-            </div>
+            </aside>
           </div>
-        </aside>
+        </div>
       </div>
     </div>
 
@@ -2290,6 +2454,7 @@ footer{
     constructor(root) {
       this.root = root;
       this.slides = Array.from(root.querySelectorAll("[data-slide]"));
+      this.scenes = Array.from(root.querySelectorAll("[data-hero-scene]"));
       this.dots = Array.from(root.querySelectorAll("[data-slide-to]"));
       this.prevButton = root.querySelector("[data-slider-prev]");
       this.nextButton = root.querySelector("[data-slider-next]");
@@ -2391,6 +2556,11 @@ footer{
           slide.classList.add(direction > 0 ? "is-prev" : "is-next");
           slide.setAttribute("aria-hidden", "true");
         }
+      });
+
+      this.scenes.forEach((scene, index) => {
+        scene.classList.toggle("active", index === nextIndex);
+        scene.setAttribute("aria-hidden", index === nextIndex ? "false" : "true");
       });
 
       this.dots.forEach((dot, index) => {
