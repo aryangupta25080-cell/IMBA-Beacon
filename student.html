@@ -134,29 +134,6 @@ body{
   align-items:center;
   gap:.7rem;
 }
-.portal-tab-row{
-  display:flex;
-  gap:.7rem;
-  flex-wrap:wrap;
-  margin-top:.55rem;
-}
-.portal-tab{
-  display:inline-flex;
-  align-items:center;
-  justify-content:center;
-  padding:.82rem 1rem;
-  border-radius:999px;
-  border:1px solid rgba(31,55,82,.1);
-  background:#fff;
-  color:#687b92;
-  font-weight:800;
-  cursor:pointer;
-}
-.portal-tab.active{
-  background:linear-gradient(135deg,rgba(106,31,54,.92),rgba(72,20,37,.95));
-  color:#fff;
-  border-color:transparent;
-}
 .profile-chip,
 .logout-btn{
   display:inline-flex;
@@ -182,11 +159,11 @@ body{
   display:grid;
   grid-template-columns:1.05fr .95fr;
   gap:1rem;
-  margin-top:.55rem;
+  margin-top:.2rem;
 }
 .portal-panel{
   display:none;
-  margin-top:.5rem;
+  margin-top:0;
 }
 .portal-panel.active{
   display:block;
@@ -619,10 +596,6 @@ body{
             <span class="profile-chip" id="account-chip">Beacon Account</span>
             <button class="logout-btn" id="logout-btn" type="button">Logout</button>
           </div>
-        </div>
-
-        <div class="portal-tab-row">
-          <button class="portal-tab active" type="button" data-portal-tab="dashboard">Dashboard</button>
         </div>
 
         <section class="portal-panel active" data-portal-panel="dashboard">
