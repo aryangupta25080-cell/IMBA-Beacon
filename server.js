@@ -765,18 +765,13 @@ async function handleBeaconSignup(request, response) {
       return;
     }
 
-    if (!isValidPhone(phone)) {
+    if (phone && !isValidPhone(phone)) {
       sendJson(response, 400, { message: "Please enter a valid 10-digit phone number." });
       return;
     }
 
-    if (!isValidPercentile(schoolPercentile)) {
+    if (schoolPercentile && !isValidPercentile(schoolPercentile)) {
       sendJson(response, 400, { message: "Please enter a valid school percentile between 0 and 100." });
-      return;
-    }
-
-    if (!category) {
-      sendJson(response, 400, { message: "Please select your candidate category." });
       return;
     }
 
@@ -792,7 +787,7 @@ async function handleBeaconSignup(request, response) {
       email,
       passwordHash,
       phone,
-      schoolPercentile: Number(schoolPercentile),
+      schoolPercentile: schoolPercentile ? Number(schoolPercentile) : null,
       category,
       picture: "",
       provider: "beacon",

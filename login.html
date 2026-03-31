@@ -29,6 +29,23 @@
 .auth-form{display:grid;gap:.8rem}
 .auth-form-row{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.8rem}
 .auth-form input{width:100%;padding:1rem 1.05rem;border:1px solid rgba(106,31,54,.12);border-radius:16px;font:inherit}
+.auth-optional{
+  padding:.95rem 1rem;
+  border-radius:18px;
+  background:rgba(106,31,54,.04);
+  border:1px dashed rgba(106,31,54,.14);
+}
+.auth-optional summary{
+  cursor:pointer;
+  font-weight:800;
+  color:var(--maroon);
+}
+.auth-optional-note{
+  color:var(--muted);
+  font-size:.84rem;
+  margin-top:.6rem;
+  line-height:1.6;
+}
 .auth-form button,.logout-btn{display:inline-flex;align-items:center;justify-content:center;padding:.92rem 1.1rem;border:none;border-radius:999px;background:linear-gradient(135deg,var(--gold-soft),var(--gold));color:var(--maroon);font-weight:800;cursor:pointer}
 .auth-secondary{background:rgba(106,31,54,.08)!important;color:var(--maroon)!important}
 .tab-panel{display:none}
@@ -86,33 +103,37 @@
 
           <div class="tab-panel" data-panel="signup">
             <h2>Create your Beacon account</h2>
-            <p>Create your account once and continue directly to your student home.</p>
+            <p>Create your account with any valid email, then add the rest of your profile details later.</p>
             <form class="auth-form" id="signup-form">
               <input type="text" name="name" placeholder="Enter your full name" required/>
               <input type="email" name="email" placeholder="Enter your email address" required/>
               <div class="auth-form-row">
-                <input type="tel" name="phone" placeholder="Enter your phone number" inputmode="numeric" maxlength="10" required/>
-                <input type="number" name="schoolPercentile" placeholder="Enter your school percentile" min="0" max="100" step="0.01" required/>
-              </div>
-              <select name="category" required style="padding:1rem 1.05rem;border:1px solid rgba(106,31,54,.12);border-radius:16px;font:inherit;background:#fff;">
-                <option value="">Select candidate category</option>
-                <option value="General">General</option>
-                <option value="OBC">OBC</option>
-                <option value="SC">SC</option>
-                <option value="ST">ST</option>
-                <option value="EWS">EWS</option>
-                <option value="PwD">PwD</option>
-                <option value="Other">Other</option>
-              </select>
-              <div class="auth-form-row">
                 <input type="password" name="password" placeholder="Create a password" required/>
                 <input type="password" name="confirmPassword" placeholder="Confirm password" required/>
               </div>
+              <details class="auth-optional">
+                <summary>Add profile details now (optional)</summary>
+                <div class="auth-form-row" style="margin-top:.9rem;">
+                  <input type="tel" name="phone" placeholder="Enter your phone number" inputmode="numeric" maxlength="10"/>
+                  <input type="number" name="schoolPercentile" placeholder="Enter your school percentile" min="0" max="100" step="0.01"/>
+                </div>
+                <select name="category" style="width:100%;margin-top:.8rem;padding:1rem 1.05rem;border:1px solid rgba(106,31,54,.12);border-radius:16px;font:inherit;background:#fff;">
+                  <option value="">Select candidate category</option>
+                  <option value="General">General</option>
+                  <option value="OBC">OBC</option>
+                  <option value="SC">SC</option>
+                  <option value="ST">ST</option>
+                  <option value="EWS">EWS</option>
+                  <option value="PwD">PwD</option>
+                  <option value="Other">Other</option>
+                </select>
+                <div class="auth-optional-note">You can also fill these details later from your profile page after sign up.</div>
+              </details>
               <div class="inline-actions">
                 <button type="submit">Create Beacon Account</button>
               </div>
             </form>
-            <div class="small-note">This account is for students who want to browse courses and manage their profile before purchasing any program.</div>
+            <div class="small-note">This account is for students who want to browse courses, read news, and manage their profile before purchasing any program.</div>
           </div>
         </section>
       </div>
