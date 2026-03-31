@@ -56,6 +56,15 @@
 .login-status.success{color:#7f6a1b}
 .login-status.info{color:#7d5a16}
 .small-note{font-size:.84rem;color:var(--muted);margin-top:.7rem}
+.otp-row{
+  display:flex;
+  gap:.7rem;
+  flex-wrap:wrap;
+  margin-top:.2rem;
+}
+.otp-row input{
+  flex:1 1 240px;
+}
 .link-row{display:flex;gap:.8rem;flex-wrap:wrap;margin-top:1.2rem}
 @media (max-width:920px){
   .auth-form-row{grid-template-columns:1fr}
@@ -103,7 +112,7 @@
 
           <div class="tab-panel" data-panel="signup">
             <h2>Create your Beacon account</h2>
-            <p>Create your account with any valid email, then add the rest of your profile details later.</p>
+            <p>Create your account with any valid email, receive an email OTP, and verify it before your first sign-in.</p>
             <form class="auth-form" id="signup-form">
               <input type="text" name="name" placeholder="Enter your full name" required/>
               <input type="email" name="email" placeholder="Enter your email address" required/>
@@ -133,6 +142,11 @@
                 <button type="submit">Create Beacon Account</button>
               </div>
             </form>
+            <div class="otp-row">
+              <input type="text" id="signup-otp" placeholder="Enter email OTP to verify account" inputmode="numeric" maxlength="6"/>
+              <button type="button" class="auth-secondary" id="verify-signup-otp-btn">Verify OTP</button>
+              <button type="button" class="auth-secondary" id="resend-signup-otp-btn">Resend OTP</button>
+            </div>
             <div class="small-note">This account is for students who want to browse courses, read news, and manage their profile before purchasing any program.</div>
           </div>
         </section>
@@ -160,6 +174,9 @@
     const tabPanels = Array.from(document.querySelectorAll("[data-panel]"));
     const passwordLoginForm = document.getElementById("password-login-form");
     const signupForm = document.getElementById("signup-form");
+    const signupOtpInput = document.getElementById("signup-otp");
+    const verifySignupOtpButton = document.getElementById("verify-signup-otp-btn");
+    const resendSignupOtpButton = document.getElementById("resend-signup-otp-btn");
     let config = null;
     let user = null;
     const accessIntent = new URLSearchParams(window.location.search).get("access");
@@ -187,6 +204,10 @@
         logoutButton.hidden = true;
         googleContainer.style.display = "";
       }
+    }
+
+    function getSignupEmail() {
+      return String(new FormData(signupForm).get("email") || "").trim();
     }
 
     async function loadConfig() {
@@ -278,12 +299,33 @@
         setStatus(payload.message || "Unable to create account.", "error");
         return;
       }
+      setStatus(payload.message || "Account created successfully. Verify your OTP to continue.", "success");
+    });
+
+    verifySignupOtpButton.addEventListener("click", async () => {
+      const email = getSignupEmail();
+      const otp = signupOtpInput.value.trim();
+      const { response, payload } = await sendJsonRequest("/api/auth/otp/verify", { email, otp });
+      if (!response.ok) {
+        setStatus(payload.message || "Unable to verify OTP.", "error");
+        return;
+      }
       user = payload.user;
       syncUi();
-      setStatus(payload.message || "Account created successfully.", "success");
+      setStatus(payload.message || "OTP verified successfully.", "success");
       window.setTimeout(() => {
         window.location.href = "./student.html";
       }, 700);
+    });
+
+    resendSignupOtpButton.addEventListener("click", async () => {
+      const email = getSignupEmail();
+      const { response, payload } = await sendJsonRequest("/api/auth/otp/request", { email });
+      if (!response.ok) {
+        setStatus(payload.message || "Unable to resend OTP.", "error");
+        return;
+      }
+      setStatus(payload.message || "A fresh OTP has been sent to your email.", "success");
     });
 
     logoutButton.addEventListener("click", async () => {

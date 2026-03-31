@@ -776,31 +776,35 @@ async function handleBeaconSignup(request, response) {
     }
 
     const existingUser = await findUserByEmail(email);
-    if (existingUser) {
+    if (existingUser && existingUser.emailVerified) {
       sendJson(response, 409, { message: "An account already exists for this email. Please sign in instead." });
       return;
     }
 
     const passwordHash = await hashSecret(password);
-    const persistedUser = await upsertUser({
+    const now = new Date().toISOString();
+    await upsertUser({
+      ...(existingUser || {}),
       name,
       email,
       passwordHash,
       phone,
       schoolPercentile: schoolPercentile ? Number(schoolPercentile) : null,
       category,
-      picture: "",
+      picture: existingUser?.picture || "",
       provider: "beacon",
-      emailVerified: true,
-      createdAt: new Date().toISOString(),
-      lastLoginAt: new Date().toISOString()
+      emailVerified: false,
+      createdAt: existingUser?.createdAt || now,
+      lastLoginAt: existingUser?.lastLoginAt || ""
     });
-    const sessionId = createSession(persistedUser);
+
+    const otpCode = await createOtpRecord(email, "verify-email");
+    await sendOtpEmail(email, otpCode);
+
     sendJson(response, 201, {
-      message: "Beacon account created successfully.",
-      user: getPublicUser(persistedUser)
-    }, {
-      "Set-Cookie": createSessionCookie(request, sessionId)
+      message: existingUser
+        ? "A fresh verification OTP has been sent to your email. Verify it to activate your Beacon account."
+        : "Beacon account created. Please verify the OTP sent to your email before signing in."
     });
   } catch (error) {
     console.error("Beacon signup failed:", error);
