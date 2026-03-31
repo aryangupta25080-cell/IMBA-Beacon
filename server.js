@@ -59,6 +59,10 @@ const FRONTEND_ORIGIN = process.env.FRONTEND_ORIGIN || "";
 const googleClient = GOOGLE_CLIENT_ID ? new OAuth2Client(GOOGLE_CLIENT_ID) : null;
 const sessionStore = new Map();
 const scryptAsync = promisify(crypto.scrypt);
+const phonePeTokenCache = {
+  value: "",
+  expiresAt: 0
+};
 const otpTransporter = SMTP_HOST && SMTP_USER && SMTP_PASS
   ? nodemailer.createTransport({
       host: SMTP_HOST,
@@ -448,6 +452,56 @@ function getPhonePeHost() {
   return PHONEPE_ENV === "production"
     ? "https://api.phonepe.com/apis/pg"
     : "https://api-preprod.phonepe.com/apis/pg-sandbox";
+}
+
+function getPhonePeAuthHost() {
+  return PHONEPE_ENV === "production"
+    ? "https://api.phonepe.com"
+    : "https://api-preprod.phonepe.com";
+}
+
+function getFrontendRedirectUrl(pathname = "/index.html", params = {}) {
+  const base = FRONTEND_ORIGIN || APP_BASE_URL;
+  const url = new URL(pathname, base.endsWith("/") ? base : `${base}/`);
+
+  Object.entries(params).forEach(([key, value]) => {
+    if (value !== undefined && value !== null && value !== "") {
+      url.searchParams.set(key, String(value));
+    }
+  });
+
+  return url.toString();
+}
+
+async function getPhonePeAccessToken() {
+  const now = Date.now();
+  if (phonePeTokenCache.value && phonePeTokenCache.expiresAt > now + 60_000) {
+    return phonePeTokenCache.value;
+  }
+
+  const response = await fetch(`${getPhonePeAuthHost()}/apis/identity-manager/v1/oauth/token`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/x-www-form-urlencoded"
+    },
+    body: new URLSearchParams({
+      client_id: PHONEPE_CLIENT_ID,
+      client_secret: PHONEPE_CLIENT_SECRET,
+      client_version: PHONEPE_CLIENT_VERSION,
+      grant_type: "client_credentials"
+    })
+  });
+
+  const payload = await response.json();
+
+  if (!response.ok || !payload?.access_token) {
+    throw new Error(payload?.message || "Unable to authorize with PhonePe.");
+  }
+
+  phonePeTokenCache.value = payload.access_token;
+  phonePeTokenCache.expiresAt = now + (Number(payload.expires_in || 900) * 1000);
+
+  return phonePeTokenCache.value;
 }
 
 function getAdminAccessKey(request, url) {
@@ -907,8 +961,46 @@ function requireAuthenticatedUser(request, response) {
   return user;
 }
 
-async function createPhonePeOrder() {
-  throw new Error("PhonePe checkout is not fully configured yet. Add merchant credentials and complete the hosted checkout integration.");
+async function createPhonePeOrder(plan, orderId, user) {
+  const accessToken = await getPhonePeAccessToken();
+  const redirectUrl = `${APP_BASE_URL.replace(/\s+/g, "")}/payment-callback?planId=${encodeURIComponent(plan.id)}&orderId=${encodeURIComponent(orderId)}`;
+
+  const response = await fetch(`${getPhonePeHost()}/checkout/v2/pay`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `O-Bearer ${accessToken}`
+    },
+    body: JSON.stringify({
+      merchantOrderId: orderId,
+      amount: plan.amount,
+      expireAfter: 1200,
+      metaInfo: {
+        udf1: user.email || "",
+        udf2: plan.id,
+        udf3: user.name || ""
+      },
+      paymentFlow: {
+        type: "PG_CHECKOUT",
+        message: `IMBA Beacon ${plan.label} plan`,
+        merchantUrls: {
+          redirectUrl
+        }
+      }
+    })
+  });
+
+  const payload = await response.json();
+  const checkoutUrl = payload?.redirectUrl || payload?.data?.redirectUrl || payload?.paymentUrl || "";
+
+  if (!response.ok || !checkoutUrl) {
+    throw new Error(payload?.message || "Unable to create PhonePe checkout session.");
+  }
+
+  return {
+    checkoutUrl,
+    raw: payload
+  };
 }
 
 async function handleCreateOrder(request, response) {
@@ -959,8 +1051,23 @@ async function handleCreateOrder(request, response) {
   }
 }
 
-async function fetchPhonePeOrderStatus() {
-  throw new Error("PhonePe status verification is not configured yet.");
+async function fetchPhonePeOrderStatus(orderId) {
+  const accessToken = await getPhonePeAccessToken();
+  const response = await fetch(`${getPhonePeHost()}/checkout/v2/order/${encodeURIComponent(orderId)}/status`, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `O-Bearer ${accessToken}`
+    }
+  });
+
+  const payload = await response.json();
+
+  if (!response.ok) {
+    throw new Error(payload?.message || "Unable to verify PhonePe payment status.");
+  }
+
+  return payload;
 }
 
 async function handleVerifyPayment(request, response) {
@@ -992,8 +1099,9 @@ async function handleVerifyPayment(request, response) {
 
     const statusPayload = await fetchPhonePeOrderStatus(orderId);
     const txnInfo = statusPayload.data || {};
+    const state = String(txnInfo.state || statusPayload.state || "").toUpperCase();
 
-    if (!statusPayload.success) {
+    if (state !== "COMPLETED") {
       sendJson(response, 400, {
         message: statusPayload.message || "Payment has not been completed successfully yet."
       });
@@ -1010,9 +1118,9 @@ async function handleVerifyPayment(request, response) {
         amount: plan.amount,
         currency: plan.currency,
         orderId,
-        paymentId: txnInfo.transactionId || "",
-        paymentMode: txnInfo.paymentInstrument || "",
-        bankTxnId: txnInfo.providerReferenceId || "",
+        paymentId: txnInfo.transactionId || txnInfo.paymentDetails?.[0]?.transactionId || "",
+        paymentMode: txnInfo.paymentDetails?.[0]?.paymentMode || txnInfo.paymentInstrument || "",
+        bankTxnId: txnInfo.paymentDetails?.[0]?.rail?.utr || txnInfo.providerReferenceId || "",
         email: user.email,
         name: user.name,
         verifiedAt: new Date().toISOString()
@@ -1160,6 +1268,21 @@ async function requestHandler(request, response) {
 
   if (request.method === "GET" && pathname === "/api/admin/waitlist.csv") {
     await handleAdminWaitlistCsv(request, response, url, corsHeaders);
+    return;
+  }
+
+  if (request.method === "GET" && pathname === "/payment-callback") {
+    const redirectUrl = getFrontendRedirectUrl("/index.html", {
+      payment_return: "phonepe",
+      planId: url.searchParams.get("planId") || "",
+      orderId: url.searchParams.get("orderId") || ""
+    });
+
+    response.writeHead(302, {
+      Location: redirectUrl,
+      "Cache-Control": "no-store"
+    });
+    response.end();
     return;
   }
 
