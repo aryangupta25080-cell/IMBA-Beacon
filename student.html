@@ -380,6 +380,54 @@ body{
   background:#f7faff;
   border:1px solid rgba(31,55,82,.06);
 }
+.mentor-accordion{
+  display:grid;
+  gap:.9rem;
+}
+.mentor-toggle{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:1rem;
+  width:100%;
+  padding:1rem 1.05rem;
+  border:none;
+  border-radius:18px;
+  background:linear-gradient(135deg,rgba(106,31,54,.08),rgba(201,162,75,.12));
+  color:#203248;
+  font:inherit;
+  text-align:left;
+  cursor:pointer;
+}
+.mentor-toggle-copy strong{
+  display:block;
+  font-size:1rem;
+}
+.mentor-toggle-copy span{
+  display:block;
+  color:#738399;
+  font-size:.86rem;
+  margin-top:.18rem;
+}
+.mentor-toggle-icon{
+  width:36px;
+  height:36px;
+  border-radius:12px;
+  display:grid;
+  place-items:center;
+  background:#fff;
+  color:var(--maroon);
+  font-size:1.1rem;
+  font-weight:800;
+  flex:0 0 auto;
+}
+.mentor-feedback-options{
+  display:grid;
+  gap:.8rem;
+}
+.mentor-feedback-options[hidden]{
+  display:none;
+}
 .feedback-copy strong,
 .leaderboard-copy strong,
 .progress-copy strong{
@@ -859,32 +907,41 @@ body{
             <article class="card">
               <div class="card-head">
                 <div>
-                  <h2>Mentor Review Desk</h2>
-                  <p>This section will show the written feedback, observations, and action points shared by your assigned mentor.</p>
+                  <h2>Mentor Feedback Hub</h2>
+                  <p>Open the mentor feedback section below to see the individual review areas that unlock after purchase.</p>
                 </div>
                 <span class="locked-tag">Locked</span>
               </div>
-              <div class="mini-stack">
-                <div class="feedback-item">
-                  <div class="feedback-copy">
-                    <strong>Session-wise mentor notes</strong>
-                    <span>Detailed comments from each mock interview and mentor session will appear here.</span>
+              <div class="mentor-accordion">
+                <button class="mentor-toggle" id="mentor-feedback-toggle" type="button" aria-expanded="false" aria-controls="mentor-feedback-options">
+                  <div class="mentor-toggle-copy">
+                    <strong>Mentor Feedback</strong>
+                    <span>Click to view the session notes, concern areas, and action steps that will appear here.</span>
                   </div>
-                  <button class="lock-btn" type="button" data-locked-action>Purchase your course</button>
-                </div>
-                <div class="feedback-item">
-                  <div class="feedback-copy">
-                    <strong>Strengths and concern areas</strong>
-                    <span>Your mentor will mark strong areas, recurring mistakes, and readiness observations.</span>
+                  <span class="mentor-toggle-icon" id="mentor-feedback-icon">+</span>
+                </button>
+                <div class="mentor-feedback-options" id="mentor-feedback-options" hidden>
+                  <div class="feedback-item">
+                    <div class="feedback-copy">
+                      <strong>Session-wise mentor notes</strong>
+                      <span>Detailed comments from each mock interview and mentor session will appear here.</span>
+                    </div>
+                    <button class="lock-btn" type="button" data-locked-action>Purchase your course</button>
                   </div>
-                  <button class="lock-btn" type="button" data-locked-action>Purchase your course</button>
-                </div>
-                <div class="feedback-item">
-                  <div class="feedback-copy">
-                    <strong>Next action recommendations</strong>
-                    <span>Priority practice steps, revision targets, and follow-up tasks will unlock here.</span>
+                  <div class="feedback-item">
+                    <div class="feedback-copy">
+                      <strong>Strengths and concern areas</strong>
+                      <span>Your mentor will mark strong areas, recurring mistakes, and readiness observations.</span>
+                    </div>
+                    <button class="lock-btn" type="button" data-locked-action>Purchase your course</button>
                   </div>
-                  <button class="lock-btn" type="button" data-locked-action>Purchase your course</button>
+                  <div class="feedback-item">
+                    <div class="feedback-copy">
+                      <strong>Next action recommendations</strong>
+                      <span>Priority practice steps, revision targets, and follow-up tasks will unlock here.</span>
+                    </div>
+                    <button class="lock-btn" type="button" data-locked-action>Purchase your course</button>
+                  </div>
                 </div>
               </div>
               <div class="helper-note">
@@ -943,6 +1000,9 @@ body{
     const logoutButton = document.getElementById("logout-btn");
     const lockedButtons = Array.from(document.querySelectorAll("[data-locked-action]"));
     const sidebarLinks = Array.from(document.querySelectorAll(".sidebar-link"));
+    const mentorFeedbackToggle = document.getElementById("mentor-feedback-toggle");
+    const mentorFeedbackOptions = document.getElementById("mentor-feedback-options");
+    const mentorFeedbackIcon = document.getElementById("mentor-feedback-icon");
 
     function setStatus(message, type) {
       statusNode.textContent = message;
@@ -1023,6 +1083,15 @@ body{
         setStatus("Purchase your course to unlock this dashboard feature.", "success");
       });
     });
+
+    if (mentorFeedbackToggle && mentorFeedbackOptions && mentorFeedbackIcon) {
+      mentorFeedbackToggle.addEventListener("click", () => {
+        const isExpanded = mentorFeedbackToggle.getAttribute("aria-expanded") === "true";
+        mentorFeedbackToggle.setAttribute("aria-expanded", String(!isExpanded));
+        mentorFeedbackOptions.hidden = isExpanded;
+        mentorFeedbackIcon.textContent = isExpanded ? "+" : "−";
+      });
+    }
 
     logoutButton.addEventListener("click", async () => {
       await fetch(`${apiBase}/api/auth/logout`, { method: "POST", credentials: "include" });
