@@ -538,7 +538,7 @@ a{text-decoration:none;color:inherit}
 
     lockedButtons.forEach((button) => {
       button.addEventListener("click", () => {
-        setStatus("Purchase your course to unlock this course track and premium features.", "success");
+        window.location.href = "./admissions.html#track-comparison";
       });
     });
 

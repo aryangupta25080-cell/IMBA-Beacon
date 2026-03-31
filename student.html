@@ -1025,7 +1025,7 @@ body{
 
     lockedButtons.forEach((button) => {
       button.addEventListener("click", () => {
-        setStatus("Purchase your course to unlock this dashboard feature.", "success");
+        window.location.href = "./student-courses.html";
       });
     });
 
