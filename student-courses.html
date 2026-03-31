@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Courses | IMBA Beacon</title>
+<script src="./site-config.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Merriweather:wght@700&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --maroon:#6a1f36;
+  --gold:#d4b055;
+  --gold-soft:#e6cf86;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{
+  font-family:"Manrope",system-ui,sans-serif;
+  min-height:100vh;
+  background:
+    radial-gradient(circle at top left, rgba(106,31,54,.16), transparent 26%),
+    linear-gradient(180deg,#eef2f7 0%,#e8edf4 100%);
+  color:#203248;
+}
+a{text-decoration:none;color:inherit}
+.student-shell{width:min(1380px,calc(100% - 1.4rem));margin:.8rem auto}
+.student-app{
+  display:grid;
+  grid-template-columns:228px minmax(0,1fr);
+  min-height:calc(100vh - 1.6rem);
+  background:#fbfdff;
+  border:1px solid rgba(31,55,82,.08);
+  border-radius:28px;
+  overflow:hidden;
+  box-shadow:0 24px 60px rgba(23,37,63,.12);
+}
+.student-sidebar{
+  background:linear-gradient(180deg,#151b29 0%,#101724 100%);
+  color:#fff;
+  padding:1rem .95rem;
+  display:flex;
+  flex-direction:column;
+  gap:1rem;
+}
+.sidebar-brand{
+  display:flex;
+  align-items:center;
+  gap:.8rem;
+  padding:.35rem .35rem 1rem;
+  border-bottom:1px solid rgba(255,255,255,.08);
+}
+.sidebar-brand-badge{
+  width:42px;
+  height:42px;
+  border-radius:14px;
+  display:grid;
+  place-items:center;
+  background:linear-gradient(135deg,var(--gold-soft),var(--gold));
+  color:var(--maroon);
+  font-weight:800;
+  font-size:.92rem;
+}
+.sidebar-brand-copy strong{display:block;font-size:1rem}
+.sidebar-brand-copy span{display:block;color:rgba(255,255,255,.56);font-size:.77rem}
+.sidebar-nav{display:grid;gap:.28rem}
+.sidebar-link{
+  display:flex;
+  align-items:center;
+  gap:.8rem;
+  padding:.82rem .88rem;
+  border-radius:15px;
+  color:rgba(255,255,255,.78);
+  font-weight:700;
+}
+.sidebar-link.active{
+  background:linear-gradient(135deg,rgba(106,31,54,.46),rgba(67,18,32,.88));
+  box-shadow:inset 0 0 0 1px rgba(227,198,128,.12);
+  color:#fff;
+}
+.sidebar-link:hover{background:rgba(255,255,255,.05)}
+.sidebar-icon{
+  width:18px;
+  height:18px;
+  border-radius:6px;
+  background:rgba(255,255,255,.14);
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  font-size:.7rem;
+  flex:0 0 auto;
+}
+.sidebar-foot{
+  margin-top:auto;
+  display:grid;
+  gap:.55rem;
+  padding:.2rem .3rem 0;
+  color:rgba(255,255,255,.48);
+  font-size:.78rem;
+}
+.student-main{padding:.85rem}
+.topbar-shell{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:1rem;
+  background:#fff;
+  border:1px solid rgba(31,55,82,.08);
+  border-radius:20px;
+  padding:.9rem 1rem;
+  box-shadow:0 10px 30px rgba(31,55,82,.06);
+}
+.topbar-title h1{font-size:1.75rem;line-height:1.05;margin-bottom:.15rem}
+.topbar-title p{color:#738399;font-size:.92rem}
+.topbar-tools{display:flex;align-items:center;gap:.7rem}
+.profile-chip,.logout-btn{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  border-radius:999px;
+  font-weight:800;
+}
+.profile-chip{
+  padding:.46rem .82rem;
+  background:rgba(106,31,54,.08);
+  color:var(--maroon);
+  font-size:.8rem;
+}
+.logout-btn{
+  padding:.82rem 1rem;
+  border:1px solid rgba(31,55,82,.1);
+  background:#fff;
+  color:#586b82;
+  cursor:pointer;
+}
+.courses-layout{
+  display:grid;
+  grid-template-columns:1.08fr .92fr;
+  gap:1rem;
+  margin-top:.55rem;
+}
+.card{
+  background:#fff;
+  border:1px solid rgba(31,55,82,.08);
+  border-radius:22px;
+  padding:1.1rem;
+  box-shadow:0 12px 28px rgba(31,55,82,.06);
+}
+.card-head{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:1rem;
+  margin-bottom:.8rem;
+}
+.card-head h2{font-size:1.05rem}
+.card-head p{color:#738399;font-size:.88rem;margin-top:.2rem}
+.feature-grid{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:1rem;
+}
+.feature-card{
+  position:relative;
+  min-height:194px;
+  overflow:hidden;
+}
+.feature-card.card{
+  padding:1rem;
+}
+.lock-glyph{
+  width:48px;
+  height:48px;
+  border-radius:16px;
+  display:grid;
+  place-items:center;
+  background:linear-gradient(135deg,rgba(106,31,54,.12),rgba(201,162,75,.16));
+  color:var(--maroon);
+  font-size:1.15rem;
+  margin-bottom:.9rem;
+}
+.feature-card h3{font-size:1.02rem;margin-bottom:.35rem}
+.feature-card p{color:#738399;font-size:.9rem;line-height:1.65}
+.mini-stack{display:grid;gap:.8rem}
+.progress-row,.feedback-item{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:1rem;
+  padding:.9rem .95rem;
+  border-radius:16px;
+  background:#f7faff;
+  border:1px solid rgba(31,55,82,.06);
+}
+.progress-copy strong,.feedback-copy strong{display:block;font-size:.94rem}
+.progress-copy span,.feedback-copy span{display:block;color:#74859b;font-size:.82rem;margin-top:.18rem}
+.progress-count{font-weight:800;color:#22384f;white-space:nowrap}
+.feature-actions{
+  display:flex;
+  gap:.7rem;
+  flex-wrap:wrap;
+  margin-top:1rem;
+}
+.lock-btn{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  padding:.86rem 1rem;
+  border-radius:14px;
+  font-weight:800;
+  cursor:pointer;
+  background:linear-gradient(135deg,var(--gold-soft),var(--gold));
+  color:var(--maroon);
+  border:none;
+}
+.helper-note{
+  margin-top:1rem;
+  padding:1rem 1.05rem;
+  border-radius:18px;
+  background:linear-gradient(135deg,rgba(106,31,54,.08),rgba(201,162,75,.12));
+  border:1px solid rgba(106,31,54,.08);
+}
+.helper-note h3{font-size:1rem;margin-bottom:.35rem}
+.helper-note p{color:#6d5c62;font-size:.92rem}
+.locked-tag{
+  display:inline-flex;
+  align-items:center;
+  padding:.4rem .75rem;
+  border-radius:999px;
+  font-size:.74rem;
+  font-weight:800;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+  background:rgba(201,162,75,.14);
+  color:#8f6512;
+}
+.student-status{min-height:1.5rem;color:#738399;margin-top:.9rem}
+.student-status.success{color:#8a6710}
+.courses-intro{
+  color:#fff;
+  background:
+    radial-gradient(circle at top right, rgba(255,255,255,.16), transparent 30%),
+    linear-gradient(135deg,#7f3858 0%,#5b1830 56%,#c29643 100%);
+}
+.courses-intro h2{
+  font-family:"Merriweather",serif;
+  font-size:clamp(2rem,4vw,3rem);
+  line-height:1.08;
+}
+.courses-intro p{
+  color:rgba(255,255,255,.84);
+  margin-top:.8rem;
+  max-width:36rem;
+  line-height:1.7;
+}
+.courses-pill{
+  display:inline-flex;
+  align-items:center;
+  padding:.4rem .75rem;
+  border-radius:999px;
+  font-size:.74rem;
+  font-weight:800;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+  background:rgba(255,255,255,.14);
+  margin-bottom:.85rem;
+}
+@media (max-width:1080px){
+  .courses-layout,.feature-grid{grid-template-columns:1fr}
+}
+@media (max-width:980px){
+  .student-app{grid-template-columns:1fr}
+  .topbar-shell{flex-direction:column;align-items:flex-start}
+  .topbar-tools{width:100%;justify-content:flex-start}
+}
+@media (max-width:720px){
+  .student-shell{width:min(100%,calc(100% - .6rem));margin:.3rem auto}
+  .student-main{padding:.75rem}
+}
+</style>
+</head>
+<body>
+  <div class="student-shell">
+    <div class="student-app">
+      <aside class="student-sidebar">
+        <div class="sidebar-brand">
+          <div class="sidebar-brand-badge">IB</div>
+          <div class="sidebar-brand-copy">
+            <strong>IMBA Beacon</strong>
+            <span>Student dashboard</span>
+          </div>
+        </div>
+        <nav class="sidebar-nav">
+          <a class="sidebar-link" href="./student.html"><span class="sidebar-icon">■</span><span>Dashboard</span></a>
+          <a class="sidebar-link active" href="./student-courses.html"><span class="sidebar-icon">▲</span><span>Courses</span></a>
+          <a class="sidebar-link" href="./student-support.html"><span class="sidebar-icon">?</span><span>Support</span></a>
+        </nav>
+        <div class="sidebar-foot">
+          <div>All students see one dashboard.</div>
+          <div>Paid students unlock premium features.</div>
+        </div>
+      </aside>
+
+      <main class="student-main">
+        <div class="topbar-shell">
+          <div class="topbar-title">
+            <h1>Courses</h1>
+            <p>Compare the available IMBA Beacon preparation tracks before selecting the one that suits your support level.</p>
+          </div>
+          <div class="topbar-tools">
+            <span class="profile-chip" id="account-chip">Beacon Account</span>
+            <button class="logout-btn" id="logout-btn" type="button">Logout</button>
+          </div>
+        </div>
+
+        <section class="courses-layout">
+          <div class="card courses-intro">
+            <span class="courses-pill">Course Tracks</span>
+            <h2>Choose the IMBA Beacon preparation track that matches your level of support.</h2>
+            <p>Both tracks are available inside the same student ecosystem. Start with Basic for a disciplined structured route, or choose Pro for broader mentoring, more mock practice, and deeper guided coverage.</p>
+          </div>
+
+          <div class="card">
+            <div class="card-head">
+              <div>
+                <h2>Track Comparison</h2>
+                <p>A quick view of the support depth available in each preparation path.</p>
+              </div>
+            </div>
+            <div class="mini-stack">
+              <div class="progress-row">
+                <div class="progress-copy">
+                  <strong>Basic Track</strong>
+                  <span>Compact core structure with essential practice and guided preparation.</span>
+                </div>
+                <div class="progress-count">₹1,500</div>
+              </div>
+              <div class="progress-row">
+                <div class="progress-copy">
+                  <strong>Pro Track</strong>
+                  <span>Deeper mentoring support with more mock interview exposure and guided follow-up.</span>
+                </div>
+                <div class="progress-count">₹2,000</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-head">
+              <div>
+                <h2>Course Tracks You Can Unlock</h2>
+                <p>Compare the two IMBA Beacon preparation paths before choosing the one that matches your level of support.</p>
+              </div>
+            </div>
+            <div class="feature-grid">
+              <div class="feature-card card">
+                <div class="lock-glyph">01</div>
+                <h3>Basic Course</h3>
+                <p>Ideal for students who want a strong structured base before moving into advanced mentoring.</p>
+                <div class="mini-stack" style="margin-top:.95rem;">
+                  <div class="progress-row">
+                    <div class="progress-copy">
+                      <strong>Includes</strong>
+                      <span>3 mock interviews, quizzes, practice sheets, and 1 communication session.</span>
+                    </div>
+                  </div>
+                  <div class="progress-row">
+                    <div class="progress-copy">
+                      <strong>Best for</strong>
+                      <span>Students who want disciplined preparation with core practice and feedback.</span>
+                    </div>
+                  </div>
+                </div>
+                <div class="feature-actions">
+                  <button class="lock-btn" type="button" data-locked-action>Purchase your course</button>
+                </div>
+              </div>
+              <div class="feature-card card">
+                <div class="lock-glyph">02</div>
+                <h3>Pro Course</h3>
+                <p>Designed for students who want deeper support, higher mentor interaction, and stronger performance tracking.</p>
+                <div class="mini-stack" style="margin-top:.95rem;">
+                  <div class="progress-row">
+                    <div class="progress-copy">
+                      <strong>Includes</strong>
+                      <span>4 mock interviews, extra communication sessions, more interaction rounds, and advanced support.</span>
+                    </div>
+                  </div>
+                  <div class="progress-row">
+                    <div class="progress-copy">
+                      <strong>Best for</strong>
+                      <span>Students aiming for closer mentoring, repeated guided practice, and premium tools.</span>
+                    </div>
+                  </div>
+                </div>
+                <div class="feature-actions">
+                  <button class="lock-btn" type="button" data-locked-action>Purchase your course</button>
+                </div>
+              </div>
+            </div>
+            <div class="helper-note">
+              <h3>Quick selection guide</h3>
+              <p>Choose Basic if you want a compact but serious preparation route. Choose Pro if you want broader mentoring support, more mock practice, and deeper guidance across the full interview journey.</p>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-head">
+              <div>
+                <h2>What Unlocks After Purchase</h2>
+                <p>Your course purchase activates the next layer of the student experience.</p>
+              </div>
+              <span class="locked-tag">Locked</span>
+            </div>
+            <div class="mini-stack">
+              <div class="progress-row">
+                <div class="progress-copy">
+                  <strong>Live Classes Access</strong>
+                  <span>Weekly guided classes, session calendar, and priority updates.</span>
+                </div>
+                <div class="progress-count">Locked</div>
+              </div>
+              <div class="progress-row">
+                <div class="progress-copy">
+                  <strong>Mock Interview Support</strong>
+                  <span>Structured mocks, mentor feedback, and improvement tracking.</span>
+                </div>
+                <div class="progress-count">Locked</div>
+              </div>
+              <div class="progress-row">
+                <div class="progress-copy">
+                  <strong>Quiz & Practice Zone</strong>
+                  <span>Quizzes, sheets, and performance ranking become active here.</span>
+                </div>
+                <div class="progress-count">Locked</div>
+              </div>
+              <div class="feature-actions">
+                <button class="lock-btn" type="button" data-locked-action>Purchase your course</button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <p class="student-status" id="student-status" aria-live="polite"></p>
+      </main>
+    </div>
+  </div>
+  <script>
+  (function () {
+    const apiBase = (window.IMBA_SITE_CONFIG && window.IMBA_SITE_CONFIG.apiBaseUrl) || "";
+    const statusNode = document.getElementById("student-status");
+    const logoutButton = document.getElementById("logout-btn");
+    const lockedButtons = Array.from(document.querySelectorAll("[data-locked-action]"));
+
+    function setStatus(message, type) {
+      statusNode.textContent = message;
+      statusNode.className = "student-status" + (type ? " " + type : "");
+    }
+
+    async function init() {
+      try {
+        const response = await fetch(`${apiBase}/api/auth/session`, { credentials: "include" });
+        const payload = await response.json();
+        const user = payload.user || null;
+
+        if (!user) {
+          window.location.href = "./login.html";
+          return;
+        }
+
+        document.getElementById("account-chip").textContent = user.provider === "google" ? "Google Account" : "Beacon Account";
+      } catch (error) {
+        setStatus("Unable to load the courses page right now.", "error");
+      }
+    }
+
+    lockedButtons.forEach((button) => {
+      button.addEventListener("click", () => {
+        setStatus("Purchase your course to unlock this course track and premium features.", "success");
+      });
+    });
+
+    logoutButton.addEventListener("click", async () => {
+      await fetch(`${apiBase}/api/auth/logout`, { method: "POST", credentials: "include" });
+      window.location.href = "./login.html";
+    });
+
+    window.addEventListener("load", init);
+  })();
+  </script>
+</body>
+</html>
