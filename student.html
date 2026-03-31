@@ -246,6 +246,58 @@ body{
   gap:.75rem;
   margin-top:1rem;
 }
+.welcome-fill{
+  display:grid;
+  grid-template-columns:1.2fr .8fr;
+  gap:.85rem;
+  margin-top:.95rem;
+}
+.welcome-fill-card{
+  padding:.9rem .95rem;
+  border-radius:18px;
+  background:rgba(255,255,255,.08);
+  border:1px solid rgba(255,255,255,.08);
+}
+.welcome-fill-card strong{
+  display:block;
+  font-size:.94rem;
+}
+.welcome-fill-card span{
+  display:block;
+  color:rgba(255,255,255,.76);
+  font-size:.82rem;
+  line-height:1.65;
+  margin-top:.22rem;
+}
+.welcome-mini-list{
+  display:grid;
+  gap:.65rem;
+}
+.welcome-mini-item{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:.85rem;
+  padding:.78rem .85rem;
+  border-radius:16px;
+  background:rgba(255,255,255,.08);
+  border:1px solid rgba(255,255,255,.08);
+}
+.welcome-mini-item strong{
+  display:block;
+  font-size:.9rem;
+}
+.welcome-mini-item span{
+  display:block;
+  color:rgba(255,255,255,.72);
+  font-size:.78rem;
+  margin-top:.14rem;
+}
+.welcome-mini-item b{
+  color:#fff;
+  font-size:.82rem;
+  white-space:nowrap;
+}
 .welcome-stat{
   padding:.8rem .85rem;
   border-radius:16px;
@@ -561,6 +613,9 @@ body{
   .welcome-stats{
     grid-template-columns:1fr 1fr;
   }
+  .welcome-fill{
+    grid-template-columns:1fr;
+  }
 }
 </style>
 </head>
@@ -629,6 +684,28 @@ body{
                 <div class="welcome-stat">
                   <strong>Locked</strong>
                   <span>Premium tools</span>
+                </div>
+              </div>
+              <div class="welcome-fill">
+                <div class="welcome-fill-card">
+                  <strong>Preparation access summary</strong>
+                  <span>Your account is ready for course selection. Once you purchase a track, this same dashboard expands with mentor feedback, quiz ranking, progress tracking, and guided preparation tools.</span>
+                </div>
+                <div class="welcome-mini-list">
+                  <div class="welcome-mini-item">
+                    <div>
+                      <strong>Available tracks</strong>
+                      <span>Basic and Pro</span>
+                    </div>
+                    <b>2</b>
+                  </div>
+                  <div class="welcome-mini-item">
+                    <div>
+                      <strong>Current status</strong>
+                      <span>Dashboard access active</span>
+                    </div>
+                    <b>Live</b>
+                  </div>
                 </div>
               </div>
             </article>
