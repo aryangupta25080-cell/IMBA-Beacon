@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Support | IMBA Beacon</title>
+<title>Profile | IMBA Beacon</title>
 <script src="./site-config.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
@@ -133,9 +133,9 @@ a{text-decoration:none;color:inherit}
   color:#586b82;
   cursor:pointer;
 }
-.support-layout{
+.profile-layout{
   display:grid;
-  grid-template-columns:1fr .9fr;
+  grid-template-columns:.95fr 1.05fr;
   gap:1rem;
   margin-top:.55rem;
 }
@@ -146,56 +146,13 @@ a{text-decoration:none;color:inherit}
   padding:1.1rem;
   box-shadow:0 12px 28px rgba(31,55,82,.06);
 }
-.card-head{
-  display:flex;
-  align-items:flex-start;
-  justify-content:space-between;
-  gap:1rem;
-  margin-bottom:.8rem;
-}
-.card-head h2{font-size:1.05rem}
-.card-head p{color:#738399;font-size:.88rem;margin-top:.2rem}
-.mini-stack{display:grid;gap:.8rem}
-.feedback-item,.progress-row{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:1rem;
-  padding:.9rem .95rem;
-  border-radius:16px;
-  background:#f7faff;
-  border:1px solid rgba(31,55,82,.06);
-}
-.feedback-copy strong,.progress-copy strong{display:block;font-size:.94rem}
-.feedback-copy span,.progress-copy span{display:block;color:#74859b;font-size:.82rem;margin-top:.18rem}
-.progress-count{font-weight:800;color:#22384f;white-space:nowrap}
-.helper-note{
-  margin-top:1rem;
-  padding:1rem 1.05rem;
-  border-radius:18px;
-  background:linear-gradient(135deg,rgba(106,31,54,.08),rgba(201,162,75,.12));
-  border:1px solid rgba(106,31,54,.08);
-}
-.helper-note h3{font-size:1rem;margin-bottom:.35rem}
-.helper-note p{color:#6d5c62;font-size:.92rem}
-.support-hero{
+.profile-hero{
   color:#fff;
   background:
     radial-gradient(circle at top right, rgba(255,255,255,.16), transparent 30%),
     linear-gradient(135deg,#7f3858 0%,#5b1830 56%,#c29643 100%);
 }
-.support-hero h2{
-  font-family:"Merriweather",serif;
-  font-size:clamp(2rem,4vw,3rem);
-  line-height:1.08;
-}
-.support-hero p{
-  color:rgba(255,255,255,.84);
-  margin-top:.8rem;
-  max-width:36rem;
-  line-height:1.7;
-}
-.support-pill{
+.profile-pill{
   display:inline-flex;
   align-items:center;
   padding:.4rem .75rem;
@@ -207,9 +164,41 @@ a{text-decoration:none;color:inherit}
   background:rgba(255,255,255,.14);
   margin-bottom:.85rem;
 }
+.profile-hero h2{
+  font-family:"Merriweather",serif;
+  font-size:clamp(2rem,4vw,3rem);
+  line-height:1.08;
+}
+.profile-hero p{
+  color:rgba(255,255,255,.84);
+  margin-top:.8rem;
+  max-width:34rem;
+  line-height:1.7;
+}
+.detail-grid{display:grid;gap:.8rem}
+.detail-row{
+  display:flex;
+  justify-content:space-between;
+  gap:1rem;
+  padding:.92rem 1rem;
+  border-radius:16px;
+  background:#f7faff;
+  border:1px solid rgba(31,55,82,.06);
+}
+.detail-row span{color:#74859b}
+.detail-row strong{text-align:right}
+.helper-note{
+  margin-top:1rem;
+  padding:1rem 1.05rem;
+  border-radius:18px;
+  background:linear-gradient(135deg,rgba(106,31,54,.08),rgba(201,162,75,.12));
+  border:1px solid rgba(106,31,54,.08);
+}
+.helper-note h3{font-size:1rem;margin-bottom:.35rem}
+.helper-note p{color:#6d5c62;font-size:.92rem}
 .student-status{min-height:1.5rem;color:#738399;margin-top:.9rem}
 .student-status.error{color:#b33d4b}
-@media (max-width:1080px){.support-layout{grid-template-columns:1fr}}
+@media (max-width:1080px){.profile-layout{grid-template-columns:1fr}}
 @media (max-width:980px){
   .student-app{grid-template-columns:1fr}
   .topbar-shell{flex-direction:column;align-items:flex-start}
@@ -234,9 +223,9 @@ a{text-decoration:none;color:inherit}
         </div>
         <nav class="sidebar-nav">
           <a class="sidebar-link" href="./student.html"><span class="sidebar-icon">■</span><span>Dashboard</span></a>
-          <a class="sidebar-link" href="./student-profile.html"><span class="sidebar-icon">●</span><span>Profile</span></a>
+          <a class="sidebar-link active" href="./student-profile.html"><span class="sidebar-icon">●</span><span>Profile</span></a>
           <a class="sidebar-link" href="./student-courses.html"><span class="sidebar-icon">▲</span><span>Courses</span></a>
-          <a class="sidebar-link active" href="./student-support.html"><span class="sidebar-icon">?</span><span>Support</span></a>
+          <a class="sidebar-link" href="./student-support.html"><span class="sidebar-icon">?</span><span>Support</span></a>
         </nav>
         <div class="sidebar-foot">
           <div>All students can view available course sections.</div>
@@ -247,8 +236,8 @@ a{text-decoration:none;color:inherit}
       <main class="student-main">
         <div class="topbar-shell">
           <div class="topbar-title">
-            <h1>Support</h1>
-            <p>Reach the IMBA Beacon team directly for login, admissions, and course-access help.</p>
+            <h1>Profile</h1>
+            <p>Review the account details you entered while creating your IMBA Beacon access.</p>
           </div>
           <div class="topbar-tools">
             <span class="profile-chip" id="account-chip">Beacon Account</span>
@@ -256,84 +245,28 @@ a{text-decoration:none;color:inherit}
           </div>
         </div>
 
-        <section class="support-layout">
-          <div class="card support-hero">
-            <span class="support-pill">Help & Support</span>
-            <h2>Get direct support for onboarding, admissions, and course access.</h2>
-            <p>Use this page whenever you need help with your account, want clarity on the Basic and Pro tracks, or need assistance before or after purchase.</p>
+        <section class="profile-layout">
+          <div class="card profile-hero">
+            <span class="profile-pill">Profile Details</span>
+            <h2>Your account information in one place.</h2>
+            <p>This page shows the details submitted during sign up so you can quickly review your course-access information before moving into preparation.</p>
           </div>
 
           <div class="card">
-            <div class="card-head">
-              <div>
-                <h2>Support Desk</h2>
-                <p>Choose the right channel and connect with the IMBA Beacon team quickly.</p>
-              </div>
+            <div class="detail-grid">
+              <div class="detail-row"><span>Full Name</span><strong id="profile-name">-</strong></div>
+              <div class="detail-row"><span>Email</span><strong id="profile-email">-</strong></div>
+              <div class="detail-row"><span>Phone</span><strong id="profile-phone">-</strong></div>
+              <div class="detail-row"><span>School Percentile</span><strong id="profile-percentile">-</strong></div>
+              <div class="detail-row"><span>Category</span><strong id="profile-category">-</strong></div>
+              <div class="detail-row"><span>Account Type</span><strong id="profile-provider">-</strong></div>
+              <div class="detail-row"><span>Email Verification</span><strong id="profile-verified">-</strong></div>
+              <div class="detail-row"><span>Joined</span><strong id="profile-created">-</strong></div>
+              <div class="detail-row"><span>Last Login</span><strong id="profile-last-login">-</strong></div>
             </div>
-            <div class="mini-stack">
-              <div class="feedback-item">
-                <div class="feedback-copy">
-                  <strong>Phone Support</strong>
-                  <span>Call during working hours for login issues, enrollment help, and general guidance.</span>
-                </div>
-                <div class="progress-count">9561895790</div>
-              </div>
-              <div class="feedback-item">
-                <div class="feedback-copy">
-                  <strong>Email Support</strong>
-                  <span>Use email for account queries, follow-up, and structured communication.</span>
-                </div>
-                <div class="progress-count">imbabeacon.dsai@gmail.com</div>
-              </div>
-              <div class="feedback-item">
-                <div class="feedback-copy">
-                  <strong>Support Window</strong>
-                  <span>The team is available to respond during regular support hours.</span>
-                </div>
-                <div class="progress-count">10 AM - 7 PM</div>
-              </div>
-            </div>
-          </div>
-
-          <div class="card">
-            <div class="card-head">
-              <div>
-                <h2>When to Contact Us</h2>
-                <p>Use the support desk for any of these common situations.</p>
-              </div>
-            </div>
-            <div class="mini-stack">
-              <div class="progress-row">
-                <div class="progress-copy">
-                  <strong>Account & Login Help</strong>
-                  <span>For sign-in trouble, course access, or account-related issues.</span>
-                </div>
-              </div>
-              <div class="progress-row">
-                <div class="progress-copy">
-                  <strong>Track Selection Guidance</strong>
-                  <span>For understanding whether Basic or Pro is the better fit for you.</span>
-                </div>
-              </div>
-              <div class="progress-row">
-                <div class="progress-copy">
-                  <strong>Course Access Support</strong>
-                  <span>For help after purchase, premium unlocks, and onboarding clarification.</span>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div class="card">
-            <div class="card-head">
-              <div>
-                <h2>Before Purchase Support</h2>
-                <p>You can use this same support page even before buying a course.</p>
-              </div>
-            </div>
-            <div class="helper-note" style="margin-top:0;">
-              <h3>Need help before purchase?</h3>
-              <p>You can ask for guidance about available tracks, onboarding flow, and which course is most suitable for your preparation stage.</p>
+            <div class="helper-note">
+              <h3>Need to update anything?</h3>
+              <p>If any information is incorrect or incomplete, use the support page and the IMBA Beacon team can help you correct your onboarding details.</p>
             </div>
           </div>
         </section>
@@ -353,6 +286,13 @@ a{text-decoration:none;color:inherit}
       statusNode.className = "student-status" + (type ? " " + type : "");
     }
 
+    function formatDate(value) {
+      if (!value) return "Not available";
+      const date = new Date(value);
+      if (Number.isNaN(date.getTime())) return "Not available";
+      return date.toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" });
+    }
+
     async function init() {
       try {
         const response = await fetch(`${apiBase}/api/auth/session`, { credentials: "include" });
@@ -365,8 +305,17 @@ a{text-decoration:none;color:inherit}
         }
 
         document.getElementById("account-chip").textContent = user.provider === "google" ? "Google Account" : "Beacon Account";
+        document.getElementById("profile-name").textContent = user.name || "Not provided";
+        document.getElementById("profile-email").textContent = user.email || "Not provided";
+        document.getElementById("profile-phone").textContent = user.phone || "Not provided";
+        document.getElementById("profile-percentile").textContent = user.schoolPercentile ?? "Not provided";
+        document.getElementById("profile-category").textContent = user.category || "Not provided";
+        document.getElementById("profile-provider").textContent = user.provider === "google" ? "Google Account" : "Beacon Account";
+        document.getElementById("profile-verified").textContent = user.emailVerified ? "Verified" : "Pending";
+        document.getElementById("profile-created").textContent = formatDate(user.createdAt);
+        document.getElementById("profile-last-login").textContent = formatDate(user.lastLoginAt);
       } catch (error) {
-        setStatus("Unable to load the support page right now.", "error");
+        setStatus("Unable to load your profile right now.", "error");
       }
     }
 

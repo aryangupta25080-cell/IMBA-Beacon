@@ -632,6 +632,7 @@ body{
         </div>
         <nav class="sidebar-nav">
           <a class="sidebar-link active" href="./student.html"><span class="sidebar-icon">■</span><span>Dashboard</span></a>
+          <a class="sidebar-link" href="./student-profile.html"><span class="sidebar-icon">●</span><span>Profile</span></a>
           <a class="sidebar-link" href="./student-courses.html"><span class="sidebar-icon">▲</span><span>Courses</span></a>
           <a class="sidebar-link" href="./student-support.html"><span class="sidebar-icon">?</span><span>Support</span></a>
         </nav>
@@ -674,8 +675,8 @@ body{
               </div>
               <div class="welcome-stats">
                 <div class="welcome-stat">
-                  <strong id="student-category">General</strong>
-                  <span>Category</span>
+                  <strong id="student-profile-status">Ready</strong>
+                  <span>Profile Status</span>
                 </div>
                 <div class="welcome-stat">
                   <strong id="student-created">Recently</strong>
@@ -975,7 +976,8 @@ body{
     function renderUser(user) {
       document.getElementById("student-name").textContent = user.name || "Student";
       document.getElementById("student-email").textContent = user.email || "";
-      document.getElementById("student-category").textContent = user.category || "Not provided";
+      const profileFields = [user.phone, user.schoolPercentile, user.category].filter((value) => value !== null && value !== undefined && value !== "");
+      document.getElementById("student-profile-status").textContent = profileFields.length === 3 ? "Complete" : "Update";
       document.getElementById("student-created").textContent = formatDate(user.createdAt);
       document.getElementById("account-chip").textContent = user.provider === "google" ? "Google Account" : "Beacon Account";
 
