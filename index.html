@@ -635,13 +635,13 @@ button,input{border:none}
 }
 .hero-layout{
   display:grid;
-  grid-template-columns:minmax(0,1.08fr) minmax(320px,.68fr);
-  gap:1.4rem;
+  grid-template-columns:minmax(0,1.16fr) minmax(300px,.62fr);
+  gap:1.8rem;
   align-items:center;
 }
 .hero-content{
   color:#fff;
-  max-width:760px;
+  max-width:860px;
 }
 .hero-label{
   display:inline-flex;
@@ -662,18 +662,18 @@ button,input{border:none}
 }
 .hero-title{
   font-family:"Merriweather",serif;
-  font-size:clamp(2.4rem,4.6vw,4.35rem);
-  line-height:1.07;
+  font-size:clamp(2.05rem,3.85vw,3.6rem);
+  line-height:1.02;
   letter-spacing:-.03em;
   margin-bottom:1.1rem;
-  max-width:14ch;
+  max-width:18ch;
   text-wrap:balance;
 }
 .hero-sub{
-  max-width:650px;
+  max-width:700px;
   color:rgba(255,255,255,.84);
-  font-size:clamp(1rem,1.7vw,1.08rem);
-  line-height:1.78;
+  font-size:clamp(.96rem,1.4vw,1.05rem);
+  line-height:1.68;
   margin-bottom:2rem;
 }
 .hero-actions{
@@ -1739,8 +1739,8 @@ footer{
     padding:3.6rem 0 7rem;
   }
   .hero-title{
-    font-size:clamp(2.2rem,10vw,3.2rem);
-    max-width:12ch;
+    font-size:clamp(2rem,8vw,2.85rem);
+    max-width:15ch;
   }
   .hero-sub{
     font-size:.98rem;
@@ -1823,6 +1823,15 @@ footer{
   }
   .hero-content{
     max-width:none;
+  }
+  .hero-title{
+    font-size:clamp(1.78rem,7.5vw,2.35rem);
+    line-height:1.05;
+    max-width:16ch;
+  }
+  .hero-sub{
+    font-size:.94rem;
+    line-height:1.62;
   }
   .hero-chip{
     min-width:100%;
