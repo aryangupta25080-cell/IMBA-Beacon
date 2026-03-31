@@ -961,6 +961,60 @@ function requireAuthenticatedUser(request, response) {
   return user;
 }
 
+async function handleProfileUpdate(request, response) {
+  const sessionUser = requireAuthenticatedUser(request, response);
+  if (!sessionUser) return;
+
+  try {
+    const body = await parseRequestBody(request);
+    const name = String(body.name || "").trim();
+    const phone = String(body.phone || "").trim();
+    const schoolPercentile = String(body.schoolPercentile || "").trim();
+    const category = String(body.category || "").trim();
+
+    if (name.length < 2) {
+      sendJson(response, 400, { message: "Please enter your full name." });
+      return;
+    }
+
+    if (!isValidPhone(phone)) {
+      sendJson(response, 400, { message: "Please enter a valid 10-digit phone number." });
+      return;
+    }
+
+    if (!isValidPercentile(schoolPercentile)) {
+      sendJson(response, 400, { message: "Please enter a valid school percentile between 0 and 100." });
+      return;
+    }
+
+    if (!category) {
+      sendJson(response, 400, { message: "Please select your candidate category." });
+      return;
+    }
+
+    const persistedUser = await upsertUser({
+      ...sessionUser,
+      name,
+      phone,
+      schoolPercentile: Number(schoolPercentile),
+      category
+    });
+
+    const cookies = parseCookies(request);
+    const sessionId = cookies[SESSION_COOKIE];
+    if (sessionId) {
+      sessionStore.set(sessionId, persistedUser);
+    }
+
+    sendJson(response, 200, {
+      message: "Profile updated successfully.",
+      user: getPublicUser(persistedUser)
+    });
+  } catch (error) {
+    sendJson(response, 400, { message: error.message || "Unable to update profile." });
+  }
+}
+
 async function createPhonePeOrder(plan, orderId, user) {
   const accessToken = await getPhonePeAccessToken();
   const redirectUrl = `${APP_BASE_URL.replace(/\s+/g, "")}/payment-callback?planId=${encodeURIComponent(plan.id)}&orderId=${encodeURIComponent(orderId)}`;
@@ -1186,6 +1240,14 @@ async function requestHandler(request, response) {
 
   if (request.method === "POST" && pathname === "/api/auth/login/password") {
     await handlePasswordLogin(request, {
+      writeHead: (...args) => response.writeHead(args[0], { ...args[1], ...corsHeaders }),
+      end: (...args) => response.end(...args)
+    });
+    return;
+  }
+
+  if (request.method === "POST" && pathname === "/api/auth/profile") {
+    await handleProfileUpdate(request, {
       writeHead: (...args) => response.writeHead(args[0], { ...args[1], ...corsHeaders }),
       end: (...args) => response.end(...args)
     });

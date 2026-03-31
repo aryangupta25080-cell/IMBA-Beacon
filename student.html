@@ -134,6 +134,29 @@ body{
   align-items:center;
   gap:.7rem;
 }
+.portal-tab-row{
+  display:flex;
+  gap:.7rem;
+  flex-wrap:wrap;
+  margin-top:1rem;
+}
+.portal-tab{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  padding:.82rem 1rem;
+  border-radius:999px;
+  border:1px solid rgba(31,55,82,.1);
+  background:#fff;
+  color:#687b92;
+  font-weight:800;
+  cursor:pointer;
+}
+.portal-tab.active{
+  background:linear-gradient(135deg,rgba(106,31,54,.92),rgba(72,20,37,.95));
+  color:#fff;
+  border-color:transparent;
+}
 .profile-chip,
 .logout-btn{
   display:inline-flex;
@@ -160,6 +183,13 @@ body{
   grid-template-columns:1.05fr .95fr;
   gap:1rem;
   margin-top:1rem;
+}
+.portal-panel{
+  display:none;
+  margin-top:1rem;
+}
+.portal-panel.active{
+  display:block;
 }
 .stack{
   display:grid;
@@ -272,6 +302,47 @@ body{
 .profile-grid{
   display:grid;
   gap:.7rem;
+}
+.profile-editor{
+  display:grid;
+  gap:.95rem;
+  margin-top:1rem;
+}
+.profile-form-grid{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:.85rem;
+}
+.profile-editor input,
+.profile-editor select{
+  width:100%;
+  padding:1rem 1.05rem;
+  border-radius:16px;
+  border:1px solid rgba(31,55,82,.1);
+  background:#f8fbff;
+  color:#203248;
+  font:inherit;
+}
+.profile-editor input[readonly]{
+  background:#eef3f8;
+  color:#72849a;
+}
+.profile-help{
+  color:#738399;
+  font-size:.9rem;
+  line-height:1.6;
+}
+.profile-save{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  padding:.92rem 1.15rem;
+  border:none;
+  border-radius:999px;
+  background:linear-gradient(135deg,var(--gold-soft),var(--gold));
+  color:var(--maroon);
+  font-weight:800;
+  cursor:pointer;
 }
 .profile-row{
   display:flex;
@@ -437,6 +508,9 @@ body{
   .dashboard-grid,.feature-grid{
     grid-template-columns:1fr;
   }
+  .profile-form-grid{
+    grid-template-columns:1fr;
+  }
 }
 @media (max-width:980px){
   .student-app{
@@ -500,6 +574,12 @@ body{
           </div>
         </div>
 
+        <div class="portal-tab-row">
+          <button class="portal-tab active" type="button" data-portal-tab="dashboard">Dashboard</button>
+          <button class="portal-tab" type="button" data-portal-tab="profile">Profile</button>
+        </div>
+
+        <section class="portal-panel active" data-portal-panel="dashboard">
         <section class="dashboard-grid">
           <div class="stack">
             <article class="card welcome-card">
@@ -764,6 +844,51 @@ body{
             </article>
           </div>
         </section>
+        </section>
+
+        <section class="portal-panel" data-portal-panel="profile">
+          <article class="card" id="profile">
+            <div class="card-head">
+              <div>
+                <h2>Edit Your Profile</h2>
+                <p>Update your student details here. These details stay attached to your Beacon account.</p>
+              </div>
+            </div>
+            <div class="profile-grid">
+              <div class="profile-row"><span>Current Name</span><strong id="profile-name-panel">Student</strong></div>
+              <div class="profile-row"><span>Current Email</span><strong id="profile-email-panel">student@example.com</strong></div>
+              <div class="profile-row"><span>Current Phone</span><strong id="profile-phone-panel">Not provided</strong></div>
+              <div class="profile-row"><span>Current Percentile</span><strong id="profile-percentile-panel">Not provided</strong></div>
+              <div class="profile-row"><span>Current Category</span><strong id="profile-category-panel">Not provided</strong></div>
+              <div class="profile-row"><span>Account Type</span><strong id="profile-provider-panel">Beacon Account</strong></div>
+            </div>
+
+            <form class="profile-editor" id="profile-form">
+              <div class="profile-form-grid">
+                <input type="text" name="name" id="edit-name" placeholder="Full name" required/>
+                <input type="email" name="email" id="edit-email" placeholder="Email address" readonly/>
+              </div>
+              <div class="profile-form-grid">
+                <input type="tel" name="phone" id="edit-phone" placeholder="10-digit phone number" inputmode="numeric" maxlength="10" required/>
+                <input type="number" name="schoolPercentile" id="edit-percentile" placeholder="School percentile" min="0" max="100" step="0.01" required/>
+              </div>
+              <select name="category" id="edit-category" required>
+                <option value="">Select candidate category</option>
+                <option value="General">General</option>
+                <option value="OBC">OBC</option>
+                <option value="SC">SC</option>
+                <option value="ST">ST</option>
+                <option value="EWS">EWS</option>
+                <option value="PwD">PwD</option>
+                <option value="Other">Other</option>
+              </select>
+              <div class="profile-help">You can edit your personal student details here. Your email stays fixed as your Beacon account identity.</div>
+              <div>
+                <button class="profile-save" type="submit">Save Profile Changes</button>
+              </div>
+            </form>
+          </article>
+        </section>
 
         <p class="student-status" id="student-status" aria-live="polite"></p>
       </main>
@@ -775,6 +900,11 @@ body{
     const statusNode = document.getElementById("student-status");
     const logoutButton = document.getElementById("logout-btn");
     const lockedButtons = Array.from(document.querySelectorAll("[data-locked-action]"));
+    const portalTabs = Array.from(document.querySelectorAll("[data-portal-tab]"));
+    const portalPanels = Array.from(document.querySelectorAll("[data-portal-panel]"));
+    const sidebarLinks = Array.from(document.querySelectorAll(".sidebar-link"));
+    const profileForm = document.getElementById("profile-form");
+    let currentUser = null;
 
     function setStatus(message, type) {
       statusNode.textContent = message;
@@ -789,6 +919,7 @@ body{
     }
 
     function renderUser(user) {
+      currentUser = user;
       document.getElementById("student-name").textContent = user.name || "Student";
       document.getElementById("student-email").textContent = user.email || "";
       document.getElementById("student-category").textContent = user.category || "Not provided";
@@ -799,7 +930,18 @@ body{
       document.getElementById("profile-percentile").textContent = user.schoolPercentile !== null && user.schoolPercentile !== undefined ? `${user.schoolPercentile}%` : "Not provided";
       document.getElementById("profile-category").textContent = user.category || "Not provided";
       document.getElementById("profile-provider").textContent = user.provider === "google" ? "Google Account" : "Beacon Account";
+      document.getElementById("profile-name-panel").textContent = user.name || "Student";
+      document.getElementById("profile-email-panel").textContent = user.email || "";
+      document.getElementById("profile-phone-panel").textContent = user.phone || "Not provided";
+      document.getElementById("profile-percentile-panel").textContent = user.schoolPercentile !== null && user.schoolPercentile !== undefined ? `${user.schoolPercentile}%` : "Not provided";
+      document.getElementById("profile-category-panel").textContent = user.category || "Not provided";
+      document.getElementById("profile-provider-panel").textContent = user.provider === "google" ? "Google Account" : "Beacon Account";
       document.getElementById("account-chip").textContent = user.provider === "google" ? "Google Account" : "Beacon Account";
+      document.getElementById("edit-name").value = user.name || "";
+      document.getElementById("edit-email").value = user.email || "";
+      document.getElementById("edit-phone").value = user.phone || "";
+      document.getElementById("edit-percentile").value = user.schoolPercentile !== null && user.schoolPercentile !== undefined ? user.schoolPercentile : "";
+      document.getElementById("edit-category").value = user.category || "";
 
       const avatar = document.getElementById("student-avatar");
       const fallback = document.getElementById("student-avatar-fallback");
@@ -815,6 +957,68 @@ body{
       }
     }
 
+    function setActivePortalTab(tabName) {
+      const activeTab = tabName === "profile" ? "profile" : "dashboard";
+
+      portalTabs.forEach((button) => {
+        button.classList.toggle("active", button.dataset.portalTab === activeTab);
+      });
+
+      portalPanels.forEach((panel) => {
+        panel.classList.toggle("active", panel.dataset.portalPanel === activeTab);
+      });
+
+      sidebarLinks.forEach((link) => {
+        const isActive =
+          (activeTab === "dashboard" && link.getAttribute("href") === "./student.html") ||
+          (activeTab === "profile" && link.getAttribute("href") === "#profile");
+        link.classList.toggle("active", isActive);
+      });
+    }
+
+    async function handleProfileSave(event) {
+      event.preventDefault();
+
+      const submitButton = profileForm.querySelector("button[type='submit']");
+      const formData = new FormData(profileForm);
+      const payload = {
+        name: String(formData.get("name") || "").trim(),
+        phone: String(formData.get("phone") || "").trim(),
+        schoolPercentile: String(formData.get("schoolPercentile") || "").trim(),
+        category: String(formData.get("category") || "").trim()
+      };
+
+      submitButton.disabled = true;
+      submitButton.textContent = "Saving...";
+
+      try {
+        const response = await fetch(`${apiBase}/api/auth/profile`, {
+          method: "POST",
+          credentials: "include",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify(payload)
+        });
+
+        const result = await response.json();
+
+        if (!response.ok) {
+          setStatus(result.message || "Unable to update profile right now.", "error");
+          return;
+        }
+
+        renderUser(result.user || currentUser);
+        setStatus(result.message || "Profile updated successfully.", "success");
+        setActivePortalTab("profile");
+      } catch (error) {
+        setStatus("Unable to update profile right now.", "error");
+      } finally {
+        submitButton.disabled = false;
+        submitButton.textContent = "Save Profile Changes";
+      }
+    }
+
     async function init() {
       try {
         const response = await fetch(`${apiBase}/api/auth/session`, { credentials: "include" });
@@ -827,10 +1031,39 @@ body{
         }
 
         renderUser(user);
+        setActivePortalTab(window.location.hash === "#profile" ? "profile" : "dashboard");
       } catch (error) {
         setStatus("Unable to load your dashboard right now.", "error");
       }
     }
+
+    portalTabs.forEach((button) => {
+      button.addEventListener("click", () => {
+        const tabName = button.dataset.portalTab;
+        setActivePortalTab(tabName);
+        window.history.replaceState({}, document.title, tabName === "profile" ? "#profile" : "#dashboard");
+      });
+    });
+
+    sidebarLinks.forEach((link) => {
+      if (link.getAttribute("href") === "#profile") {
+        link.addEventListener("click", (event) => {
+          event.preventDefault();
+          setActivePortalTab("profile");
+          window.history.replaceState({}, document.title, "#profile");
+        });
+      }
+
+      if (link.getAttribute("href") === "./student.html") {
+        link.addEventListener("click", (event) => {
+          event.preventDefault();
+          setActivePortalTab("dashboard");
+          window.history.replaceState({}, document.title, "#dashboard");
+        });
+      }
+    });
+
+    profileForm.addEventListener("submit", handleProfileSave);
 
     lockedButtons.forEach((button) => {
       button.addEventListener("click", () => {
