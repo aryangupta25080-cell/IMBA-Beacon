@@ -552,7 +552,6 @@ body{
         </div>
         <nav class="sidebar-nav">
           <a class="sidebar-link active" href="./student.html"><span class="sidebar-icon">■</span><span>Dashboard</span></a>
-          <a class="sidebar-link" href="#profile"><span class="sidebar-icon">●</span><span>Profile</span></a>
           <a class="sidebar-link" href="#courses"><span class="sidebar-icon">▲</span><span>Courses</span></a>
           <a class="sidebar-link" href="./contact.html"><span class="sidebar-icon">?</span><span>Support</span></a>
         </nav>
@@ -969,9 +968,7 @@ body{
       });
 
       sidebarLinks.forEach((link) => {
-        const isActive =
-          (activeTab === "dashboard" && link.getAttribute("href") === "./student.html") ||
-          (activeTab === "profile" && link.getAttribute("href") === "#profile");
+        const isActive = activeTab === "dashboard" && link.getAttribute("href") === "./student.html";
         link.classList.toggle("active", isActive);
       });
     }
@@ -1046,14 +1043,6 @@ body{
     });
 
     sidebarLinks.forEach((link) => {
-      if (link.getAttribute("href") === "#profile") {
-        link.addEventListener("click", (event) => {
-          event.preventDefault();
-          setActivePortalTab("profile");
-          window.history.replaceState({}, document.title, "#profile");
-        });
-      }
-
       if (link.getAttribute("href") === "./student.html") {
         link.addEventListener("click", (event) => {
           event.preventDefault();
