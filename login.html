@@ -62,6 +62,7 @@
   flex-wrap:wrap;
   margin-top:.2rem;
 }
+.otp-row[hidden]{display:none!important}
 .otp-row input{
   flex:1 1 240px;
 }
@@ -142,12 +143,12 @@
                 <button type="submit">Create Beacon Account</button>
               </div>
             </form>
-            <div class="otp-row">
+            <div class="otp-row" id="signup-otp-row" hidden>
               <input type="text" id="signup-otp" placeholder="Enter email OTP to verify account" inputmode="numeric" maxlength="6"/>
               <button type="button" class="auth-secondary" id="verify-signup-otp-btn">Verify OTP</button>
               <button type="button" class="auth-secondary" id="resend-signup-otp-btn">Resend OTP</button>
             </div>
-            <div class="small-note">This account is for students who want to browse courses, read news, and manage their profile before purchasing any program.</div>
+            <div class="small-note" id="signup-note">This account is for students who want to browse courses, read news, and manage their profile before purchasing any program.</div>
           </div>
         </section>
       </div>
@@ -174,9 +175,11 @@
     const tabPanels = Array.from(document.querySelectorAll("[data-panel]"));
     const passwordLoginForm = document.getElementById("password-login-form");
     const signupForm = document.getElementById("signup-form");
+    const signupOtpRow = document.getElementById("signup-otp-row");
     const signupOtpInput = document.getElementById("signup-otp");
     const verifySignupOtpButton = document.getElementById("verify-signup-otp-btn");
     const resendSignupOtpButton = document.getElementById("resend-signup-otp-btn");
+    const signupNote = document.getElementById("signup-note");
     let config = null;
     let user = null;
     const accessIntent = new URLSearchParams(window.location.search).get("access");
@@ -299,6 +302,8 @@
         setStatus(payload.message || "Unable to create account.", "error");
         return;
       }
+      signupOtpRow.hidden = false;
+      signupNote.textContent = "An OTP has been sent to your email. Enter it below to verify your account and continue.";
       setStatus(payload.message || "Account created successfully. Verify your OTP to continue.", "success");
     });
 
