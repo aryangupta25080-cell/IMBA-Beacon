@@ -553,7 +553,7 @@ body{
         <nav class="sidebar-nav">
           <a class="sidebar-link active" href="./student.html"><span class="sidebar-icon">■</span><span>Dashboard</span></a>
           <a class="sidebar-link" href="#courses"><span class="sidebar-icon">▲</span><span>Courses</span></a>
-          <a class="sidebar-link" href="./contact.html"><span class="sidebar-icon">?</span><span>Support</span></a>
+          <a class="sidebar-link" href="#support"><span class="sidebar-icon">?</span><span>Support</span></a>
         </nav>
         <div class="sidebar-foot">
           <div>All students see one dashboard.</div>
@@ -892,6 +892,42 @@ body{
                 <p>Once your course access is active, this area becomes your personal feedback desk with comments that are actually written by your mentor after sessions.</p>
               </div>
             </article>
+
+            <article class="card" id="support">
+              <div class="card-head">
+                <div>
+                  <h2>Help & Support Desk</h2>
+                  <p>Reach the IMBA Beacon team directly from your dashboard for admissions, account, and course-access help.</p>
+                </div>
+              </div>
+              <div class="mini-stack">
+                <div class="feedback-item">
+                  <div class="feedback-copy">
+                    <strong>Phone Support</strong>
+                    <span>Call during working hours for login issues, enrollment help, and general guidance.</span>
+                  </div>
+                  <div class="progress-count">9561895790</div>
+                </div>
+                <div class="feedback-item">
+                  <div class="feedback-copy">
+                    <strong>Email Support</strong>
+                    <span>Use email for account queries, follow-up, and structured communication.</span>
+                  </div>
+                  <div class="progress-count">imbabeacon.dsai@gmail.com</div>
+                </div>
+                <div class="feedback-item">
+                  <div class="feedback-copy">
+                    <strong>Support Window</strong>
+                    <span>The team is available to respond during regular support hours.</span>
+                  </div>
+                  <div class="progress-count">10 AM - 7 PM</div>
+                </div>
+              </div>
+              <div class="helper-note">
+                <h3>Need help before purchase?</h3>
+                <p>You can use the same support desk even before buying a course if you want guidance about tracks, onboarding, or access.</p>
+              </div>
+            </article>
           </div>
         </section>
         </section>
@@ -962,7 +998,22 @@ body{
       if (link.getAttribute("href") === "./student.html") {
         link.addEventListener("click", (event) => {
           event.preventDefault();
+          sidebarLinks.forEach((item) => item.classList.remove("active"));
+          link.classList.add("active");
           window.history.replaceState({}, document.title, "#dashboard");
+          window.scrollTo({ top: 0, behavior: "smooth" });
+        });
+      }
+
+      if (link.getAttribute("href") === "#courses" || link.getAttribute("href") === "#support") {
+        link.addEventListener("click", (event) => {
+          event.preventDefault();
+          const target = document.querySelector(link.getAttribute("href"));
+          if (!target) return;
+          sidebarLinks.forEach((item) => item.classList.remove("active"));
+          link.classList.add("active");
+          target.scrollIntoView({ behavior: "smooth", block: "start" });
+          window.history.replaceState({}, document.title, link.getAttribute("href"));
         });
       }
     });
