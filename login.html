@@ -37,6 +37,7 @@
 .login-status{min-height:1.6em;color:var(--muted);margin-top:1rem}
 .login-status.error{color:#b33d4b}
 .login-status.success{color:#7f6a1b}
+.login-status.info{color:#7d5a16}
 .small-note{font-size:.84rem;color:var(--muted);margin-top:.7rem}
 .link-row{display:flex;gap:.8rem;flex-wrap:wrap;margin-top:1.2rem}
 @media (max-width:920px){
@@ -140,6 +141,7 @@
     const signupForm = document.getElementById("signup-form");
     let config = null;
     let user = null;
+    const accessIntent = new URLSearchParams(window.location.search).get("access");
 
     function setStatus(message, type) {
       status.textContent = message;
@@ -220,6 +222,10 @@
           });
         }
         syncUi();
+        if (accessIntent === "news" && !user) {
+          setStatus("Sign up or log in to access the interview news briefings and current-affairs content.", "info");
+          activateTab("signup");
+        }
       } catch (error) {
         setStatus("Unable to initialize login right now.", "error");
       }
