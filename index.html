@@ -552,7 +552,7 @@ button,input{border:none}
 
 .hero{
   position:relative;
-  min-height:84vh;
+  min-height:clamp(42rem,84vh,52rem);
   background:var(--navy);
   overflow:hidden;
 }
@@ -631,14 +631,14 @@ button,input{border:none}
 .hero-overlay{
   position:relative;
   z-index:3;
-  min-height:84vh;
+  min-height:clamp(42rem,84vh,52rem);
   display:grid;
   align-items:center;
   padding:6rem 0 4.4rem;
 }
 .hero-scenes{
   position:relative;
-  min-height:clamp(34rem,68vh,46rem);
+  min-height:clamp(33rem,63vh,41rem);
 }
 .hero-scene{
   position:absolute;
@@ -1856,11 +1856,14 @@ footer{
   .mobile-menu{display:block}
   .nav-dropdown{display:none}
   .hero{
-    min-height:min(92svh,860px);
+    min-height:46rem;
   }
   .hero-overlay{
-    min-height:min(92svh,860px);
+    min-height:46rem;
     padding:5.25rem 0 5.8rem;
+  }
+  .hero-scenes{
+    min-height:34rem;
   }
   .slider-controls{
     align-items:center;
@@ -1896,11 +1899,14 @@ footer{
     font-size:.9rem;
   }
   .hero{
-    min-height:auto;
+    min-height:44rem;
   }
   .hero-overlay{
-    min-height:auto;
+    min-height:44rem;
     padding:3.6rem 0 7rem;
+  }
+  .hero-scenes{
+    min-height:31rem;
   }
   .hero-title{
     font-size:clamp(2rem,8vw,2.85rem);
@@ -1982,8 +1988,15 @@ footer{
   }
 }
 @media (max-width:560px){
+  .hero{
+    min-height:42rem;
+  }
   .hero-overlay{
+    min-height:42rem;
     padding-top:4.6rem;
+  }
+  .hero-scenes{
+    min-height:29rem;
   }
   .hero-content{
     max-width:none;
