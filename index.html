@@ -1024,6 +1024,10 @@ button,input{border:none}
   transition:transform .32s var(--slider-ease),box-shadow .32s var(--slider-ease);
   scroll-snap-align:start;
 }
+.mentor-card.featured-mentor{
+  flex-basis:360px;
+  min-height:486px;
+}
 .mentor-card::before{
   content:"";
   position:absolute;
@@ -1085,6 +1089,18 @@ button,input{border:none}
   height:100%;
   display:block;
   object-fit:cover;
+}
+.mentor-card.featured-mentor .mentor-poster-box{
+  min-height:312px;
+}
+.mentor-card.featured-mentor h3{
+  font-size:1.9rem;
+  margin-bottom:.5rem;
+}
+.mentor-card.featured-mentor p{
+  font-size:1rem;
+  line-height:1.58;
+  max-width:28ch;
 }
 .news-section{
   padding:1.8rem 0 0;
@@ -2586,11 +2602,11 @@ footer{
       <p class="section-copy">Scroll through the mentor showcase below. These seven boxes are ready for your mentor intro posters.</p>
     </div>
     <div class="poster-grid">
-      <div class="mentor-card reveal">
+      <div class="mentor-card featured-mentor reveal">
         <div>
           <div class="poster-kicker">Mentor 01</div>
           <h3>Hardik Agarwal</h3>
-          <p>Strategic problem-solver and IIT Roorkee case finalist featured in your first mentor introduction poster.</p>
+          <p>Strategic problem-solver, IIT Roorkee case finalist, and a course mentor bringing structured interview guidance to IMBA aspirants.</p>
         </div>
         <div class="mentor-poster-box has-image">
           <img src="./assets/mentor-hardik-agarwal.png" alt="Hardik Agarwal mentor poster"/>
