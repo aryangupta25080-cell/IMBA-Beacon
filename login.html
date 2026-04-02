@@ -35,6 +35,10 @@
   background:rgba(106,31,54,.04);
   border:1px dashed rgba(106,31,54,.14);
 }
+.auth-optional.required-mode{
+  background:rgba(201,162,75,.12);
+  border:1px solid rgba(201,162,75,.38);
+}
 .auth-optional summary{
   cursor:pointer;
   font-weight:800;
@@ -121,13 +125,13 @@
                 <input type="password" name="password" placeholder="Create a password" required/>
                 <input type="password" name="confirmPassword" placeholder="Confirm password" required/>
               </div>
-              <details class="auth-optional">
-                <summary>Add profile details now (optional)</summary>
+              <details class="auth-optional" id="signup-details-panel">
+                <summary id="signup-details-summary">Add profile details now (optional)</summary>
                 <div class="auth-form-row" style="margin-top:.9rem;">
-                  <input type="tel" name="phone" placeholder="Enter your phone number" inputmode="numeric" maxlength="10"/>
-                  <input type="number" name="schoolPercentile" placeholder="Enter your school percentile" min="0" max="100" step="0.01"/>
+                  <input type="tel" id="signup-phone" name="phone" placeholder="Enter your phone number" inputmode="numeric" maxlength="10"/>
+                  <input type="number" id="signup-percentile" name="schoolPercentile" placeholder="Enter your school percentile" min="0" max="100" step="0.01"/>
                 </div>
-                <select name="category" style="width:100%;margin-top:.8rem;padding:1rem 1.05rem;border:1px solid rgba(106,31,54,.12);border-radius:16px;font:inherit;background:#fff;">
+                <select id="signup-category" name="category" style="width:100%;margin-top:.8rem;padding:1rem 1.05rem;border:1px solid rgba(106,31,54,.12);border-radius:16px;font:inherit;background:#fff;">
                   <option value="">Select candidate category</option>
                   <option value="General">General</option>
                   <option value="OBC">OBC</option>
@@ -137,10 +141,10 @@
                   <option value="PwD">PwD</option>
                   <option value="Other">Other</option>
                 </select>
-                <div class="auth-optional-note">You can also fill these details later from your profile page after sign up.</div>
+                <div class="auth-optional-note" id="signup-details-note">You can also fill these details later from your profile page after sign up.</div>
               </details>
               <div class="inline-actions">
-                <button type="submit">Create Beacon Account</button>
+                <button type="submit" id="signup-submit-btn">Create Beacon Account</button>
               </div>
             </form>
             <div class="otp-row" id="signup-otp-row" hidden>
@@ -180,10 +184,18 @@
     const verifySignupOtpButton = document.getElementById("verify-signup-otp-btn");
     const resendSignupOtpButton = document.getElementById("resend-signup-otp-btn");
     const signupNote = document.getElementById("signup-note");
+    const signupDetailsPanel = document.getElementById("signup-details-panel");
+    const signupDetailsSummary = document.getElementById("signup-details-summary");
+    const signupDetailsNote = document.getElementById("signup-details-note");
+    const signupSubmitButton = document.getElementById("signup-submit-btn");
+    const signupPhoneInput = document.getElementById("signup-phone");
+    const signupPercentileInput = document.getElementById("signup-percentile");
+    const signupCategoryInput = document.getElementById("signup-category");
     let config = null;
     let user = null;
     const searchParams = new URLSearchParams(window.location.search);
     const accessIntent = searchParams.get("access");
+    const purchasePlan = searchParams.get("plan");
     const requestedNext = searchParams.get("next");
 
     function getSafeNextUrl() {
@@ -200,6 +212,23 @@
     function activateTab(target) {
       tabButtons.forEach((button) => button.classList.toggle("active", button.dataset.tab === target));
       tabPanels.forEach((panel) => panel.classList.toggle("active", panel.dataset.panel === target));
+    }
+
+    function applyPurchaseMode() {
+      if (accessIntent !== "purchase") return;
+
+      const selectedPlanLabel = purchasePlan === "pro" ? "Pro" : "Basic";
+      activateTab("signup");
+      signupDetailsPanel.open = true;
+      signupDetailsPanel.classList.add("required-mode");
+      signupDetailsSummary.textContent = `Complete these details to continue toward the ${selectedPlanLabel} course`;
+      signupDetailsNote.textContent = "Phone number, school percentile, and candidate category are mandatory before course purchase can continue.";
+      signupSubmitButton.textContent = `Create Beacon Account for ${selectedPlanLabel}`;
+      signupPhoneInput.required = true;
+      signupPercentileInput.required = true;
+      signupCategoryInput.required = true;
+      signupNote.textContent = `This sign up is for students who want to continue toward the ${selectedPlanLabel} course. Complete your basic profile details first.`;
+      setStatus(`Before continuing toward the ${selectedPlanLabel} course, complete these profile details and verify your email OTP.`, "info");
     }
 
     function syncUi() {
@@ -283,6 +312,7 @@
           setStatus("Sign up or log in to access the interview news briefings and current-affairs content.", "info");
           activateTab("signup");
         }
+        applyPurchaseMode();
       } catch (error) {
         setStatus("Unable to initialize login right now.", "error");
       }
