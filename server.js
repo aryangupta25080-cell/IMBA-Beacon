@@ -83,14 +83,14 @@ const PLAN_CATALOG = {
   basic: {
     id: "basic",
     label: "Basic",
-    amount: 150000,
+    amount: 149900,
     currency: "INR",
     description: "IMBA Beacon Basic preparation plan"
   },
   pro: {
     id: "pro",
     label: "Pro",
-    amount: 200000,
+    amount: 199900,
     currency: "INR",
     description: "IMBA Beacon Pro preparation plan"
   }
