@@ -1080,19 +1080,20 @@ button,input{border:none}
   font-weight:700;
 }
 .mentor-poster-box.has-image{
-  padding:0;
-  border-style:solid;
-  border-color:rgba(255,255,255,.14);
-  background:rgba(12,8,10,.34);
+  padding:.45rem;
+  border:none;
+  background:rgba(26,10,18,.45);
   overflow:hidden;
   aspect-ratio:4 / 5;
 }
 .mentor-poster-box img{
-  width:100%;
-  height:100%;
+  width:calc(100% + 2px);
+  height:calc(100% + 2px);
   display:block;
   object-fit:contain;
   object-position:center top;
+  border-radius:22px;
+  transform:translate(-1px,-1px) scale(1.01);
 }
 .mentor-card.featured-mentor .mentor-poster-box{
   min-height:auto;
