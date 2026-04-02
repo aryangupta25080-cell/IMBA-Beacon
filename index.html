@@ -638,21 +638,66 @@ button,input{border:none}
 }
 .hero-scenes{
   position:relative;
+  min-height:clamp(34rem,68vh,46rem);
 }
 .hero-scene{
   position:absolute;
   inset:0;
   opacity:0;
   visibility:hidden;
-  transform:translateX(22px);
-  transition:opacity .55s var(--slider-ease),transform .55s var(--slider-ease),visibility 0s linear .55s;
+  transform:translate3d(28px,0,0);
+  filter:blur(6px);
+  transition:
+    opacity .72s var(--slider-ease),
+    transform .82s var(--slider-ease),
+    filter .82s var(--slider-ease),
+    visibility 0s linear .82s;
 }
 .hero-scene.active{
   position:relative;
   opacity:1;
   visibility:visible;
-  transform:translateX(0);
-  transition:opacity .55s var(--slider-ease),transform .55s var(--slider-ease),visibility 0s linear 0s;
+  transform:translate3d(0,0,0);
+  filter:blur(0);
+  transition:
+    opacity .72s var(--slider-ease),
+    transform .82s var(--slider-ease),
+    filter .82s var(--slider-ease),
+    visibility 0s linear 0s;
+}
+.hero-content > *,
+.hero-aside > *{
+  opacity:0;
+  transform:translate3d(0,22px,0);
+  transition:
+    opacity .56s var(--slider-ease),
+    transform .72s var(--slider-ease);
+  will-change:opacity,transform;
+}
+.hero-scene.active .hero-content > *,
+.hero-scene.active .hero-aside > *{
+  opacity:1;
+  transform:translate3d(0,0,0);
+}
+.hero-scene.active .hero-content > :nth-child(1),
+.hero-scene.active .hero-aside > :nth-child(1){
+  transition-delay:.08s;
+}
+.hero-scene.active .hero-content > :nth-child(2),
+.hero-scene.active .hero-aside > :nth-child(2){
+  transition-delay:.16s;
+}
+.hero-scene.active .hero-content > :nth-child(3),
+.hero-scene.active .hero-aside > :nth-child(3){
+  transition-delay:.24s;
+}
+.hero-scene.active .hero-content > :nth-child(4),
+.hero-scene.active .hero-aside > :nth-child(4){
+  transition-delay:.32s;
+}
+.hero-scene.active .hero-content > :nth-child(5),
+.hero-scene.active .hero-aside > :nth-child(5){
+  transition-delay:.4s;
 }
 .hero-layout{
   display:grid;
@@ -2689,6 +2734,7 @@ footer{
 
     goTo(targetIndex, direction = 1, resetTimer = false) {
       const nextIndex = this.normalizeIndex(targetIndex);
+      if (nextIndex === this.activeIndex && !resetTimer) return;
 
       this.slides.forEach((slide, index) => {
         slide.classList.remove("active", "is-prev", "is-next");
