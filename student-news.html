@@ -176,7 +176,7 @@ a{text-decoration:none;color:inherit}
         const payload = await response.json();
         const user = payload.user || null;
         if (!user) {
-          window.location.href = "./login.html?access=news";
+          window.location.href = "./login.html?access=news&next=./student-news.html";
           return;
         }
         document.getElementById("account-chip").textContent = user.provider === "google" ? "Google Account" : "Beacon Account";

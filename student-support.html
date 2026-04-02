@@ -381,7 +381,7 @@ a{text-decoration:none;color:inherit}
         const user = payload.user || null;
 
         if (!user) {
-          window.location.href = "./login.html";
+          window.location.href = "./login.html?next=./student-support.html";
           return;
         }
 

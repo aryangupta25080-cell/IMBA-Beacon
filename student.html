@@ -1078,7 +1078,7 @@ body{
         const user = payload.user || null;
 
         if (!user) {
-          window.location.href = "./login.html";
+          window.location.href = "./login.html?next=./student.html";
           return;
         }
 

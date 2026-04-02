@@ -182,7 +182,15 @@
     const signupNote = document.getElementById("signup-note");
     let config = null;
     let user = null;
-    const accessIntent = new URLSearchParams(window.location.search).get("access");
+    const searchParams = new URLSearchParams(window.location.search);
+    const accessIntent = searchParams.get("access");
+    const requestedNext = searchParams.get("next");
+
+    function getSafeNextUrl() {
+      if (!requestedNext || !requestedNext.startsWith("./")) return "./student.html";
+      if (requestedNext.includes("login.html")) return "./student.html";
+      return requestedNext;
+    }
 
     function setStatus(message, type) {
       status.textContent = message;
@@ -243,9 +251,9 @@
       }
       user = payload.user;
       syncUi();
-      setStatus(`Signed in as ${user.name}. Redirecting to your dashboard...`, "success");
+      setStatus(`Signed in as ${user.name}. Redirecting you now...`, "success");
       window.setTimeout(() => {
-        window.location.href = "./student.html";
+        window.location.href = getSafeNextUrl();
       }, 700);
     }
 
@@ -267,6 +275,10 @@
           });
         }
         syncUi();
+        if (user && requestedNext) {
+          window.location.href = getSafeNextUrl();
+          return;
+        }
         if (accessIntent === "news" && !user) {
           setStatus("Sign up or log in to access the interview news briefings and current-affairs content.", "info");
           activateTab("signup");
@@ -289,7 +301,7 @@
       syncUi();
       setStatus(payload.message || "Logged in successfully.", "success");
       window.setTimeout(() => {
-        window.location.href = "./student.html";
+        window.location.href = getSafeNextUrl();
       }, 700);
     });
 
@@ -319,7 +331,7 @@
       syncUi();
       setStatus(payload.message || "OTP verified successfully.", "success");
       window.setTimeout(() => {
-        window.location.href = "./student.html";
+        window.location.href = getSafeNextUrl();
       }, 700);
     });
 
