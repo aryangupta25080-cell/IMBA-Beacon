@@ -96,6 +96,9 @@ img{max-width:100%;display:block}
   font-weight:700;
   font-size:.92rem;
 }
+.page-links a.active{
+  color:var(--gold-soft);
+}
 .page-links a:hover,.topbar a:hover{color:var(--gold-soft)}
 .nav-cta{
   display:inline-flex;
