@@ -252,6 +252,9 @@ section{padding:4.5rem 0}
   color:#30465e;
   font-size:.92rem;
 }
+.plan-list.aligned-list li{
+  min-height:1.5rem;
+}
 .plan-list .tick{
   color:var(--gold);
   font-weight:800;
