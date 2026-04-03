@@ -159,59 +159,22 @@ img{max-width:100%;display:block}
 .hero-card ul{
   list-style:none;
   display:grid;
-  gap:.8rem;
-  counter-reset:hero-card-items;
+  gap:.7rem;
 }
-.hero-card li{
-  counter-increment:hero-card-items;
-}
-.hero-card li,
 .hero-card li a{
-  position:relative;
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:1rem;
-  min-height:58px;
-  padding:.95rem 1.05rem .95rem 4rem;
-  border-radius:18px;
-  background:linear-gradient(180deg,rgba(255,255,255,.08),rgba(255,255,255,.05));
+  display:block;
+  padding:.92rem 1rem;
+  border-radius:14px;
+  background:rgba(255,255,255,.06);
   border:1px solid rgba(255,255,255,.08);
-  color:rgba(255,255,255,.92);
+  color:rgba(255,255,255,.9);
   font-weight:700;
-  transition:transform .2s ease,background .2s ease,border-color .2s ease,box-shadow .2s ease,color .2s ease;
-}
-.hero-card li::before,
-.hero-card li a::before{
-  content:counter(hero-card-items, decimal-leading-zero);
-  position:absolute;
-  left:1rem;
-  top:50%;
-  transform:translateY(-50%);
-  width:2rem;
-  height:2rem;
-  display:grid;
-  place-items:center;
-  border-radius:999px;
-  background:rgba(255,255,255,.12);
-  border:1px solid rgba(255,255,255,.12);
-  color:var(--gold-soft);
-  font-size:.72rem;
-  font-weight:800;
-  letter-spacing:.08em;
-}
-.hero-card li a::after{
-  content:"↗";
-  color:var(--gold-soft);
-  font-size:.92rem;
-  line-height:1;
-  opacity:.9;
+  transition:background .2s ease,border-color .2s ease,color .2s ease;
 }
 .hero-card li a:hover{
-  transform:translateY(-1px);
-  background:linear-gradient(180deg,rgba(255,255,255,.12),rgba(255,255,255,.08));
-  border-color:rgba(227,198,128,.35);
-  box-shadow:0 14px 28px rgba(34,7,16,.18);
+  background:rgba(255,255,255,.1);
+  border-color:rgba(227,198,128,.28);
+  color:#fff;
 }
 section{padding:4.5rem 0}
 .section-head{
@@ -359,10 +322,8 @@ footer{
   .page-links{display:none}
   .brand-mark-top{font-size:1.26rem}
   .brand-mark-bottom{font-size:1.52rem}
-  .hero-card li,
   .hero-card li a{
-    min-height:54px;
-    padding:.9rem .95rem .9rem 3.7rem;
+    padding:.88rem .95rem;
   }
 }
 .student-page{
