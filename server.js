@@ -58,6 +58,15 @@ const FRONTEND_ORIGIN = process.env.FRONTEND_ORIGIN || "";
 
 const googleClient = GOOGLE_CLIENT_ID ? new OAuth2Client(GOOGLE_CLIENT_ID) : null;
 const sessionStore = new Map();
+const PREMIUM_FEATURE_KEYS = [
+  "liveClasses",
+  "mockInterviews",
+  "practiceZone",
+  "mentorFeedback",
+  "leaderboard",
+  "progressTracker",
+  "newsBriefs"
+];
 const scryptAsync = promisify(crypto.scrypt);
 const phonePeTokenCache = {
   value: "",
@@ -304,6 +313,7 @@ function isValidPercentile(value) {
 
 function getPublicUser(user) {
   if (!user) return null;
+  const courseAccess = normalizeCourseAccess(user);
   return {
     name: user.name,
     email: user.email,
@@ -314,7 +324,45 @@ function getPublicUser(user) {
     provider: user.provider || "beacon",
     emailVerified: Boolean(user.emailVerified),
     createdAt: user.createdAt || "",
-    lastLoginAt: user.lastLoginAt || ""
+    lastLoginAt: user.lastLoginAt || "",
+    courseAccess
+  };
+}
+
+function normalizeFeatureAccess(value, purchased = false) {
+  const source = value && typeof value === "object" ? value : {};
+  return PREMIUM_FEATURE_KEYS.reduce((accumulator, key) => {
+    accumulator[key] = typeof source[key] === "boolean" ? source[key] : purchased;
+    return accumulator;
+  }, {});
+}
+
+function normalizeCourseAccess(user) {
+  const source = user?.courseAccess && typeof user.courseAccess === "object" ? user.courseAccess : {};
+  const purchased = Boolean(source.purchased || user?.purchased);
+  const planId = source.planId === "basic" || source.planId === "pro" ? source.planId : null;
+  return {
+    purchased,
+    planId,
+    grantedAt: source.grantedAt || "",
+    featureAccess: normalizeFeatureAccess(source.featureAccess, purchased)
+  };
+}
+
+function summarizeProfileStatus(user) {
+  const fields = [user?.phone, user?.schoolPercentile, user?.category].filter((value) => value !== null && value !== undefined && String(value).trim() !== "");
+  return {
+    completedFields: fields.length,
+    isComplete: fields.length === 3
+  };
+}
+
+function getAdminUserRecord(user) {
+  const publicUser = getPublicUser(user);
+  const profileStatus = summarizeProfileStatus(user);
+  return {
+    ...publicUser,
+    profileStatus
   };
 }
 
@@ -353,9 +401,13 @@ async function upsertUser(nextUser) {
   const email = normalizeEmail(nextUser.email);
   const existingIndex = users.findIndex((entry) => entry.email === email);
   if (existingIndex >= 0) {
-    users[existingIndex] = { ...users[existingIndex], ...nextUser, email };
+    const mergedUser = { ...users[existingIndex], ...nextUser, email };
+    mergedUser.courseAccess = normalizeCourseAccess(mergedUser);
+    users[existingIndex] = mergedUser;
   } else {
-    users.push({ ...nextUser, email });
+    const createdUser = { ...nextUser, email };
+    createdUser.courseAccess = normalizeCourseAccess(createdUser);
+    users.push(createdUser);
   }
   await writeJsonFile(USERS_FILE, users);
   return users.find((entry) => entry.email === email);
@@ -649,6 +701,83 @@ async function handleAdminWaitlistCsv(request, response, url, corsHeaders) {
     response.end(csv);
   } catch (error) {
     sendJson(response, 500, { message: "Unable to export waitlist CSV." }, corsHeaders);
+  }
+}
+
+async function handleAdminUsers(request, response, url, corsHeaders) {
+  if (!requireAdminAccess(request, response, url, corsHeaders)) return;
+
+  try {
+    const users = await readJsonFile(USERS_FILE);
+    const entries = users
+      .map((user) => getAdminUserRecord(user))
+      .sort((left, right) => new Date(right.createdAt || 0).getTime() - new Date(left.createdAt || 0).getTime());
+
+    sendJson(response, 200, {
+      count: entries.length,
+      entries
+    }, corsHeaders);
+  } catch (error) {
+    sendJson(response, 500, { message: "Unable to read user access data." }, corsHeaders);
+  }
+}
+
+async function handleAdminUserAccessUpdate(request, response, url, corsHeaders) {
+  if (!requireAdminAccess(request, response, url, corsHeaders)) return;
+
+  try {
+    const body = await parseRequestBody(request);
+    const email = normalizeEmail(body.email);
+    const purchased = Boolean(body.purchased);
+    const planId = body.planId === "basic" || body.planId === "pro" ? body.planId : null;
+    const requestedFeatureAccess = body.featureAccess && typeof body.featureAccess === "object" ? body.featureAccess : {};
+
+    if (!isValidEmail(email)) {
+      sendJson(response, 400, { message: "Provide a valid user email." }, corsHeaders);
+      return;
+    }
+
+    if (purchased && !planId) {
+      sendJson(response, 400, { message: "Select Basic or Pro before granting paid course access." }, corsHeaders);
+      return;
+    }
+
+    const existingUser = await findUserByEmail(email);
+    if (!existingUser) {
+      sendJson(response, 404, { message: "No Beacon user found for this email." }, corsHeaders);
+      return;
+    }
+
+    const nextCourseAccess = {
+      purchased,
+      planId,
+      grantedAt: purchased ? (existingUser.courseAccess?.grantedAt || new Date().toISOString()) : "",
+      featureAccess: PREMIUM_FEATURE_KEYS.reduce((accumulator, key) => {
+        accumulator[key] = typeof requestedFeatureAccess[key] === "boolean"
+          ? requestedFeatureAccess[key]
+          : purchased;
+        return accumulator;
+      }, {})
+    };
+
+    const persistedUser = await upsertUser({
+      ...existingUser,
+      courseAccess: nextCourseAccess
+    });
+
+    const sessionEntries = Array.from(sessionStore.entries());
+    sessionEntries.forEach(([sessionId, sessionUser]) => {
+      if (normalizeEmail(sessionUser.email) === email) {
+        sessionStore.set(sessionId, persistedUser);
+      }
+    });
+
+    sendJson(response, 200, {
+      message: "User access updated successfully.",
+      user: getAdminUserRecord(persistedUser)
+    }, corsHeaders);
+  } catch (error) {
+    sendJson(response, 400, { message: error.message || "Unable to update user access." }, corsHeaders);
   }
 }
 
@@ -1329,6 +1458,16 @@ async function requestHandler(request, response) {
 
   if (request.method === "GET" && pathname === "/api/admin/waitlist.csv") {
     await handleAdminWaitlistCsv(request, response, url, corsHeaders);
+    return;
+  }
+
+  if (request.method === "GET" && pathname === "/api/admin/users") {
+    await handleAdminUsers(request, response, url, corsHeaders);
+    return;
+  }
+
+  if (request.method === "POST" && pathname === "/api/admin/users/access") {
+    await handleAdminUserAccessUpdate(request, response, url, corsHeaders);
     return;
   }
 

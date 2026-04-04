@@ -794,7 +794,7 @@ body{
                   <span>Joined</span>
                 </div>
                 <div class="welcome-stat">
-                  <strong>Locked</strong>
+                  <strong id="premium-tools-state">Locked</strong>
                   <span>Premium tools</span>
                 </div>
               </div>
@@ -807,16 +807,16 @@ body{
                   <div class="welcome-mini-item">
                     <div>
                       <strong>Course tracks</strong>
-                      <span>Basic and Pro</span>
+                      <span id="course-track-copy">Basic and Pro</span>
                     </div>
                     <b>2</b>
                   </div>
                   <div class="welcome-mini-item">
                     <div>
                       <strong>Enrollment status</strong>
-                      <span>Course access active</span>
+                      <span id="enrollment-copy">Course access active</span>
                     </div>
-                    <b>Live</b>
+                    <b id="enrollment-badge">Live</b>
                   </div>
                 </div>
               </div>
@@ -830,26 +830,26 @@ body{
                 </div>
               </div>
               <div class="mini-stack">
-                <div class="progress-row">
+                <div class="progress-row" data-feature-row="liveClasses">
                   <div class="progress-copy">
                     <strong>Live Classes Access</strong>
                     <span>Weekly guided classes, session calendar, and priority updates.</span>
                   </div>
-                  <div class="progress-count">Locked</div>
+                  <div class="progress-count" data-feature-count="liveClasses">Locked</div>
                 </div>
-                <div class="progress-row">
+                <div class="progress-row" data-feature-row="mockInterviews">
                   <div class="progress-copy">
                     <strong>Mock Interview Support</strong>
                     <span>Structured mocks, mentor feedback, and improvement tracking.</span>
                   </div>
-                  <div class="progress-count">Locked</div>
+                  <div class="progress-count" data-feature-count="mockInterviews">Locked</div>
                 </div>
-                <div class="progress-row">
+                <div class="progress-row" data-feature-row="practiceZone">
                   <div class="progress-copy">
                     <strong>Quiz & Practice Zone</strong>
                     <span>Quizzes, sheets, and performance ranking become active here.</span>
                   </div>
-                  <div class="progress-count">Locked</div>
+                  <div class="progress-count" data-feature-count="practiceZone">Locked</div>
                 </div>
                 <div class="feature-actions">
                   <button class="lock-btn" type="button" data-locked-action>Purchase your course</button>
@@ -898,9 +898,9 @@ body{
                   <h2>Mentor Feedback</h2>
                   <p>Mentor reviews will appear here after you purchase a course and complete guided sessions.</p>
                 </div>
-                <span class="locked-tag">Locked</span>
+                <span class="locked-tag" id="mentor-feedback-tag">Locked</span>
               </div>
-              <div class="mini-stack">
+              <div class="mini-stack" data-feature-row="mentorFeedback">
                 <div class="feedback-item">
                   <div class="feedback-copy">
                     <strong>Mock Interview Review</strong>
@@ -931,9 +931,9 @@ body{
                   <h2>Quiz Leaderboard</h2>
                   <p>A quiz-based leaderboard can be shown here once your course and quizzes are active.</p>
                 </div>
-                <span class="locked-tag">Locked</span>
+                <span class="locked-tag" id="leaderboard-tag">Locked</span>
               </div>
-              <div class="mini-stack">
+              <div class="mini-stack" data-feature-row="leaderboard">
                 <div class="leaderboard-row">
                   <div style="display:flex;align-items:center;gap:.8rem;">
                     <div class="leaderboard-rank">1</div>
@@ -966,9 +966,9 @@ body{
                   <h2>Progress Tracker</h2>
                   <p>Track exactly how much of your course you have completed once your course is active.</p>
                 </div>
-                <span class="locked-tag">Locked</span>
+                <span class="locked-tag" id="progress-tag">Locked</span>
               </div>
-              <div class="mini-stack">
+              <div class="mini-stack" data-feature-row="progressTracker">
                 <div class="progress-row">
                   <div class="progress-copy">
                     <strong>Video Lectures</strong>
@@ -1013,7 +1013,7 @@ body{
                   <h2>Mentor Feedback Hub</h2>
                   <p>Open the mentor feedback section below to see the individual review areas that unlock after purchase.</p>
                 </div>
-                <span class="locked-tag">Locked</span>
+                <span class="locked-tag" id="mentor-hub-tag">Locked</span>
               </div>
               <div class="mentor-accordion">
                 <button class="mentor-toggle" id="mentor-feedback-toggle" type="button" aria-expanded="false" aria-controls="mentor-feedback-options">
@@ -1074,6 +1074,11 @@ body{
     const mentorFeedbackToggle = document.getElementById("mentor-feedback-toggle");
     const mentorFeedbackOptions = document.getElementById("mentor-feedback-options");
     const mentorFeedbackIcon = document.getElementById("mentor-feedback-icon");
+    const featureCounts = {
+      liveClasses: document.querySelector('[data-feature-count="liveClasses"]'),
+      mockInterviews: document.querySelector('[data-feature-count="mockInterviews"]'),
+      practiceZone: document.querySelector('[data-feature-count="practiceZone"]')
+    };
 
     function setStatus(message, type) {
       statusNode.textContent = message;
@@ -1093,12 +1098,60 @@ body{
     }
 
     function renderUser(user) {
+      const courseAccess = user.courseAccess || { purchased: false, planId: null, featureAccess: {} };
+      const purchased = Boolean(courseAccess.purchased);
+      const planLabel = courseAccess.planId === "pro" ? "Pro" : courseAccess.planId === "basic" ? "Basic" : "Not selected";
+
       document.getElementById("student-name").textContent = user.name || "Student";
       document.getElementById("student-email").textContent = user.email || "";
       const profileFields = [user.phone, user.schoolPercentile, user.category].filter((value) => value !== null && value !== undefined && value !== "");
       document.getElementById("student-profile-status").textContent = profileFields.length === 3 ? "Complete" : "Update";
       document.getElementById("student-created").textContent = formatDate(user.createdAt);
       document.getElementById("account-chip").textContent = user.provider === "google" ? "Google Account" : "Beacon Account";
+      document.getElementById("account-state").textContent = purchased ? `${planLabel} Unlocked` : "Not Purchased";
+      document.getElementById("premium-tools-state").textContent = purchased ? "Available" : "Locked";
+      document.getElementById("course-track-copy").textContent = purchased ? `${planLabel} plan active` : "Basic and Pro";
+      document.getElementById("enrollment-copy").textContent = purchased ? "Paid course access unlocked" : "Course access active";
+      document.getElementById("enrollment-badge").textContent = purchased ? "Active" : "Live";
+      document.getElementById("welcome-copy").textContent = purchased
+        ? `Your ${planLabel} IMBA Beacon preparation plan is active. Continue with your unlocked feedback, progress tracking, and guided course features.`
+        : "Your IMBA Beacon course account is active. Review your preparation track, keep your details ready, and unlock guided course features after enrollment.";
+
+      const featureAccess = courseAccess.featureAccess || {};
+      const featureState = {
+        liveClasses: Boolean(featureAccess.liveClasses),
+        mockInterviews: Boolean(featureAccess.mockInterviews),
+        practiceZone: Boolean(featureAccess.practiceZone),
+        mentorFeedback: Boolean(featureAccess.mentorFeedback),
+        leaderboard: Boolean(featureAccess.leaderboard),
+        progressTracker: Boolean(featureAccess.progressTracker)
+      };
+
+      Object.entries(featureCounts).forEach(([key, node]) => {
+        if (!node) return;
+        node.textContent = featureState[key] ? "Open" : "Locked";
+      });
+
+      const tagMap = {
+        mentorFeedback: document.getElementById("mentor-feedback-tag"),
+        leaderboard: document.getElementById("leaderboard-tag"),
+        progressTracker: document.getElementById("progress-tag")
+      };
+      Object.entries(tagMap).forEach(([key, node]) => {
+        if (!node) return;
+        node.textContent = featureState[key] ? "Unlocked" : "Locked";
+      });
+      document.getElementById("mentor-hub-tag").textContent = featureState.mentorFeedback ? "Unlocked" : "Locked";
+
+      document.querySelectorAll("[data-feature-row]").forEach((row) => {
+        const key = row.getAttribute("data-feature-row");
+        const unlocked = Boolean(featureState[key]);
+        row.style.opacity = unlocked ? "1" : "";
+      });
+
+      lockedButtons.forEach((button) => {
+        button.hidden = purchased;
+      });
 
       const avatar = document.getElementById("student-avatar");
       const fallback = document.getElementById("student-avatar-fallback");

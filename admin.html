@@ -153,6 +153,42 @@ button{
   border:1px solid var(--line);
   border-radius:18px;
 }
+.section-title{
+  font-size:1.15rem;
+  color:var(--maroon);
+  margin-bottom:.35rem;
+}
+.section-copy{
+  color:var(--muted);
+  margin-bottom:1rem;
+}
+.stack-panels{
+  display:grid;
+  gap:1.5rem;
+}
+.access-table td{
+  min-width:130px;
+}
+.toggle-grid{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:.45rem .85rem;
+}
+.toggle-grid label{
+  display:flex;
+  align-items:center;
+  gap:.45rem;
+  font-size:.82rem;
+  color:var(--ink);
+  white-space:nowrap;
+}
+.inline-select{
+  min-width:130px;
+}
+.cell-stack{
+  display:grid;
+  gap:.35rem;
+}
 table{
   width:100%;
   border-collapse:collapse;
@@ -255,6 +291,33 @@ tbody tr:hover{
         </table>
       </div>
     </section>
+
+    <section class="panel">
+      <h2 class="section-title">Student Access Control</h2>
+      <p class="section-copy">Grant purchased access, assign the plan, and choose exactly which premium features are unlocked for each Beacon account.</p>
+      <p class="status" id="access-status" aria-live="polite"></p>
+      <div class="table-wrap">
+        <table class="access-table">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Email</th>
+              <th>Verified</th>
+              <th>Profile</th>
+              <th>Plan</th>
+              <th>Purchased</th>
+              <th>Feature Access</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody id="access-table-body">
+            <tr>
+              <td class="empty" colspan="8">Load applications to manage student access.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
   </main>
 
 <script>
@@ -270,20 +333,28 @@ tbody tr:hover{
   const copyEmailsButton = document.getElementById("copy-emails");
   const resetFiltersButton = document.getElementById("reset-filters");
   const status = document.getElementById("admin-status");
+  const accessStatus = document.getElementById("access-status");
   const entryCount = document.getElementById("entry-count");
   const tableBody = document.getElementById("admin-table-body");
+  const accessTableBody = document.getElementById("access-table-body");
   const statTotal = document.getElementById("stat-total");
   const statPhone = document.getElementById("stat-phone");
   const statCategory = document.getElementById("stat-category");
   const statLatest = document.getElementById("stat-latest");
   const storageKey = "imba_admin_access_key";
   let allEntries = [];
+  let allUsers = [];
 
   keyInput.value = sessionStorage.getItem(storageKey) || "";
 
   function setStatus(message, type) {
     status.textContent = message;
     status.className = "status" + (type ? " " + type : "");
+  }
+
+  function setAccessStatus(message, type) {
+    accessStatus.textContent = message;
+    accessStatus.className = "status" + (type ? " " + type : "");
   }
 
   function getAccessKey() {
@@ -358,6 +429,74 @@ tbody tr:hover{
     entryCount.textContent = `${filtered.length} visible of ${allEntries.length} application${allEntries.length === 1 ? "" : "s"}`;
   }
 
+  function featureToggleMarkup(user, key, label) {
+    const checked = user.courseAccess?.featureAccess?.[key] ? "checked" : "";
+    return `<label><input type="checkbox" data-feature-key="${key}" ${checked}/> <span>${label}</span></label>`;
+  }
+
+  function renderAccessRows(entries) {
+    if (!entries.length) {
+      accessTableBody.innerHTML = '<tr><td class="empty" colspan="8">No Beacon users found yet.</td></tr>';
+      return;
+    }
+
+    accessTableBody.innerHTML = entries.map((user) => `
+      <tr data-user-email="${user.email}">
+        <td>${user.name || "-"}</td>
+        <td>${user.email || "-"}</td>
+        <td>${user.emailVerified ? "Verified" : "Pending"}</td>
+        <td>${user.profileStatus?.isComplete ? "Complete" : `Incomplete (${user.profileStatus?.completedFields || 0}/3)`}</td>
+        <td>
+          <select class="inline-select" data-plan-select>
+            <option value="">No plan</option>
+            <option value="basic" ${user.courseAccess?.planId === "basic" ? "selected" : ""}>Basic</option>
+            <option value="pro" ${user.courseAccess?.planId === "pro" ? "selected" : ""}>Pro</option>
+          </select>
+        </td>
+        <td>
+          <label><input type="checkbox" data-purchased-toggle ${user.courseAccess?.purchased ? "checked" : ""}/> Paid</label>
+        </td>
+        <td>
+          <div class="toggle-grid">
+            ${featureToggleMarkup(user, "liveClasses", "Live classes")}
+            ${featureToggleMarkup(user, "mockInterviews", "Mock interviews")}
+            ${featureToggleMarkup(user, "practiceZone", "Practice zone")}
+            ${featureToggleMarkup(user, "mentorFeedback", "Mentor feedback")}
+            ${featureToggleMarkup(user, "leaderboard", "Leaderboard")}
+            ${featureToggleMarkup(user, "progressTracker", "Progress tracker")}
+            ${featureToggleMarkup(user, "newsBriefs", "News briefs")}
+          </div>
+        </td>
+        <td>
+          <div class="cell-stack">
+            <button class="btn-primary" type="button" data-save-access>Save Access</button>
+          </div>
+        </td>
+      </tr>
+    `).join("");
+  }
+
+  async function loadUsers() {
+    const accessKey = getAccessKey();
+    if (!accessKey) return;
+
+    try {
+      const response = await fetch(`${apiBase}/api/admin/users?accessKey=${encodeURIComponent(accessKey)}`);
+      const payload = await response.json();
+
+      if (!response.ok) {
+        setAccessStatus(payload.message || "Unable to load access controls.", "error");
+        return;
+      }
+
+      allUsers = payload.entries || [];
+      renderAccessRows(allUsers);
+      setAccessStatus("Student access controls loaded successfully.", "success");
+    } catch (error) {
+      setAccessStatus("Unable to connect to the access control endpoint right now.", "error");
+    }
+  }
+
   async function loadEntries() {
     const accessKey = getAccessKey();
     if (!accessKey) {
@@ -381,6 +520,7 @@ tbody tr:hover{
       updateStats(allEntries);
       updateCategoryOptions(allEntries);
       applyFilters();
+      await loadUsers();
       setStatus("Admin dashboard loaded successfully.", "success");
     } catch (error) {
       setStatus("Unable to connect to the admin endpoint right now.", "error");
@@ -430,6 +570,44 @@ tbody tr:hover{
     applyFilters();
   }
 
+  async function saveUserAccess(row) {
+    const accessKey = getAccessKey();
+    const email = row.getAttribute("data-user-email");
+    const purchased = Boolean(row.querySelector("[data-purchased-toggle]")?.checked);
+    const planId = row.querySelector("[data-plan-select]")?.value || "";
+    const featureInputs = Array.from(row.querySelectorAll("[data-feature-key]"));
+    const featureAccess = featureInputs.reduce((accumulator, input) => {
+      accumulator[input.getAttribute("data-feature-key")] = Boolean(input.checked);
+      return accumulator;
+    }, {});
+
+    try {
+      const response = await fetch(`${apiBase}/api/admin/users/access?accessKey=${encodeURIComponent(accessKey)}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          email,
+          purchased,
+          planId,
+          featureAccess
+        })
+      });
+      const payload = await response.json();
+
+      if (!response.ok) {
+        setAccessStatus(payload.message || "Unable to update access.", "error");
+        return;
+      }
+
+      setAccessStatus(`Access updated for ${email}.`, "success");
+      await loadUsers();
+    } catch (error) {
+      setAccessStatus("Unable to save access right now.", "error");
+    }
+  }
+
   loadButton.addEventListener("click", loadEntries);
   refreshButton.addEventListener("click", loadEntries);
   csvButton.addEventListener("click", downloadCsv);
@@ -438,6 +616,13 @@ tbody tr:hover{
   resetFiltersButton.addEventListener("click", resetFilters);
   searchInput.addEventListener("input", applyFilters);
   categoryFilter.addEventListener("change", applyFilters);
+  accessTableBody.addEventListener("click", (event) => {
+    const button = event.target.closest("[data-save-access]");
+    if (!button) return;
+    const row = button.closest("tr[data-user-email]");
+    if (!row) return;
+    saveUserAccess(row);
+  });
 })();
 </script>
 </body>
