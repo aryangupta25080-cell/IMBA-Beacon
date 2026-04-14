@@ -198,6 +198,47 @@ section{padding:4.5rem 0}
   color:var(--muted);
   max-width:64ch;
 }
+.important-note{
+  position:relative;
+  overflow:hidden;
+  background:linear-gradient(135deg,#fff8df,#f8edc4);
+  border:1px solid rgba(197,155,61,.45);
+  border-radius:28px;
+  padding:1.6rem;
+  display:flex;
+  justify-content:space-between;
+  gap:1.2rem;
+  align-items:center;
+  box-shadow:0 18px 44px rgba(106,31,54,.08);
+}
+.important-note::before{
+  content:"";
+  position:absolute;
+  inset:0 auto 0 0;
+  width:7px;
+  background:linear-gradient(180deg,var(--gold),var(--maroon));
+}
+.important-note small{
+  display:inline-flex;
+  margin-bottom:.55rem;
+  color:#7a5520;
+  font-size:.72rem;
+  font-weight:900;
+  letter-spacing:.14em;
+  text-transform:uppercase;
+}
+.important-note h3{
+  color:var(--maroon);
+  font-size:1.35rem;
+  margin-bottom:.45rem;
+}
+.important-note p{
+  color:#6b5a4a;
+  max-width:72ch;
+}
+.important-note .nav-cta{
+  white-space:nowrap;
+}
 .card-grid{
   display:grid;
   grid-template-columns:repeat(3,1fr);
@@ -327,6 +368,13 @@ footer{
   .brand-mark-bottom{font-size:1.52rem}
   .hero-card li a{
     padding:.88rem .95rem;
+  }
+  .important-note{
+    flex-direction:column;
+    align-items:flex-start;
+  }
+  .important-note .nav-cta{
+    white-space:normal;
   }
 }
 .student-page{
