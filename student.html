@@ -8,26 +8,50 @@
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Merriweather:wght@700&display=swap" rel="stylesheet"/>
-<link rel="stylesheet" href="./section-pages.css"/>
 <style>
+:root{
+  --maroon:#6a1f36;
+  --maroon-deep:#4b1527;
+  --maroon-soft:#8f4660;
+  --gold:#d4b058;
+  --gold-soft:#efddb0;
+  --ink:#2c2026;
+  --muted:#776a72;
+  --line:#eadfe4;
+  --surface:#ffffff;
+  --surface-soft:#faf6f8;
+  --surface-tint:#f4eef1;
+  --success:#2f7a4d;
+  --danger:#b33d4b;
+}
+*{
+  box-sizing:border-box;
+}
 body{
+  margin:0;
   min-height:100vh;
-  background:
-    radial-gradient(circle at top left, rgba(106,31,54,.10), transparent 28%),
-    linear-gradient(180deg,#faf7f8 0%,#f2eef1 100%);
-  color:#203248;
+  font-family:"Manrope",system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  color:var(--ink);
+  background:linear-gradient(180deg,#f4f1f4 0%,#edf1f6 100%);
+}
+a{
+  color:inherit;
+  text-decoration:none;
+}
+button{
+  font:inherit;
 }
 .dashboard-shell{
-  width:min(1240px,calc(100% - 1.25rem));
-  margin:.75rem auto;
+  width:min(1200px,calc(100% - 1.4rem));
+  margin:1rem auto;
 }
-.dashboard-app{
-  min-height:min(900px,calc(100vh - 1.5rem));
-  background:#fffdfd;
+.dashboard-frame{
+  background:rgba(255,255,255,.9);
   border:1px solid rgba(106,31,54,.08);
-  border-radius:28px;
-  box-shadow:0 24px 60px rgba(35,18,26,.10);
+  border-radius:30px;
+  box-shadow:0 26px 70px rgba(42,20,28,.10);
   overflow:hidden;
+  backdrop-filter:blur(12px);
 }
 .dashboard-topbar{
   display:flex;
@@ -35,28 +59,23 @@ body{
   justify-content:space-between;
   gap:1rem;
   padding:1rem 1.15rem;
+  background:rgba(255,255,255,.94);
   border-bottom:1px solid rgba(106,31,54,.08);
-  background:rgba(255,255,255,.92);
-  position:sticky;
-  top:0;
-  z-index:20;
-  backdrop-filter:blur(14px);
 }
-.brand-wrap{
+.brand-group{
   display:flex;
   align-items:center;
-  gap:.85rem;
+  gap:.95rem;
 }
 .brand-badge{
-  width:46px;
-  height:46px;
+  width:48px;
+  height:48px;
   border-radius:16px;
   display:grid;
   place-items:center;
   background:linear-gradient(135deg,var(--gold-soft),var(--gold));
   color:var(--maroon);
   font-weight:800;
-  font-size:.94rem;
 }
 .brand-copy strong{
   display:block;
@@ -64,137 +83,117 @@ body{
 }
 .brand-copy span{
   display:block;
-  color:#7d7180;
-  font-size:.82rem;
+  color:var(--muted);
+  font-size:.84rem;
 }
-.topbar-tools{
+.topbar-actions{
   display:flex;
   align-items:center;
   gap:.7rem;
+  flex-wrap:wrap;
 }
-.menu-toggle,.account-chip,.logout-btn,.ghost-btn,.primary-btn{
+.account-chip,
+.outline-btn,
+.primary-btn,
+.logout-btn,
+.module-open-btn{
   border:none;
   border-radius:999px;
-  font:inherit;
   font-weight:800;
   cursor:pointer;
 }
-.menu-toggle{
-  display:none;
-  width:44px;
-  height:44px;
-  border-radius:14px;
-  background:#f5eff2;
-  box-shadow:inset 0 0 0 1px rgba(106,31,54,.08);
-}
-.menu-toggle span{
-  display:block;
-  width:18px;
-  height:2px;
-  border-radius:999px;
-  margin:3px auto;
-  background:#5d2940;
-}
 .account-chip{
-  padding:.6rem .95rem;
+  padding:.65rem 1rem;
   background:rgba(106,31,54,.08);
   color:var(--maroon);
 }
-.logout-btn,.ghost-btn{
-  padding:.84rem 1.05rem;
+.outline-btn,
+.logout-btn{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  padding:.82rem 1rem;
   background:#fff;
-  color:#6b5f6a;
+  color:#5f5560;
   box-shadow:inset 0 0 0 1px rgba(106,31,54,.12);
 }
-.primary-btn{
-  padding:.88rem 1.18rem;
+.primary-btn,
+.module-open-btn{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  padding:.88rem 1.08rem;
   background:linear-gradient(135deg,var(--gold-soft),var(--gold));
   color:var(--maroon);
-  display:inline-flex;
-  align-items:center;
-  justify-content:center;
-  gap:.45rem;
-}
-.quick-nav{
-  display:flex;
-  align-items:center;
-  gap:.6rem;
-  flex-wrap:wrap;
-}
-.quick-nav a{
-  display:inline-flex;
-  align-items:center;
-  justify-content:center;
-  padding:.7rem 1rem;
-  border-radius:999px;
-  color:#5d2940;
-  background:#f8f1f4;
-  box-shadow:inset 0 0 0 1px rgba(106,31,54,.08);
-  font-weight:700;
-}
-.mobile-nav{
-  display:none;
-  padding:0 1rem 1rem;
-}
-.mobile-nav-panel{
-  background:#fff;
-  border:1px solid rgba(106,31,54,.08);
-  border-radius:22px;
-  padding:.8rem;
-  box-shadow:0 18px 36px rgba(35,18,26,.08);
-}
-.mobile-nav-panel[hidden]{
-  display:none!important;
-}
-.mobile-nav-links{
-  display:grid;
-  gap:.55rem;
-}
-.mobile-nav-links a{
-  padding:.85rem 1rem;
-  border-radius:16px;
-  background:#f8f1f4;
-  color:#5d2940;
-  font-weight:700;
 }
 .dashboard-main{
   padding:1rem;
   display:grid;
   gap:1rem;
 }
-.hero-grid{
+.track-strip,
+.overview-grid,
+.progress-shell,
+.access-grid,
+.footer-grid{
   display:grid;
-  grid-template-columns:1.25fr .95fr;
   gap:1rem;
 }
-.hero-card,
-.panel-card{
-  background:#fff;
-  border:1px solid rgba(106,31,54,.08);
-  border-radius:26px;
-  box-shadow:0 14px 34px rgba(35,18,26,.08);
+.track-strip{
+  grid-template-columns:repeat(4,minmax(0,1fr));
 }
-.hero-card{
-  padding:1.35rem;
+.track-chip,
+.overview-card,
+.progress-panel,
+.access-card,
+.footer-card{
+  background:var(--surface);
+  border:1px solid rgba(106,31,54,.08);
+  border-radius:24px;
+  box-shadow:0 16px 38px rgba(42,20,28,.06);
+}
+.track-chip{
+  padding:1rem 1.1rem;
+  text-align:center;
+  background:linear-gradient(180deg,#fff 0%,#fbf7f8 100%);
+}
+.track-chip small{
+  display:block;
+  color:var(--muted);
+  font-size:.72rem;
+  text-transform:uppercase;
+  letter-spacing:.08em;
+  margin-bottom:.2rem;
+}
+.track-chip strong{
+  display:block;
+  font-size:1.02rem;
+}
+.overview-grid{
+  grid-template-columns:1.2fr .8fr;
+}
+.overview-card{
+  padding:1.15rem;
+}
+.overview-card.hero{
+  background:linear-gradient(135deg,#7a3653 0%,#5c1931 54%,#bc8f40 100%);
   color:#fff;
-  background:
-    radial-gradient(circle at top right, rgba(255,255,255,.18), transparent 32%),
-    linear-gradient(135deg,#7d3555 0%,#5f1d38 58%,#bf9341 100%);
 }
 .hero-top{
   display:flex;
-  align-items:flex-start;
+  align-items:center;
   justify-content:space-between;
   gap:1rem;
 }
 .hero-label,
-.locked-pill{
+.state-pill,
+.step-tag{
   display:inline-flex;
   align-items:center;
   justify-content:center;
-  padding:.46rem .85rem;
+  padding:.46rem .8rem;
   border-radius:999px;
-  font-size:.78rem;
+  font-size:.75rem;
   font-weight:800;
   letter-spacing:.08em;
   text-transform:uppercase;
@@ -202,643 +201,674 @@ body{
 .hero-label{
   background:rgba(255,255,255,.14);
 }
-.hero-copy h1{
-  font-family:"Merriweather",serif;
-  font-size:clamp(2rem,4vw,3.35rem);
-  line-height:1.02;
-  margin:.95rem 0 .45rem;
+.state-pill{
+  background:rgba(255,255,255,.16);
 }
-.hero-copy p{
-  max-width:62ch;
+.hero-title{
+  font-family:"Merriweather",serif;
+  font-size:clamp(1.9rem,4vw,2.85rem);
+  line-height:1.06;
+  margin:.9rem 0 .65rem;
+  max-width:12ch;
+}
+.hero-copy{
+  max-width:58ch;
   color:rgba(255,255,255,.84);
 }
-.student-summary{
+.student-row{
   display:flex;
   align-items:center;
+  justify-content:space-between;
   gap:1rem;
-  margin-top:1.35rem;
+  flex-wrap:wrap;
+  margin-top:1rem;
+}
+.identity-wrap{
+  display:flex;
+  align-items:center;
+  gap:.9rem;
 }
 .avatar,
 .avatar-fallback{
-  width:78px;
-  height:78px;
-  border-radius:24px;
+  width:72px;
+  height:72px;
+  border-radius:20px;
   object-fit:cover;
-  box-shadow:inset 0 0 0 1px rgba(255,255,255,.18);
 }
 .avatar-fallback{
   display:grid;
   place-items:center;
-  background:rgba(120,94,255,.92);
-  font-size:1.85rem;
+  background:rgba(122,99,255,.92);
+  color:#fff;
+  font-size:1.75rem;
   font-weight:800;
 }
-.student-meta strong{
+.identity-copy strong{
   display:block;
-  font-size:1.8rem;
+  font-size:1.55rem;
   line-height:1.1;
 }
-.student-meta span{
+.identity-copy span{
   display:block;
   color:rgba(255,255,255,.84);
   margin-top:.2rem;
 }
-.hero-stats{
+.hero-quick-stats{
   display:grid;
-  grid-template-columns:repeat(4,minmax(0,1fr));
+  grid-template-columns:repeat(3,minmax(0,1fr));
   gap:.8rem;
-  margin-top:1.3rem;
+  margin-top:1rem;
 }
 .hero-stat{
-  min-height:104px;
-  padding:1rem;
+  padding:.9rem;
   border-radius:20px;
-  background:rgba(255,255,255,.10);
-  box-shadow:inset 0 0 0 1px rgba(255,255,255,.10);
+  background:rgba(255,255,255,.12);
 }
-.hero-stat b{
+.hero-stat small{
   display:block;
-  font-size:1.35rem;
-  margin-bottom:.2rem;
+  color:rgba(255,255,255,.72);
+  text-transform:uppercase;
+  letter-spacing:.08em;
+  font-size:.68rem;
 }
-.hero-stat span{
-  color:rgba(255,255,255,.82);
-  font-size:.9rem;
+.hero-stat strong{
+  display:block;
+  margin-top:.32rem;
+  font-size:1.05rem;
 }
-.hero-side{
-  padding:1.15rem;
+.overview-card.side{
   display:grid;
-  gap:.9rem;
-}
-.side-card{
-  padding:1.05rem;
-  border-radius:22px;
-  background:#fff;
-  border:1px solid rgba(106,31,54,.08);
-  box-shadow:0 10px 24px rgba(35,18,26,.06);
-}
-.side-card h2{
-  font-size:1.06rem;
-  margin-bottom:.2rem;
-}
-.side-card p{
-  color:#7d7180;
-}
-.side-card-list{
-  display:grid;
-  gap:.7rem;
-  margin-top:.95rem;
-}
-.side-card-item{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
   gap:.8rem;
-  padding:.9rem 1rem;
-  border-radius:18px;
-  background:#faf5f7;
 }
-.side-card-item strong{
+.section-kicker{
   display:block;
-  margin-bottom:.15rem;
+  color:var(--muted);
+  text-transform:uppercase;
+  letter-spacing:.08em;
+  font-size:.72rem;
+  font-weight:800;
 }
-.side-card-item span{
-  color:#7d7180;
-  font-size:.9rem;
+.side h2,
+.progress-panel h2,
+.footer-card h2{
+  margin:.25rem 0 0;
+  font-size:1.3rem;
 }
-.side-card-item b{
-  color:var(--maroon);
+.mini-list{
+  display:grid;
+  gap:.75rem;
+  margin-top:.2rem;
 }
-.progress-card{
+.mini-item{
+  padding:.95rem 1rem;
+  border-radius:18px;
+  background:var(--surface-soft);
+}
+.mini-item strong{
+  display:block;
+}
+.mini-item span{
+  display:block;
+  color:var(--muted);
+  margin-top:.22rem;
+}
+.progress-panel{
   padding:1.15rem;
 }
-.section-head{
+.panel-top{
   display:flex;
-  align-items:flex-end;
+  align-items:flex-start;
   justify-content:space-between;
   gap:1rem;
-  margin-bottom:1rem;
+  flex-wrap:wrap;
 }
-.section-head h2{
-  font-size:1.35rem;
-  margin-bottom:.15rem;
+.panel-top p{
+  margin:.35rem 0 0;
+  color:var(--muted);
 }
-.section-head p{
-  color:#7d7180;
+.progress-pill{
+  color:var(--maroon);
+  font-weight:800;
 }
-.progress-grid{
-  display:grid;
-  grid-template-columns:repeat(4,minmax(0,1fr));
-  gap:.9rem;
+.progress-line-wrap{
+  position:relative;
+  margin-top:1.2rem;
+  padding:1.2rem 0 .3rem;
 }
-.progress-box{
-  padding:1rem;
-  border-radius:20px;
-  background:#fbf7f8;
-  border:1px solid rgba(106,31,54,.08);
-}
-.progress-box-head{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:.7rem;
-  margin-bottom:.55rem;
-}
-.progress-box strong{
-  font-size:1rem;
-}
-.progress-box span{
-  color:#7d7180;
-  font-size:.9rem;
-}
-.progress-track{
-  width:100%;
-  height:10px;
+.progress-line{
+  position:absolute;
+  top:31px;
+  left:6%;
+  right:6%;
+  height:6px;
   border-radius:999px;
-  overflow:hidden;
-  background:#ead8df;
-  margin-top:.75rem;
+  background:#e8dde2;
 }
-.progress-fill{
+.progress-line-fill{
   width:0;
   height:100%;
   border-radius:999px;
-  background:linear-gradient(135deg,#7f3858,#c29643);
+  background:linear-gradient(90deg,#7d3654 0%,#d2a448 100%);
 }
-.dashboard-grid{
+.progress-nodes{
+  position:relative;
   display:grid;
-  grid-template-columns:repeat(2,minmax(0,1fr));
+  grid-template-columns:repeat(4,minmax(0,1fr));
   gap:1rem;
 }
-.panel-card{
-  padding:1.15rem;
+.progress-node{
+  display:grid;
+  justify-items:center;
+  text-align:center;
+  gap:.58rem;
 }
-.panel-card h3{
-  font-size:1.18rem;
-  margin-bottom:.2rem;
+.node-circle{
+  width:56px;
+  height:56px;
+  border-radius:999px;
+  display:grid;
+  place-items:center;
+  background:#fff;
+  border:3px solid rgba(106,31,54,.12);
+  box-shadow:0 12px 22px rgba(42,20,28,.08);
+  font-weight:800;
+  color:var(--maroon);
 }
-.panel-card p{
-  color:#7d7180;
+.node-circle.open{
+  background:linear-gradient(135deg,var(--gold-soft),var(--gold));
+  border-color:rgba(201,162,75,.5);
 }
-.panel-list{
+.progress-node strong{
+  font-size:1rem;
+}
+.progress-node span{
+  color:var(--muted);
+  font-size:.92rem;
+}
+.detail-grid{
+  display:grid;
+  grid-template-columns:1.15fr .85fr;
+  gap:1rem;
+  margin-top:1.15rem;
+}
+.detail-stack{
+  display:grid;
+  gap:.8rem;
+}
+.stack-card{
+  padding:1rem;
+  border-radius:20px;
+  background:var(--surface-soft);
+}
+.stack-card strong{
+  display:block;
+  margin-bottom:.18rem;
+}
+.stack-card span{
+  color:var(--muted);
+}
+.progress-stats{
+  display:grid;
+  gap:.8rem;
+}
+.progress-stat{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:1rem;
+  padding:.95rem 1rem;
+  border-radius:18px;
+  background:var(--surface-soft);
+}
+.progress-stat div strong{
+  display:block;
+}
+.progress-stat div span{
+  color:var(--muted);
+}
+.progress-stat b{
+  color:var(--maroon);
+}
+.access-grid{
+  grid-template-columns:repeat(4,minmax(0,1fr));
+}
+.access-card{
+  padding:1rem;
+  display:grid;
+  gap:.8rem;
+}
+.access-head{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:.8rem;
+}
+.access-card h3{
+  margin:.2rem 0 0;
+  font-size:1.08rem;
+}
+.access-card p{
+  margin:0;
+  color:var(--muted);
+  font-size:.92rem;
+}
+.access-card ul{
+  margin:0;
+  padding-left:1rem;
+  color:var(--muted);
+  display:grid;
+  gap:.35rem;
+}
+.module-status{
+  font-size:.78rem;
+  font-weight:800;
+  color:#8a7023;
+  text-transform:uppercase;
+  letter-spacing:.08em;
+}
+.module-status.open{
+  color:var(--success);
+}
+.footer-grid{
+  grid-template-columns:1fr 1fr;
+}
+.footer-card{
+  padding:1.1rem;
+}
+.footer-card p{
+  margin:.35rem 0 0;
+  color:var(--muted);
+}
+.profile-list{
   display:grid;
   gap:.75rem;
   margin-top:1rem;
 }
-.panel-item{
+.profile-item{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:1rem;
+  padding:.88rem 1rem;
+  border-radius:18px;
+  background:var(--surface-soft);
+}
+.profile-item strong{
+  display:block;
+}
+.profile-item span{
+  color:var(--muted);
+}
+.purchase-stack{
+  display:grid;
+  gap:.75rem;
+  margin-top:1rem;
+}
+.purchase-option{
   display:flex;
   align-items:center;
   justify-content:space-between;
   gap:1rem;
   padding:1rem;
-  border-radius:18px;
-  background:#faf5f7;
+  border-radius:20px;
+  background:var(--surface-soft);
 }
-.panel-item strong{
+.purchase-option strong{
   display:block;
-  margin-bottom:.15rem;
+  margin-bottom:.18rem;
 }
-.panel-item span{
-  display:block;
-  color:#7d7180;
+.purchase-option span{
+  color:var(--muted);
   font-size:.92rem;
 }
-.panel-item b{
-  color:#5d2940;
-}
-.locked-pill{
-  background:#f8f0d9;
-  color:#8f6e17;
-}
-.status-open{
-  color:#2f7a4d;
-}
-.status-locked{
-  color:#8d6b1d;
-}
-.action-row{
-  display:flex;
-  align-items:center;
-  gap:.75rem;
-  flex-wrap:wrap;
-  margin-top:1rem;
-}
-.empty-note{
-  margin-top:1rem;
-  padding:1rem;
-  border-radius:18px;
-  background:#fff8e8;
-  color:#7d5a16;
-}
-.profile-grid{
-  display:grid;
-  grid-template-columns:repeat(2,minmax(0,1fr));
-  gap:.75rem;
-  margin-top:1rem;
-}
-.profile-grid .panel-item{
-  padding:.95rem 1rem;
+.purchase-price{
+  color:var(--maroon);
+  font-weight:800;
 }
 .dashboard-status{
-  min-height:1.5em;
-  color:#7d7180;
-  padding:0 .15rem .2rem;
-}
-.dashboard-status.error{
-  color:#b33d4b;
+  min-height:1.6em;
+  padding:.1rem .15rem 0;
+  color:var(--muted);
 }
 .dashboard-status.success{
-  color:#2f7a4d;
+  color:var(--success);
 }
-@media (max-width: 1080px){
-  .hero-grid,
-  .dashboard-grid{
-    grid-template-columns:1fr;
-  }
-  .progress-grid{
+.dashboard-status.error{
+  color:var(--danger);
+}
+@media (max-width: 1100px){
+  .track-strip,
+  .access-grid{
     grid-template-columns:repeat(2,minmax(0,1fr));
+  }
+  .overview-grid,
+  .detail-grid,
+  .footer-grid{
+    grid-template-columns:1fr;
   }
 }
 @media (max-width: 760px){
   .dashboard-shell{
-    width:min(100%,calc(100% - .55rem));
+    width:min(100%,calc(100% - .6rem));
     margin:.3rem auto;
   }
-  .dashboard-app{
-    min-height:auto;
+  .dashboard-frame{
     border-radius:22px;
   }
   .dashboard-topbar{
-    padding:.9rem;
     align-items:flex-start;
+    flex-direction:column;
   }
-  .menu-toggle{
-    display:inline-flex;
-    align-items:center;
-    justify-content:center;
+  .topbar-actions{
+    width:100%;
+    justify-content:flex-start;
   }
-  .quick-nav{
-    display:none;
-  }
-  .mobile-nav{
-    display:block;
-  }
-  .topbar-tools{
-    flex-wrap:wrap;
-    justify-content:flex-end;
-  }
-  .hero-copy h1{
-    font-size:2rem;
-  }
-  .student-summary{
-    align-items:flex-start;
-  }
-  .hero-stats,
-  .progress-grid,
-  .profile-grid{
+  .track-strip,
+  .access-grid,
+  .hero-quick-stats,
+  .progress-nodes{
     grid-template-columns:1fr;
   }
-  .dashboard-main{
-    padding:.85rem;
+  .progress-line{
+    display:none;
   }
-  .panel-item,
-  .side-card-item{
+  .student-row,
+  .purchase-option,
+  .profile-item{
     flex-direction:column;
     align-items:flex-start;
+  }
+  .dashboard-main{
+    padding:.8rem;
   }
 }
 </style>
 </head>
 <body>
   <div class="dashboard-shell">
-    <div class="dashboard-app">
+    <div class="dashboard-frame">
       <header class="dashboard-topbar">
-        <div class="brand-wrap">
-          <button class="menu-toggle" id="menu-toggle" type="button" aria-label="Open navigation" aria-controls="mobile-nav-panel" aria-expanded="false">
-            <span></span>
-            <span></span>
-            <span></span>
-          </button>
+        <div class="brand-group">
           <div class="brand-badge">IB</div>
           <div class="brand-copy">
             <strong>IMBA Beacon</strong>
-            <span>Student dashboard</span>
+            <span>Student Dashboard</span>
           </div>
         </div>
-        <nav class="quick-nav" aria-label="Student navigation">
-          <a href="#overview">Overview</a>
-          <a href="#classes">Classes</a>
-          <a href="#quiz">Quiz</a>
-          <a href="#sheets">Sheets</a>
-          <a href="#solutions">Solutions</a>
-          <a href="#profile">Profile</a>
-        </nav>
-        <div class="topbar-tools">
+        <div class="topbar-actions">
           <span class="account-chip" id="account-chip">Beacon Account</span>
+          <a class="outline-btn" href="./student-profile.html">Profile</a>
           <button class="logout-btn" id="logout-btn" type="button">Logout</button>
         </div>
       </header>
 
-      <div class="mobile-nav">
-        <div class="mobile-nav-panel" id="mobile-nav-panel" hidden>
-          <nav class="mobile-nav-links" aria-label="Mobile student navigation">
-            <a href="#overview">Overview</a>
-            <a href="#classes">Classes</a>
-            <a href="#quiz">Quiz</a>
-            <a href="#sheets">Sheets</a>
-            <a href="#solutions">Solutions</a>
-            <a href="#profile">Profile</a>
-          </nav>
-        </div>
-      </div>
-
       <main class="dashboard-main">
-        <section class="hero-grid" id="overview">
-          <article class="hero-card">
+        <section class="track-strip">
+          <article class="track-chip">
+            <small>Track 01</small>
+            <strong>Classes</strong>
+          </article>
+          <article class="track-chip">
+            <small>Track 02</small>
+            <strong>Quiz</strong>
+          </article>
+          <article class="track-chip">
+            <small>Track 03</small>
+            <strong>Sheets</strong>
+          </article>
+          <article class="track-chip">
+            <small>Track 04</small>
+            <strong>Solutions</strong>
+          </article>
+        </section>
+
+        <section class="overview-grid">
+          <article class="overview-card hero">
             <div class="hero-top">
-              <span class="hero-label">Student Dashboard</span>
-              <span class="hero-label" id="account-state">Not Purchased</span>
+              <span class="hero-label">Course Access</span>
+              <span class="state-pill" id="account-state">Not Purchased</span>
             </div>
-            <div class="hero-copy">
-              <h1>Classes, quizzes, sheets, and progress in one simple place.</h1>
-              <p id="welcome-copy">Once your course is active, this dashboard becomes your single preparation space for live classes, quizzes, practice sheets, solution sheets, and course tracking.</p>
+            <h1 class="hero-title">Your full course flow, in one simple dashboard.</h1>
+            <p class="hero-copy" id="welcome-copy">After login, this is the only working area you see: classes, quiz, sheets, and solution sheets in one straight progression.</p>
+            <div class="student-row">
+              <div class="identity-wrap">
+                <img class="avatar" id="student-avatar" alt="Student avatar" hidden/>
+                <div class="avatar-fallback" id="student-avatar-fallback">IB</div>
+                <div class="identity-copy">
+                  <strong id="student-name">Student</strong>
+                  <span id="student-email">student@example.com</span>
+                </div>
+              </div>
+              <a class="outline-btn" href="./student-profile.html">Edit Profile</a>
             </div>
-            <div class="student-summary">
-              <img class="avatar" id="student-avatar" alt="Student avatar" hidden/>
-              <div class="avatar-fallback" id="student-avatar-fallback">IB</div>
-              <div class="student-meta">
-                <strong id="student-name">Student</strong>
-                <span id="student-email">student@example.com</span>
-              </div>
-            </div>
-            <div class="hero-stats">
+            <div class="hero-quick-stats">
               <div class="hero-stat">
-                <b id="student-plan">Not selected</b>
-                <span>Current plan</span>
+                <small>Current Plan</small>
+                <strong id="student-plan">Not selected</strong>
               </div>
               <div class="hero-stat">
-                <b id="student-created">Recently</b>
-                <span>Joined</span>
+                <small>Joined</small>
+                <strong id="student-joined">Recently</strong>
               </div>
               <div class="hero-stat">
-                <b id="student-profile-status">Update</b>
-                <span>Profile status</span>
-              </div>
-              <div class="hero-stat">
-                <b id="premium-tools-state">Locked</b>
-                <span>Course tools</span>
+                <small>Readiness</small>
+                <strong id="student-profile-status">Update Needed</strong>
               </div>
             </div>
           </article>
 
-          <aside class="hero-side">
-            <div class="side-card">
-              <h2>Dashboard Snapshot</h2>
-              <p>Keep the entire course structure readable at a glance without switching between too many pages.</p>
-              <div class="side-card-list">
-                <div class="side-card-item">
-                  <div>
-                    <strong>Live classes</strong>
-                    <span id="next-class-copy">Unlock weekly class access after course activation.</span>
-                  </div>
-                  <b id="class-state-badge">Locked</b>
-                </div>
-                <div class="side-card-item">
-                  <div>
-                    <strong>Quiz access</strong>
-                    <span id="quiz-state-copy">Practice quizzes appear here once enabled.</span>
-                  </div>
-                  <b id="quiz-state-badge">Locked</b>
-                </div>
-                <div class="side-card-item">
-                  <div>
-                    <strong>Sheets & solutions</strong>
-                    <span id="sheet-state-copy">Track practice sheets and answer keys from one dashboard.</span>
-                  </div>
-                  <b id="sheet-state-badge">Locked</b>
-                </div>
+          <article class="overview-card side">
+            <div>
+              <span class="section-kicker">At a glance</span>
+              <h2>Simple access summary</h2>
+            </div>
+            <div class="mini-list">
+              <div class="mini-item">
+                <strong id="plan-summary-title">Course plan pending</strong>
+                <span id="plan-summary">Choose a course when you're ready. The same dashboard unlocks without changing its structure.</span>
+              </div>
+              <div class="mini-item">
+                <strong id="class-summary-title">Class room status</strong>
+                <span id="class-summary">Physics and interview classes appear here once your plan is active.</span>
+              </div>
+              <div class="mini-item">
+                <strong id="progress-summary-title">Progress state</strong>
+                <span id="progress-summary">Your completion bar stays connected to lectures, quiz, sheets, and solutions.</span>
               </div>
             </div>
-
-            <div class="side-card">
-              <h2>Quick Actions</h2>
-              <p>Use one place to move from account setup to guided preparation.</p>
-              <div class="action-row">
-                <a class="primary-btn" href="./student-profile.html">Edit Profile</a>
-                <a class="ghost-btn" href="./admissions.html#track-comparison">View Packs</a>
-              </div>
-              <div class="empty-note" id="purchase-note">Purchase a course to unlock classes, quizzes, practice sheets, and solution sheets on this same dashboard.</div>
-            </div>
-          </aside>
+          </article>
         </section>
 
-        <section class="panel-card progress-card">
-          <div class="section-head">
+        <section class="progress-panel">
+          <div class="panel-top">
             <div>
-              <h2>Progress Bar</h2>
-              <p>Your course work stays in one straight line: video lectures, quiz, sheets, and solution sheets.</p>
+              <span class="section-kicker">Progress Bar</span>
+              <h2>Course Journey</h2>
+              <p>Move in one line from classes to quiz, then sheets, then solutions.</p>
             </div>
+            <span class="progress-pill" id="overall-progress-label">0% Complete</span>
           </div>
-          <div class="progress-grid">
-            <div class="progress-box">
-              <div class="progress-box-head">
+
+          <div class="progress-line-wrap">
+            <div class="progress-line">
+              <div class="progress-line-fill" id="overall-progress-fill"></div>
+            </div>
+            <div class="progress-nodes">
+              <div class="progress-node">
+                <span class="node-circle" id="step-classes">01</span>
                 <strong>Video Lectures</strong>
-                <span id="video-progress-count">0 / 12</span>
+                <span>Classes and guided sessions</span>
               </div>
-              <span>Lecture completion</span>
-              <div class="progress-track"><div class="progress-fill" id="video-progress-fill"></div></div>
-            </div>
-            <div class="progress-box">
-              <div class="progress-box-head">
+              <div class="progress-node">
+                <span class="node-circle" id="step-quiz">02</span>
                 <strong>Quiz</strong>
-                <span id="quiz-progress-count">0 / 8</span>
+                <span>Practice and check</span>
               </div>
-              <span>Quiz completion</span>
-              <div class="progress-track"><div class="progress-fill" id="quiz-progress-fill"></div></div>
-            </div>
-            <div class="progress-box">
-              <div class="progress-box-head">
+              <div class="progress-node">
+                <span class="node-circle" id="step-sheets">03</span>
                 <strong>Sheets</strong>
-                <span id="sheet-progress-count">0 / 10</span>
+                <span>Practice sheets</span>
               </div>
-              <span>Practice sheet completion</span>
-              <div class="progress-track"><div class="progress-fill" id="sheet-progress-fill"></div></div>
-            </div>
-            <div class="progress-box">
-              <div class="progress-box-head">
+              <div class="progress-node">
+                <span class="node-circle" id="step-solutions">04</span>
                 <strong>Solution Sheets</strong>
-                <span id="solution-progress-count">0 / 10</span>
+                <span>Answer support</span>
               </div>
-              <span>Solution sheet access</span>
-              <div class="progress-track"><div class="progress-fill" id="solution-progress-fill"></div></div>
+            </div>
+          </div>
+
+          <div class="detail-grid">
+            <div class="detail-stack">
+              <div class="stack-card">
+                <strong>Physics Classes</strong>
+                <span id="classes-item-1-copy">Live classroom opens after course activation.</span>
+              </div>
+              <div class="stack-card">
+                <strong>Personal Interview Sessions</strong>
+                <span id="classes-item-2-copy">Mock interview room and schedule appear here after activation.</span>
+              </div>
+            </div>
+
+            <div class="progress-stats">
+              <div class="progress-stat">
+                <div>
+                  <strong>Video Lectures</strong>
+                  <span>Lecture completion</span>
+                </div>
+                <b id="video-progress-count">0 / 12</b>
+              </div>
+              <div class="progress-stat">
+                <div>
+                  <strong>Quiz</strong>
+                  <span>Quiz completion</span>
+                </div>
+                <b id="quiz-progress-count">0 / 8</b>
+              </div>
+              <div class="progress-stat">
+                <div>
+                  <strong>Sheets</strong>
+                  <span>Sheet completion</span>
+                </div>
+                <b id="sheet-progress-count">0 / 10</b>
+              </div>
+              <div class="progress-stat">
+                <div>
+                  <strong>Solution Sheets</strong>
+                  <span>Solution completion</span>
+                </div>
+                <b id="solution-progress-count">0 / 10</b>
+              </div>
             </div>
           </div>
         </section>
 
-        <section class="dashboard-grid">
-          <article class="panel-card" id="classes">
-            <div class="section-head">
+        <section class="access-grid">
+          <article class="access-card">
+            <div class="access-head">
               <div>
-                <h2>Classes</h2>
-                <p>Keep live class access and upcoming sessions visible on the dashboard itself.</p>
+                <span class="step-tag">01</span>
+                <h3>Classes</h3>
               </div>
-              <span class="locked-pill" id="classes-tag">Locked</span>
+              <span class="module-status" id="classes-tag">Locked</span>
             </div>
-            <div class="panel-list">
-              <div class="panel-item">
-                <div>
-                  <strong>Physics Foundation Live</strong>
-                  <span>Weekly live classroom access for concept revision and discussion.</span>
-                </div>
-                <b id="classes-item-1">Locked</b>
-              </div>
-              <div class="panel-item">
-                <div>
-                  <strong>Interview Communication Class</strong>
-                  <span>Guided class room for communication practice and structured speaking.</span>
-                </div>
-                <b id="classes-item-2">Locked</b>
-              </div>
-              <div class="panel-item">
-                <div>
-                  <strong>Class Schedule</strong>
-                  <span>See all class timings without opening a different dashboard page.</span>
-                </div>
-                <b id="classes-item-3">Locked</b>
-              </div>
-            </div>
-            <div class="action-row">
-              <button class="primary-btn" type="button" data-feature-gate="liveClasses">Open Classes</button>
-            </div>
+            <p>Open your live class room and interview session access from here.</p>
+            <ul>
+              <li>Physics class room</li>
+              <li>Interview schedule</li>
+            </ul>
+            <button class="module-open-btn" type="button" data-feature-gate="liveClasses">Open Classes</button>
           </article>
 
-          <article class="panel-card" id="quiz">
-            <div class="section-head">
+          <article class="access-card">
+            <div class="access-head">
               <div>
-                <h2>Quiz</h2>
-                <p>Keep quiz practice simple: one place to start, review, and track performance.</p>
+                <span class="step-tag">02</span>
+                <h3>Quiz</h3>
               </div>
-              <span class="locked-pill" id="quiz-tag">Locked</span>
+              <span class="module-status" id="quiz-tag">Locked</span>
             </div>
-            <div class="panel-list">
-              <div class="panel-item">
-                <div>
-                  <strong>Topic Quiz</strong>
-                  <span>Start your latest practice quiz directly from this section.</span>
-                </div>
-                <b id="quiz-item-1">Locked</b>
-              </div>
-              <div class="panel-item">
-                <div>
-                  <strong>Quiz Performance</strong>
-                  <span>Watch your attempt count and score trend in a cleaner way.</span>
-                </div>
-                <b id="quiz-item-2">Locked</b>
-              </div>
-              <div class="panel-item">
-                <div>
-                  <strong>Leaderboard</strong>
-                  <span>See rank only when quiz access is active for your course.</span>
-                </div>
-                <b id="quiz-item-3">Locked</b>
-              </div>
-            </div>
-            <div class="action-row">
-              <button class="primary-btn" type="button" data-feature-gate="practiceZone">Open Quiz</button>
-            </div>
+            <p>Attempt quizzes and check your course performance in one place.</p>
+            <ul>
+              <li>Latest quiz attempt</li>
+              <li>Quick performance check</li>
+            </ul>
+            <button class="module-open-btn" type="button" data-feature-gate="practiceZone">Open Quiz</button>
           </article>
 
-          <article class="panel-card" id="sheets">
-            <div class="section-head">
+          <article class="access-card">
+            <div class="access-head">
               <div>
-                <h2>Sheets</h2>
-                <p>Keep practice sheets easy to find and finish from the same main dashboard.</p>
+                <span class="step-tag">03</span>
+                <h3>Sheets</h3>
               </div>
-              <span class="locked-pill" id="sheets-tag">Locked</span>
+              <span class="module-status" id="sheets-tag">Locked</span>
             </div>
-            <div class="panel-list">
-              <div class="panel-item">
-                <div>
-                  <strong>Practice Sheet 01</strong>
-                  <span>Download or open the latest assigned practice sheet.</span>
-                </div>
-                <b id="sheet-item-1">Locked</b>
-              </div>
-              <div class="panel-item">
-                <div>
-                  <strong>Completed Sheets</strong>
-                  <span>Mark finished sheets and keep the dashboard updated.</span>
-                </div>
-                <b id="sheet-item-2">Locked</b>
-              </div>
-              <div class="panel-item">
-                <div>
-                  <strong>Submission Status</strong>
-                  <span>Track which sheets are pending and which ones are done.</span>
-                </div>
-                <b id="sheet-item-3">Locked</b>
-              </div>
-            </div>
-            <div class="action-row">
-              <button class="primary-btn" type="button" data-feature-gate="practiceZone">Open Sheets</button>
-            </div>
+            <p>See assigned practice sheets and keep your submissions organized.</p>
+            <ul>
+              <li>Assigned sheets</li>
+              <li>Submission state</li>
+            </ul>
+            <button class="module-open-btn" type="button" data-feature-gate="practiceZone">Open Sheets</button>
           </article>
 
-          <article class="panel-card" id="solutions">
-            <div class="section-head">
+          <article class="access-card">
+            <div class="access-head">
               <div>
-                <h2>Solution Sheets</h2>
-                <p>Keep sheet solutions and answer references alongside the practice section.</p>
+                <span class="step-tag">04</span>
+                <h3>Solution Sheets</h3>
               </div>
-              <span class="locked-pill" id="solutions-tag">Locked</span>
+              <span class="module-status" id="solutions-tag">Locked</span>
             </div>
-            <div class="panel-list">
-              <div class="panel-item">
-                <div>
-                  <strong>Sheet Solutions</strong>
-                  <span>Access solutions only when your sheet section is active.</span>
-                </div>
-                <b id="solution-item-1">Locked</b>
-              </div>
-              <div class="panel-item">
-                <div>
-                  <strong>Revision Notes</strong>
-                  <span>Use solved explanations as quick revision support.</span>
-                </div>
-                <b id="solution-item-2">Locked</b>
-              </div>
-              <div class="panel-item">
-                <div>
-                  <strong>Doubt Resolution Trail</strong>
-                  <span>Keep your solved references and corrections in one area.</span>
-                </div>
-                <b id="solution-item-3">Locked</b>
-              </div>
-            </div>
-            <div class="action-row">
-              <button class="primary-btn" type="button" data-feature-gate="practiceZone">Open Solutions</button>
-            </div>
+            <p>Open answer references and keep solution material connected to sheets.</p>
+            <ul>
+              <li>Solution references</li>
+              <li>Revision support</li>
+            </ul>
+            <button class="module-open-btn" type="button" data-feature-gate="practiceZone">Open Solutions</button>
           </article>
         </section>
 
-        <section class="panel-card" id="profile">
-          <div class="section-head">
-            <div>
-              <h2>Profile</h2>
-              <p>Your entered details stay visible here, and you can update them whenever needed.</p>
+        <section class="footer-grid">
+          <article class="footer-card">
+            <span class="section-kicker">Profile</span>
+            <h2>Your details</h2>
+            <p>Use the profile page only for editing details. The working dashboard remains here.</p>
+            <div class="profile-list">
+              <div class="profile-item"><div><strong>Full Name</strong><span id="profile-name">-</span></div></div>
+              <div class="profile-item"><div><strong>Email</strong><span id="profile-email">-</span></div></div>
+              <div class="profile-item"><div><strong>Phone</strong><span id="profile-phone">Not provided</span></div></div>
+              <div class="profile-item"><div><strong>School Percentile</strong><span id="profile-percentile">Not provided</span></div></div>
+              <div class="profile-item"><div><strong>Category</strong><span id="profile-category">Not provided</span></div></div>
             </div>
-          </div>
-          <div class="profile-grid">
-            <div class="panel-item"><div><strong>Full Name</strong><span id="profile-name">-</span></div></div>
-            <div class="panel-item"><div><strong>Email</strong><span id="profile-email">-</span></div></div>
-            <div class="panel-item"><div><strong>Phone</strong><span id="profile-phone">Not provided</span></div></div>
-            <div class="panel-item"><div><strong>School Percentile</strong><span id="profile-percentile">Not provided</span></div></div>
-            <div class="panel-item"><div><strong>Category</strong><span id="profile-category">Not provided</span></div></div>
-            <div class="panel-item"><div><strong>Account Type</strong><span id="profile-provider">Beacon Account</span></div></div>
-          </div>
-          <div class="action-row">
-            <a class="primary-btn" href="./student-profile.html">Edit Profile</a>
-          </div>
+          </article>
+
+          <article class="footer-card" id="purchase">
+            <span class="section-kicker">Course Access</span>
+            <h2>Choose your pack</h2>
+            <p id="purchase-note">Unlock the four dashboard sections by activating either Basic or Pro.</p>
+            <div class="purchase-stack">
+              <div class="purchase-option">
+                <div>
+                  <strong>Basic Pack</strong>
+                  <span>Core guided preparation with classes, quiz, sheets, and solution support.</span>
+                </div>
+                <div>
+                  <div class="purchase-price">₹1,499</div>
+                  <a class="outline-btn" href="./admissions.html#track-comparison">View</a>
+                </div>
+              </div>
+              <div class="purchase-option">
+                <div>
+                  <strong>Pro Pack</strong>
+                  <span>Higher mock volume, extra communication guidance, and deeper guided support.</span>
+                </div>
+                <div>
+                  <div class="purchase-price">₹1,999</div>
+                  <a class="outline-btn" href="./admissions.html#track-comparison">View</a>
+                </div>
+              </div>
+            </div>
+          </article>
         </section>
 
         <p class="dashboard-status" id="dashboard-status" aria-live="polite"></p>
@@ -851,9 +881,6 @@ body{
     const apiBase = (window.IMBA_SITE_CONFIG && window.IMBA_SITE_CONFIG.apiBaseUrl) || "";
     const statusNode = document.getElementById("dashboard-status");
     const logoutButton = document.getElementById("logout-btn");
-    const menuToggle = document.getElementById("menu-toggle");
-    const mobileNavPanel = document.getElementById("mobile-nav-panel");
-    const mobileNavLinks = Array.from(document.querySelectorAll(".mobile-nav-links a"));
     const gatedButtons = Array.from(document.querySelectorAll("[data-feature-gate]"));
 
     function setStatus(message, type) {
@@ -865,162 +892,174 @@ body{
       if (!value) return "Recently";
       const date = new Date(value);
       if (Number.isNaN(date.getTime())) return "Recently";
-      return date.toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" });
+      return date.toLocaleDateString("en-IN", {
+        day: "numeric",
+        month: "short",
+        year: "numeric"
+      });
     }
 
-    function setProgress(prefix, completed, total) {
-      const safeCompleted = Number.isFinite(completed) ? completed : 0;
-      const safeTotal = Number.isFinite(total) && total > 0 ? total : 1;
-      const percent = Math.max(0, Math.min(100, Math.round((safeCompleted / safeTotal) * 100)));
-      document.getElementById(`${prefix}-progress-count`).textContent = `${safeCompleted} / ${safeTotal}`;
-      document.getElementById(`${prefix}-progress-fill`).style.width = `${percent}%`;
+    function setCount(nodeId, completed, total) {
+      document.getElementById(nodeId).textContent = `${completed} / ${total}`;
     }
 
-    function setCardState(baseId, unlocked) {
-      for (let index = 1; index <= 3; index += 1) {
-        const node = document.getElementById(`${baseId}-item-${index}`);
-        if (!node) continue;
-        node.textContent = unlocked ? "Open" : "Locked";
-        node.className = unlocked ? "status-open" : "status-locked";
-      }
+    function setOverallProgress(percent) {
+      const safePercent = Math.max(0, Math.min(100, Math.round(percent)));
+      document.getElementById("overall-progress-fill").style.width = `${safePercent}%`;
+      document.getElementById("overall-progress-label").textContent = `${safePercent}% Complete`;
+    }
+
+    function setStepState(nodeId, unlocked) {
+      const node = document.getElementById(nodeId);
+      if (!node) return;
+      node.classList.toggle("open", unlocked);
+    }
+
+    function setModuleTag(nodeId, unlocked) {
+      const node = document.getElementById(nodeId);
+      if (!node) return;
+      node.textContent = unlocked ? "Open" : "Locked";
+      node.classList.toggle("open", unlocked);
     }
 
     function renderUser(user) {
       const courseAccess = user.courseAccess || { purchased: false, planId: null, featureAccess: {} };
-      const purchased = Boolean(courseAccess.purchased);
       const featureAccess = courseAccess.featureAccess || {};
+      const purchased = Boolean(courseAccess.purchased);
+      const liveClassesUnlocked = Boolean(featureAccess.liveClasses);
+      const practiceZoneUnlocked = Boolean(featureAccess.practiceZone);
       const planLabel = courseAccess.planId === "pro" ? "Pro" : courseAccess.planId === "basic" ? "Basic" : "Not selected";
-      const providerLabel = user.provider === "google" ? "Google Account" : "Beacon Account";
+      const profileComplete = [user.phone, user.schoolPercentile, user.category].every((value) => value !== null && value !== undefined && value !== "");
 
       document.getElementById("student-name").textContent = user.name || "Student";
       document.getElementById("student-email").textContent = user.email || "student@example.com";
-      document.getElementById("student-plan").textContent = purchased ? `${planLabel} Plan` : "Not selected";
-      document.getElementById("student-created").textContent = formatDate(user.createdAt);
-      document.getElementById("account-chip").textContent = providerLabel;
+      document.getElementById("student-plan").textContent = purchased ? `${planLabel} Plan Active` : "Not selected";
+      document.getElementById("student-profile-status").textContent = profileComplete ? "Ready" : "Update Needed";
+      document.getElementById("student-joined").textContent = formatDate(user.createdAt);
+      document.getElementById("account-chip").textContent = user.provider === "google" ? "Google Account" : "Beacon Account";
       document.getElementById("account-state").textContent = purchased ? `${planLabel} Unlocked` : "Not Purchased";
-      document.getElementById("premium-tools-state").textContent = purchased ? "Available" : "Locked";
-
-      const profileComplete = [user.phone, user.schoolPercentile, user.category].every((value) => value !== null && value !== undefined && value !== "");
-      document.getElementById("student-profile-status").textContent = profileComplete ? "Complete" : "Update";
-
       document.getElementById("profile-name").textContent = user.name || "-";
       document.getElementById("profile-email").textContent = user.email || "-";
       document.getElementById("profile-phone").textContent = user.phone || "Not provided";
       document.getElementById("profile-percentile").textContent = user.schoolPercentile !== null && user.schoolPercentile !== undefined && user.schoolPercentile !== "" ? String(user.schoolPercentile) : "Not provided";
       document.getElementById("profile-category").textContent = user.category || "Not provided";
-      document.getElementById("profile-provider").textContent = providerLabel;
 
+      document.getElementById("plan-summary-title").textContent = purchased ? `${planLabel} course active` : "Course plan pending";
+      document.getElementById("plan-summary").textContent = purchased
+        ? `Your ${planLabel} plan is active. This dashboard remains the same, only the sections open up.`
+        : "Choose a course when you're ready. The same dashboard unlocks without changing its structure.";
+      document.getElementById("class-summary-title").textContent = liveClassesUnlocked ? "Class room open" : "Class room locked";
+      document.getElementById("class-summary").textContent = liveClassesUnlocked
+        ? "Your physics classes and interview sessions are now accessible from this dashboard."
+        : "Physics and interview classes appear here once your plan is active.";
+      document.getElementById("progress-summary-title").textContent = purchased ? "Progress tracking ready" : "Progress tracking waiting";
+      document.getElementById("progress-summary").textContent = purchased
+        ? "Lectures, quiz, sheets, and solutions now feed the same progress flow."
+        : "Your completion bar stays connected to lectures, quiz, sheets, and solutions.";
       document.getElementById("welcome-copy").textContent = purchased
-        ? `Your ${planLabel} IMBA Beacon course is active. Use this single dashboard to move through classes, quizzes, sheets, solution sheets, and ongoing progress.`
-        : "Your IMBA Beacon account is active. Once you purchase a course, this same dashboard unlocks classes, quizzes, practice sheets, and solution sheets.";
-
-      const liveClassesUnlocked = Boolean(featureAccess.liveClasses);
-      const practiceZoneUnlocked = Boolean(featureAccess.practiceZone);
-      const leaderboardUnlocked = Boolean(featureAccess.leaderboard);
-
-      document.getElementById("next-class-copy").textContent = liveClassesUnlocked
-        ? "Weekly live class room is now available from your dashboard."
-        : "Unlock weekly class access after course activation.";
-      document.getElementById("class-state-badge").textContent = liveClassesUnlocked ? "Open" : "Locked";
-      document.getElementById("quiz-state-copy").textContent = practiceZoneUnlocked
-        ? "Quiz attempts and guided practice are now available."
-        : "Practice quizzes appear here once enabled.";
-      document.getElementById("quiz-state-badge").textContent = practiceZoneUnlocked ? "Open" : "Locked";
-      document.getElementById("sheet-state-copy").textContent = practiceZoneUnlocked
-        ? "Sheets and solution sheets are accessible from this dashboard."
-        : "Track practice sheets and answer keys from one dashboard.";
-      document.getElementById("sheet-state-badge").textContent = practiceZoneUnlocked ? "Open" : "Locked";
-
-      document.getElementById("classes-tag").textContent = liveClassesUnlocked ? "Open" : "Locked";
-      document.getElementById("quiz-tag").textContent = practiceZoneUnlocked ? "Open" : "Locked";
-      document.getElementById("sheets-tag").textContent = practiceZoneUnlocked ? "Open" : "Locked";
-      document.getElementById("solutions-tag").textContent = practiceZoneUnlocked ? "Open" : "Locked";
-
-      setCardState("classes", liveClassesUnlocked);
-      setCardState("quiz", practiceZoneUnlocked);
-      document.getElementById("quiz-item-3").textContent = leaderboardUnlocked ? "Open" : "Locked";
-      document.getElementById("quiz-item-3").className = leaderboardUnlocked ? "status-open" : "status-locked";
-      setCardState("sheet", practiceZoneUnlocked);
-      setCardState("solution", practiceZoneUnlocked);
-
-      const progressEnabled = purchased && practiceZoneUnlocked;
-      setProgress("video", progressEnabled ? 0 : 0, 12);
-      setProgress("quiz", progressEnabled ? 0 : 0, 8);
-      setProgress("sheet", progressEnabled ? 0 : 0, 10);
-      setProgress("solution", progressEnabled ? 0 : 0, 10);
-
+        ? `Your ${planLabel} course is active. This dashboard now works as your single study space for classes, quiz, sheets, and solution sheets.`
+        : "After login, this is the only working area you see: classes, quiz, sheets, and solution sheets in one straight progression.";
       document.getElementById("purchase-note").textContent = purchased
-        ? `Your ${planLabel} plan is active. Use the dashboard sections above to access each course block from one place.`
-        : "Purchase a course to unlock classes, quizzes, practice sheets, and solution sheets on this same dashboard.";
+        ? `Your ${planLabel} plan is already active on this account. Open the sections above to continue.`
+        : "Unlock the four dashboard sections by activating either Basic or Pro.";
 
-      const avatar = document.getElementById("student-avatar");
-      const fallback = document.getElementById("student-avatar-fallback");
       if (user.picture) {
+        const avatar = document.getElementById("student-avatar");
         avatar.src = user.picture;
         avatar.hidden = false;
-        fallback.hidden = true;
+        document.getElementById("student-avatar-fallback").hidden = true;
       } else {
-        const initials = (user.name || "IB").split(" ").filter(Boolean).slice(0, 2).map((part) => part[0].toUpperCase()).join("") || "IB";
-        avatar.hidden = true;
-        fallback.hidden = false;
-        fallback.textContent = initials;
+        const initials = (user.name || "IB")
+          .split(" ")
+          .filter(Boolean)
+          .slice(0, 2)
+          .map((part) => part[0].toUpperCase())
+          .join("") || "IB";
+        document.getElementById("student-avatar-fallback").textContent = initials;
       }
 
+      setStepState("step-classes", liveClassesUnlocked);
+      setStepState("step-quiz", practiceZoneUnlocked);
+      setStepState("step-sheets", practiceZoneUnlocked);
+      setStepState("step-solutions", practiceZoneUnlocked);
+
+      setModuleTag("classes-tag", liveClassesUnlocked);
+      setModuleTag("quiz-tag", practiceZoneUnlocked);
+      setModuleTag("sheets-tag", practiceZoneUnlocked);
+      setModuleTag("solutions-tag", practiceZoneUnlocked);
+
+      document.getElementById("classes-item-1-copy").textContent = liveClassesUnlocked
+        ? "Your live classroom is ready from this dashboard."
+        : "Live classroom opens after course activation.";
+      document.getElementById("classes-item-2-copy").textContent = liveClassesUnlocked
+        ? "Personal interview sessions and schedules now stay here."
+        : "Mock interview room and schedule appear here after activation.";
+
+      const lectureCompleted = purchased ? 0 : 0;
+      const quizCompleted = practiceZoneUnlocked ? 0 : 0;
+      const sheetCompleted = practiceZoneUnlocked ? 0 : 0;
+      const solutionCompleted = practiceZoneUnlocked ? 0 : 0;
+      const overallTotal = 12 + 8 + 10 + 10;
+      const overallComplete = lectureCompleted + quizCompleted + sheetCompleted + solutionCompleted;
+      const overallPercent = overallTotal ? (overallComplete / overallTotal) * 100 : 0;
+
+      setCount("video-progress-count", lectureCompleted, 12);
+      setCount("quiz-progress-count", quizCompleted, 8);
+      setCount("sheet-progress-count", sheetCompleted, 10);
+      setCount("solution-progress-count", solutionCompleted, 10);
+      setOverallProgress(overallPercent);
+    }
+
+    async function fetchSession() {
+      const response = await fetch(`${apiBase}/api/auth/session`, { credentials: "include" });
+      if (!response.ok) throw new Error("Unable to read session.");
+      const data = await response.json();
+      return data.user || null;
+    }
+
+    async function logout() {
+      try {
+        const response = await fetch(`${apiBase}/api/auth/logout`, {
+          method: "POST",
+          credentials: "include"
+        });
+        if (!response.ok) throw new Error("Logout failed.");
+        window.location.href = "./index.html";
+      } catch (error) {
+        setStatus(error.message || "Unable to logout right now.", "error");
+      }
+    }
+
+    function bindFeatureButtons(user) {
+      const courseAccess = user.courseAccess || { purchased: false, featureAccess: {} };
+      const featureAccess = courseAccess.featureAccess || {};
       gatedButtons.forEach((button) => {
-        const featureKey = button.getAttribute("data-feature-gate");
-        const unlocked = Boolean(featureAccess[featureKey]);
-        button.textContent = unlocked ? button.textContent.replace("Purchase", "Open") : button.textContent;
-        button.dataset.unlocked = unlocked ? "true" : "false";
+        button.addEventListener("click", () => {
+          const featureName = button.getAttribute("data-feature-gate");
+          if (featureAccess[featureName]) {
+            setStatus(`"${button.textContent.trim()}" is ready for integration next.`, "success");
+          } else {
+            setStatus("This section unlocks after course activation.", "error");
+          }
+        });
       });
     }
 
-    async function init() {
-      try {
-        const response = await fetch(`${apiBase}/api/auth/session`, { credentials: "include" });
-        const payload = await response.json();
-        const user = payload.user || null;
+    logoutButton.addEventListener("click", logout);
 
+    fetchSession()
+      .then((user) => {
         if (!user) {
           window.location.href = "./login.html?next=./student.html";
           return;
         }
-
         renderUser(user);
-      } catch (error) {
-        setStatus("Unable to load your dashboard right now.", "error");
-      }
-    }
-
-    logoutButton.addEventListener("click", async () => {
-      await fetch(`${apiBase}/api/auth/logout`, { method: "POST", credentials: "include" });
-      window.location.href = "./login.html";
-    });
-
-    menuToggle.addEventListener("click", () => {
-      const nextState = menuToggle.getAttribute("aria-expanded") !== "true";
-      menuToggle.setAttribute("aria-expanded", String(nextState));
-      mobileNavPanel.hidden = !nextState;
-    });
-
-    mobileNavLinks.forEach((link) => {
-      link.addEventListener("click", () => {
-        menuToggle.setAttribute("aria-expanded", "false");
-        mobileNavPanel.hidden = true;
+        bindFeatureButtons(user);
+        setStatus("Dashboard loaded successfully.", "success");
+      })
+      .catch((error) => {
+        setStatus(error.message || "Unable to load the dashboard.", "error");
       });
-    });
-
-    gatedButtons.forEach((button) => {
-      button.addEventListener("click", () => {
-        const unlocked = button.dataset.unlocked === "true";
-        if (unlocked) {
-          setStatus("This section is ready. Connect the actual class, quiz, or sheet content here next.", "success");
-          return;
-        }
-        window.location.href = "./admissions.html#track-comparison";
-      });
-    });
-
-    window.addEventListener("load", init);
   })();
   </script>
 </body>
