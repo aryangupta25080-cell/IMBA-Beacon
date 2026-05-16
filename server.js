@@ -16,6 +16,7 @@ const WAITLIST_FILE = path.join(DATA_DIR, "waitlist.json");
 const PAYMENTS_FILE = path.join(DATA_DIR, "payments.json");
 const USERS_FILE = path.join(DATA_DIR, "users.json");
 const OTP_FILE = path.join(DATA_DIR, "otp-codes.json");
+const SESSIONS_FILE = path.join(DATA_DIR, "sessions.json");
 const SESSION_COOKIE = "imba_session";
 const ENV_FILE = path.join(ROOT_DIR, ".env");
 
@@ -136,6 +137,10 @@ async function ensureDataStore() {
   if (!existsSync(OTP_FILE)) {
     await fs.writeFile(OTP_FILE, "[]\n", "utf8");
   }
+
+  if (!existsSync(SESSIONS_FILE)) {
+    await fs.writeFile(SESSIONS_FILE, "{}\n", "utf8");
+  }
 }
 
 async function readJsonFile(filePath) {
@@ -146,6 +151,19 @@ async function readJsonFile(filePath) {
 
 async function writeJsonFile(filePath, data) {
   await fs.writeFile(filePath, JSON.stringify(data, null, 2) + "\n", "utf8");
+}
+
+async function loadSessionStore() {
+  const storedSessions = await readJsonFile(SESSIONS_FILE);
+  Object.entries(storedSessions || {}).forEach(([sessionId, sessionUser]) => {
+    if (sessionId && sessionUser && typeof sessionUser === "object") {
+      sessionStore.set(sessionId, sessionUser);
+    }
+  });
+}
+
+async function saveSessionStore() {
+  await writeJsonFile(SESSIONS_FILE, Object.fromEntries(sessionStore.entries()));
 }
 
 function sendJson(response, statusCode, payload, extraHeaders = {}) {
@@ -255,17 +273,19 @@ function getSessionUser(request) {
   return sessionStore.get(sessionId) || null;
 }
 
-function createSession(userProfile) {
+async function createSession(userProfile) {
   const sessionId = crypto.randomUUID();
   sessionStore.set(sessionId, userProfile);
+  await saveSessionStore();
   return sessionId;
 }
 
-function destroySession(request) {
+async function destroySession(request) {
   const cookies = parseCookies(request);
   const sessionId = cookies[SESSION_COOKIE];
   if (sessionId) {
     sessionStore.delete(sessionId);
+    await saveSessionStore();
   }
 }
 
@@ -771,6 +791,7 @@ async function handleAdminUserAccessUpdate(request, response, url, corsHeaders) 
         sessionStore.set(sessionId, persistedUser);
       }
     });
+    await saveSessionStore();
 
     sendJson(response, 200, {
       message: "User access updated successfully.",
@@ -845,7 +866,7 @@ async function handleGoogleLogin(request, response) {
       lastLoginAt: new Date().toISOString()
     });
 
-    const sessionId = createSession(persistedUser);
+    const sessionId = await createSession(persistedUser);
 
     sendJson(
       response,
@@ -976,7 +997,7 @@ async function handlePasswordLogin(request, response) {
       lastLoginAt: new Date().toISOString()
     });
 
-    const sessionId = createSession(persistedUser);
+    const sessionId = await createSession(persistedUser);
     sendJson(response, 200, {
       message: "Logged in successfully.",
       user: getPublicUser(persistedUser)
@@ -1047,7 +1068,7 @@ async function handleVerifyOtp(request, response) {
       lastLoginAt: new Date().toISOString()
     });
 
-    const sessionId = createSession(persistedUser);
+    const sessionId = await createSession(persistedUser);
     sendJson(response, 200, {
       message: otpResult.purpose === "verify-email"
         ? "Email verified successfully. Your Beacon account is now active."
@@ -1070,8 +1091,8 @@ function handleSession(request, response) {
   });
 }
 
-function handleLogout(request, response) {
-  destroySession(request);
+async function handleLogout(request, response) {
+  await destroySession(request);
   sendJson(
     response,
     200,
@@ -1132,6 +1153,7 @@ async function handleProfileUpdate(request, response) {
     const sessionId = cookies[SESSION_COOKIE];
     if (sessionId) {
       sessionStore.set(sessionId, persistedUser);
+      await saveSessionStore();
     }
 
     sendJson(response, 200, {
@@ -1406,6 +1428,7 @@ async function requestHandler(request, response) {
   }
 
   if (request.method === "POST" && pathname === "/api/auth/logout") {
+    await destroySession(request);
     sendJson(
       response,
       200,
@@ -1514,6 +1537,7 @@ async function requestHandler(request, response) {
 
 async function startServer() {
   await ensureDataStore();
+  await loadSessionStore();
 
   const server = http.createServer((request, response) => {
     requestHandler(request, response).catch((error) => {

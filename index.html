@@ -3025,6 +3025,10 @@ footer{
     async initialize() {
       await this.loadConfig();
       await this.loadSession();
+      if (this.user) {
+        window.location.href = "./student.html";
+        return;
+      }
       this.bindEvents();
       this.renderGoogleButton();
       this.syncUi();
