@@ -32,7 +32,13 @@ if (existsSync(ENV_FILE)) {
     if (separatorIndex === -1) return;
 
     const key = trimmedLine.slice(0, separatorIndex).trim();
-    const value = trimmedLine.slice(separatorIndex + 1).trim();
+    const rawValue = trimmedLine.slice(separatorIndex + 1).trim();
+    const value = (
+      (rawValue.startsWith('"') && rawValue.endsWith('"')) ||
+      (rawValue.startsWith("'") && rawValue.endsWith("'"))
+    )
+      ? rawValue.slice(1, -1)
+      : rawValue;
 
     if (key && !process.env[key]) {
       process.env[key] = value;
@@ -94,14 +100,14 @@ const PLAN_CATALOG = {
   basic: {
     id: "basic",
     label: "Basic",
-    amount: 149900,
+    amount: 119900,
     currency: "INR",
     description: "IMBA Beacon Basic preparation plan"
   },
   pro: {
     id: "pro",
     label: "Pro",
-    amount: 199900,
+    amount: 169900,
     currency: "INR",
     description: "IMBA Beacon Pro preparation plan"
   }
@@ -162,6 +168,24 @@ function safeParseJson(value, fallback) {
   } catch (error) {
     return fallback;
   }
+}
+
+function normalizeTimestamp(value, fallback = null) {
+  if (value === null || value === undefined) {
+    return fallback;
+  }
+
+  const stringValue = String(value).trim();
+  if (!stringValue) {
+    return fallback;
+  }
+
+  const parsedTime = Date.parse(stringValue);
+  if (Number.isNaN(parsedTime)) {
+    return fallback;
+  }
+
+  return new Date(parsedTime).toISOString();
 }
 
 function normalizeSqlParams(args) {
@@ -583,12 +607,20 @@ function mapWaitlistRow(row) {
 async function upsertUserInDatabase(db, nextUser) {
   const email = normalizeEmail(nextUser.email);
   const existingRow = await db.get("SELECT * FROM users WHERE email = ?", email);
+  const existingUser = existingRow ? mapUserRow(existingRow) : null;
   const mergedUser = {
-    ...(existingRow ? mapUserRow(existingRow) : {}),
+    ...(existingUser || {}),
     ...nextUser,
     email
   };
   const normalizedCourseAccess = normalizeCourseAccess(mergedUser);
+  const createdAt = existingUser?.createdAt
+    ? normalizeTimestamp(existingUser.createdAt, new Date().toISOString())
+    : normalizeTimestamp(mergedUser.createdAt, new Date().toISOString());
+  const lastLoginAt = normalizeTimestamp(
+    mergedUser.lastLoginAt,
+    existingUser?.lastLoginAt ? normalizeTimestamp(existingUser.lastLoginAt, null) : null
+  );
 
   await db.run(`
     INSERT INTO users (
@@ -632,8 +664,8 @@ async function upsertUserInDatabase(db, nextUser) {
     mergedUser.picture || "",
     mergedUser.provider || "beacon",
     Boolean(mergedUser.emailVerified),
-    mergedUser.createdAt || new Date().toISOString(),
-    mergedUser.lastLoginAt || null,
+    createdAt,
+    lastLoginAt,
     JSON.stringify(normalizedCourseAccess)
   ]);
 
@@ -666,8 +698,8 @@ async function migrateLegacyData(db) {
         normalizeEmail(record.email),
         record.purpose || "verify-email",
         record.otpHash || "",
-        record.expiresAt || new Date().toISOString(),
-        record.createdAt || new Date().toISOString()
+        normalizeTimestamp(record.expiresAt, new Date().toISOString()),
+        normalizeTimestamp(record.createdAt, new Date().toISOString())
       ]);
     }
   }
@@ -688,7 +720,7 @@ async function migrateLegacyData(db) {
         sessionId,
         normalizeEmail(sessionUser.email),
         JSON.stringify(sessionUser),
-        new Date().toISOString()
+        normalizeTimestamp(sessionUser.createdAt, new Date().toISOString())
       ]);
     }
   }
@@ -707,7 +739,7 @@ async function migrateLegacyData(db) {
         entry.phone || "",
         Number(entry.schoolPercentile || 0),
         entry.category || "",
-        entry.submittedAt || new Date().toISOString()
+        normalizeTimestamp(entry.submittedAt, new Date().toISOString())
       ]);
     }
   }
@@ -742,7 +774,7 @@ async function migrateLegacyData(db) {
         payment.bankTxnId || "",
         normalizeEmail(payment.email),
         payment.name || "",
-        payment.verifiedAt || new Date().toISOString()
+        normalizeTimestamp(payment.verifiedAt, new Date().toISOString())
       ]);
     }
   }
@@ -1294,7 +1326,7 @@ async function handleBeaconSignup(request, response) {
       provider: "beacon",
       emailVerified: false,
       createdAt: existingUser?.createdAt || now,
-      lastLoginAt: existingUser?.lastLoginAt || ""
+      lastLoginAt: existingUser?.lastLoginAt || null
     });
 
     const otpCode = await createOtpRecord(email, "verify-email");
