@@ -553,7 +553,6 @@ button,input{border:none}
 
 .hero{
   position:relative;
-  min-height:clamp(42rem,84vh,52rem);
   background:var(--navy);
   overflow:hidden;
 }
@@ -632,14 +631,11 @@ button,input{border:none}
 .hero-overlay{
   position:relative;
   z-index:3;
-  min-height:clamp(42rem,84vh,52rem);
-  display:grid;
-  align-items:center;
-  padding:6rem 0 4.4rem;
+  display:block;
+  padding:3rem 0 4rem;
 }
 .hero-scenes{
   position:relative;
-  min-height:clamp(33rem,63vh,41rem);
 }
 .hero-scene{
   position:absolute;
@@ -702,13 +698,13 @@ button,input{border:none}
 }
 .hero-layout{
   display:grid;
-  grid-template-columns:minmax(0,1.16fr) minmax(300px,.62fr);
+  grid-template-columns:minmax(0,1.28fr) minmax(280px,.56fr);
   gap:1.8rem;
-  align-items:center;
+  align-items:start;
 }
 .hero-content{
   color:#fff;
-  max-width:860px;
+  max-width:980px;
 }
 .hero-label{
   display:inline-flex;
@@ -729,25 +725,25 @@ button,input{border:none}
 }
 .hero-title{
   font-family:"Merriweather",serif;
-  font-size:clamp(2.05rem,3.85vw,3.6rem);
+  font-size:clamp(1.95rem,3.45vw,3.15rem);
   line-height:1.02;
   letter-spacing:-.03em;
   margin-bottom:1.1rem;
-  max-width:18ch;
+  max-width:24ch;
   text-wrap:balance;
 }
 .hero-sub{
-  max-width:700px;
+  max-width:760px;
   color:rgba(255,255,255,.84);
   font-size:clamp(.96rem,1.4vw,1.05rem);
   line-height:1.68;
-  margin-bottom:2rem;
+  margin-bottom:1.15rem;
 }
 .hero-actions{
   display:flex;
   gap:.95rem;
   flex-wrap:wrap;
-  margin-bottom:2.2rem;
+  margin-bottom:1.2rem;
 }
 .btn-primary,
 .btn-secondary{
@@ -801,12 +797,12 @@ button,input{border:none}
   background:linear-gradient(180deg,rgba(255,255,255,.11),rgba(255,255,255,.06));
   border:1px solid rgba(255,255,255,.14);
   border-radius:24px;
-  padding:1.4rem;
+  padding:1.2rem;
   backdrop-filter:blur(16px);
   box-shadow:0 20px 44px rgba(0,0,0,.14);
 }
 .hero-panel + .hero-panel{
-  margin-top:1rem;
+  margin-top:.85rem;
 }
 .hero-panel-head{
   display:flex;
@@ -878,7 +874,7 @@ button,input{border:none}
   position:absolute;
   left:0;
   right:0;
-  bottom:1.65rem;
+  bottom:.8rem;
   z-index:4;
   width:var(--container);
   margin:0 auto;
@@ -977,7 +973,7 @@ button,input{border:none}
 .quick-links{
   position:relative;
   z-index:5;
-  margin-top:-2.9rem;
+  margin-top:-1.6rem;
 }
 .portal-posters{
   padding:1.8rem 0 5rem;
@@ -1866,7 +1862,7 @@ footer{
   .card-grid,.centre-grid{grid-template-columns:repeat(2,1fr)}
   .news-grid{grid-template-columns:1fr}
   .quick-links-grid{grid-template-columns:repeat(2,1fr)}
-  .hero-content{max-width:680px}
+  .hero-content{max-width:760px}
   .hero-layout{grid-template-columns:1fr}
   .admissions-band{grid-template-columns:repeat(2,1fr)}
   .auth-panel{grid-template-columns:1fr}
@@ -1888,15 +1884,20 @@ footer{
   .mobile-menu-toggle{display:inline-flex}
   .mobile-menu{display:block}
   .nav-dropdown{display:none}
-  .hero{
-    min-height:46rem;
-  }
   .hero-overlay{
-    min-height:46rem;
-    padding:5.25rem 0 5.8rem;
+    padding:2.3rem 0 3.8rem;
   }
-  .hero-scenes{
-    min-height:34rem;
+  .hero-layout{
+    gap:1.35rem;
+  }
+  .hero-title{
+    max-width:none;
+  }
+  .hero-aside .hero-panel:last-child{
+    display:none;
+  }
+  .hero-panel{
+    padding:1rem;
   }
   .slider-controls{
     align-items:center;
@@ -1931,33 +1932,22 @@ footer{
     padding:.78rem .98rem;
     font-size:.9rem;
   }
-  .hero{
-    min-height:44rem;
-  }
   .hero-overlay{
-    min-height:44rem;
-    padding:3.6rem 0 7rem;
-  }
-  .hero-scenes{
-    min-height:31rem;
+    padding:2rem 0 3.35rem;
   }
   .hero-title{
-    font-size:clamp(2rem,8vw,2.85rem);
-    max-width:15ch;
+    font-size:clamp(1.82rem,6.6vw,2.35rem);
+    max-width:none;
   }
   .hero-sub{
-    font-size:.98rem;
-    margin-bottom:1.7rem;
+    font-size:.96rem;
+    margin-bottom:1rem;
   }
   .hero-highlights{
-    gap:.8rem;
-  }
-  .hero-chip{
-    min-width:calc(50% - .4rem);
-    flex:1 1 180px;
+    display:none;
   }
   .quick-links{
-    margin-top:-1.6rem;
+    margin-top:-.95rem;
   }
   .quick-links-grid,
   .card-grid,
@@ -1989,7 +1979,7 @@ footer{
   }
   .slider-controls{
     width:min(calc(100% - 1rem),var(--container));
-    bottom:1rem;
+    bottom:.75rem;
     align-items:flex-end;
   }
   .slider-arrow{
@@ -2021,30 +2011,32 @@ footer{
   }
 }
 @media (max-width:560px){
-  .hero{
-    min-height:42rem;
-  }
   .hero-overlay{
-    min-height:42rem;
-    padding-top:4.6rem;
-  }
-  .hero-scenes{
-    min-height:29rem;
+    padding:1.7rem 0 3rem;
   }
   .hero-content{
     max-width:none;
   }
   .hero-title{
-    font-size:clamp(1.78rem,7.5vw,2.35rem);
+    font-size:clamp(1.5rem,6.8vw,1.95rem);
     line-height:1.05;
-    max-width:16ch;
+    max-width:none;
   }
   .hero-sub{
     font-size:.94rem;
     line-height:1.62;
   }
-  .hero-chip{
-    min-width:100%;
+  .hero-board{
+    gap:.65rem;
+  }
+  .hero-board-item{
+    padding:.8rem .85rem;
+  }
+  .hero-board-item strong{
+    font-size:.9rem;
+  }
+  .hero-board-item span{
+    font-size:.79rem;
   }
   .slider-controls{
     flex-direction:column;
