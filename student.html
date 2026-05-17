@@ -951,7 +951,7 @@ button{
       if (plan === "basic") {
         return [
           { value: "3", label: "Mock interviews" },
-          { value: "1", label: "Verbal sessions" },
+          { value: "1", label: "Etiquette sessions" },
           { value: "0%", label: "Course progress" },
           { value: "5", label: "Sheets available" }
         ];
@@ -959,7 +959,7 @@ button{
       if (plan === "pro") {
         return [
           { value: "4", label: "Mock interviews" },
-          { value: "3", label: "Verbal sessions" },
+          { value: "3", label: "Etiquette sessions" },
           { value: "0%", label: "Course progress" },
           { value: "10", label: "Sheets available" }
         ];
@@ -1114,7 +1114,7 @@ button{
           { id: "section-recordings", label: "Track 01", icon: "video", title: "Video Recordings", copy: "Lecture recordings and guided sessions." },
           { id: "section-quiz", label: "Track 02", icon: "help-square-rounded", title: "Practice Quiz", copy: "Check your knowledge and performance." },
           { id: "", label: "Track 03", icon: "microphone", title: "Mock Interviews", copy: "Guided mock rounds with mentor feedback." },
-          { id: "", label: "Track 04", icon: "message-circle-2", title: "Verbal Communication", copy: "Communication coaching and confidence building." }
+          { id: "", label: "Track 04", icon: "message-circle-2", title: "Interview Etiquettes", copy: "Etiquette coaching and confidence building." }
         ];
 
         return `
@@ -1212,9 +1212,9 @@ button{
               <small>Track 04</small>
               <div class="track-head">
                 <i class="ti ti-message-circle-2"></i>
-                <h3>Verbal Communication</h3>
+                <h3>Interview Etiquettes</h3>
               </div>
-              <p>${verbal} guided communication ${verbal === 1 ? "session" : "sessions"}.</p>
+              <p>${verbal} guided etiquette ${verbal === 1 ? "session" : "sessions"}.</p>
               <div class="track-footer">
                 <span>${verbal} ${verbal === 1 ? "session" : "sessions"}</span>
                 <button class="track-btn" type="button" data-placeholder="verbal">Open</button>
@@ -1224,10 +1224,10 @@ button{
 
           <article class="dashboard-card" style="margin-top:.95rem;">
             <div class="live-header">
-              <strong>Maths &amp; Physics Mentoring</strong>
+              <strong>Maths Mentoring</strong>
               <span class="track-tag pro">${mentoringUnlocked ? '<i class="ti ti-bolt"></i> Pro active' : '<i class="ti ti-lock"></i> Pro only'}</span>
             </div>
-            <p class="live-meta" style="margin-top:.55rem;">${mentoringUnlocked ? "Live maths & physics mentoring sessions are unlocked in your Pro plan." : "This mentoring track opens after upgrading to Pro."}</p>
+            <p class="live-meta" style="margin-top:.55rem;">${mentoringUnlocked ? "Live maths mentoring sessions are unlocked in your Pro plan." : "This mentoring track opens after upgrading to Pro."}</p>
             <div style="margin-top:.95rem;">
               <button class="section-btn" type="button" ${mentoringUnlocked ? 'data-placeholder="mentoring"' : "disabled"}>
                 ${mentoringUnlocked ? "Open mentoring" : "Locked for Basic"}
@@ -1349,7 +1349,7 @@ button{
               <ul>
                 <li>3 mock interviews</li>
                 <li>Practice quizzes</li>
-                <li>1 verbal communication session</li>
+                <li>1 interview etiquettes session</li>
                 <li>Practice sheets</li>
                 <li>1 batch interaction session</li>
               </ul>
@@ -1366,10 +1366,10 @@ button{
               <ul>
                 <li>4 mock interviews</li>
                 <li>Practice quizzes</li>
-                <li>3 verbal communication sessions</li>
+                <li>3 interview etiquettes sessions</li>
                 <li>Practice sheets</li>
                 <li>2 batch interaction sessions</li>
-                <li>Live maths &amp; physics mentoring sessions</li>
+                <li>Live maths mentoring sessions</li>
               </ul>
               <div style="margin-top:1rem;">
                 <button class="cta-solid" type="button" data-plan-id="pro">Choose Pro</button>
@@ -1651,8 +1651,8 @@ button{
           recordings: "Recording hub can be connected here next.",
           quiz: "Quiz module can be connected to this tile next.",
           "mock-interviews": "Interview scheduling can be attached to this button next.",
-          verbal: "Verbal communication session room can be connected here next.",
-          mentoring: "Maths & physics mentoring room can be connected here next."
+          verbal: "Interview etiquettes session room can be connected here next.",
+          mentoring: "Maths mentoring room can be connected here next."
         };
         setStatus(messages[feature] || "This module can be connected here next.", "success");
       }
