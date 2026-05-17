@@ -304,16 +304,29 @@ section{padding:4.5rem 0}
   display:inline-flex;
   align-items:center;
   justify-content:center;
+  appearance:none;
+  border:none;
   border-radius:999px;
   padding:.82rem 1.15rem;
+  cursor:pointer;
+  font:inherit;
   font-weight:800;
   background:var(--maroon);
   color:#fff;
+  text-decoration:none;
 }
 .plan-card.featured .plan-action{
   background:linear-gradient(135deg,var(--gold-soft),var(--gold));
   color:var(--maroon);
 }
+.payment-status{
+  min-height:1.5rem;
+  margin-top:1rem;
+  color:var(--muted);
+}
+.payment-status.error{color:#b33d4b}
+.payment-status.success{color:#7f6a1b}
+.payment-status.info{color:#7d5a16}
 .info-card{
   background:var(--surface);
   border:1px solid var(--line);

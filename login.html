@@ -6,6 +6,7 @@
 <title>Login | IMBA Beacon</title>
 <script src="./site-config.js"></script>
 <script src="https://accounts.google.com/gsi/client" async defer></script>
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Merriweather:wght@700&display=swap" rel="stylesheet"/>
@@ -59,6 +60,8 @@
 .login-status.error{color:#b33d4b}
 .login-status.success{color:#7f6a1b}
 .login-status.info{color:#7d5a16}
+.purchase-continue-row{margin-top:.95rem}
+.purchase-continue-row[hidden]{display:none!important}
 .small-note{font-size:.84rem;color:var(--muted);margin-top:.7rem}
 .otp-row{
   display:flex;
@@ -158,6 +161,9 @@
       </div>
 
       <p class="login-status" id="login-status" aria-live="polite"></p>
+      <div class="inline-actions purchase-continue-row" id="purchase-continue-row" hidden>
+        <button type="button" id="purchase-continue-btn">Continue to Payment</button>
+      </div>
       <div class="link-row">
         <a class="nav-cta" href="./admissions.html">Open Admissions Page</a>
         <a class="tab-btn" href="./index.html">Back to Home</a>
@@ -184,6 +190,8 @@
     const verifySignupOtpButton = document.getElementById("verify-signup-otp-btn");
     const resendSignupOtpButton = document.getElementById("resend-signup-otp-btn");
     const signupNote = document.getElementById("signup-note");
+    const purchaseContinueRow = document.getElementById("purchase-continue-row");
+    const purchaseContinueButton = document.getElementById("purchase-continue-btn");
     const signupDetailsPanel = document.getElementById("signup-details-panel");
     const signupDetailsSummary = document.getElementById("signup-details-summary");
     const signupDetailsNote = document.getElementById("signup-details-note");
@@ -197,11 +205,20 @@
     const accessIntent = searchParams.get("access");
     const purchasePlan = searchParams.get("plan");
     const requestedNext = searchParams.get("next");
+    let purchaseCheckoutStarted = false;
 
     function getSafeNextUrl() {
       if (!requestedNext || !requestedNext.startsWith("./")) return "./student.html";
       if (requestedNext.includes("login.html")) return "./student.html";
       return requestedNext;
+    }
+
+    function hasPurchaseIntent() {
+      return accessIntent === "purchase" && Boolean(purchasePlan);
+    }
+
+    function getPurchasePlanLabel() {
+      return purchasePlan === "pro" ? "Pro" : "Basic";
     }
 
     function setStatus(message, type) {
@@ -215,9 +232,9 @@
     }
 
     function applyPurchaseMode() {
-      if (accessIntent !== "purchase") return;
+      if (!hasPurchaseIntent()) return;
 
-      const selectedPlanLabel = purchasePlan === "pro" ? "Pro" : "Basic";
+      const selectedPlanLabel = getPurchasePlanLabel();
       activateTab("signup");
       signupDetailsPanel.open = true;
       signupDetailsPanel.classList.add("required-mode");
@@ -244,6 +261,8 @@
         logoutButton.hidden = true;
         googleContainer.style.display = "";
       }
+
+      purchaseContinueRow.hidden = !(user && hasPurchaseIntent());
     }
 
     function getSignupEmail() {
@@ -272,6 +291,119 @@
       return { response, payload };
     }
 
+    async function verifyPurchasePayment(paymentDetails) {
+      const { response, payload } = await sendJsonRequest("/api/verify-payment", {
+        planId: purchasePlan,
+        razorpay_order_id: paymentDetails.razorpay_order_id,
+        razorpay_payment_id: paymentDetails.razorpay_payment_id,
+        razorpay_signature: paymentDetails.razorpay_signature
+      });
+
+      if (!response.ok) {
+        setStatus(payload.message || "Payment verification failed.", "error");
+        return false;
+      }
+
+      if (payload.user) {
+        user = payload.user;
+        syncUi();
+      }
+
+      setStatus(payload.message || `${getPurchasePlanLabel()} plan activated successfully. Redirecting you now...`, "success");
+      window.setTimeout(() => {
+        window.location.href = getSafeNextUrl();
+      }, 800);
+      return true;
+    }
+
+    async function startPurchaseCheckout() {
+      if (!hasPurchaseIntent() || !user || purchaseCheckoutStarted) return;
+
+      if (!config?.paymentsEnabled) {
+        setStatus("Online payments are temporarily disabled right now.", "error");
+        return;
+      }
+
+      if (!config?.razorpayKeyId || typeof window.Razorpay !== "function") {
+        setStatus("Razorpay checkout could not be loaded right now.", "error");
+        return;
+      }
+
+      purchaseCheckoutStarted = true;
+      const originalLabel = purchaseContinueButton.textContent;
+      purchaseContinueButton.disabled = true;
+      purchaseContinueButton.textContent = "Preparing checkout...";
+
+      try {
+        const { response, payload } = await sendJsonRequest("/api/create-order", { planId: purchasePlan });
+        if (!response.ok) {
+          setStatus(payload.message || "Unable to create Razorpay order.", "error");
+          return;
+        }
+
+        const razorpay = new window.Razorpay({
+          key: config.razorpayKeyId,
+          amount: payload.amount,
+          currency: payload.currency,
+          name: "IMBA Beacon",
+          description: `${getPurchasePlanLabel()} plan checkout`,
+          order_id: payload.order_id,
+          prefill: {
+            name: user.name || "",
+            email: user.email || "",
+            contact: user.phone || ""
+          },
+          theme: {
+            color: "#6a1f36"
+          },
+          modal: {
+            ondismiss: () => {
+              purchaseCheckoutStarted = false;
+              purchaseContinueButton.disabled = false;
+              purchaseContinueButton.textContent = originalLabel;
+              setStatus("Checkout was closed before payment completion. You can continue again whenever you're ready.", "info");
+            }
+          },
+          handler: (paymentResponse) => {
+            verifyPurchasePayment(paymentResponse).finally(() => {
+              purchaseCheckoutStarted = false;
+              purchaseContinueButton.disabled = false;
+              purchaseContinueButton.textContent = originalLabel;
+            });
+          }
+        });
+
+        razorpay.on("payment.failed", (event) => {
+          purchaseCheckoutStarted = false;
+          purchaseContinueButton.disabled = false;
+          purchaseContinueButton.textContent = originalLabel;
+          const description = event?.error?.description || event?.error?.reason || "Payment failed.";
+          setStatus(description, "error");
+        });
+
+        razorpay.open();
+      } catch (error) {
+        purchaseCheckoutStarted = false;
+        purchaseContinueButton.disabled = false;
+        purchaseContinueButton.textContent = originalLabel;
+        setStatus("Unable to initiate Razorpay checkout right now.", "error");
+      }
+    }
+
+    async function continueAfterAuth(message) {
+      syncUi();
+      if (hasPurchaseIntent()) {
+        setStatus(message || `Signed in successfully. Opening ${getPurchasePlanLabel()} checkout now...`, "success");
+        await startPurchaseCheckout();
+        return;
+      }
+
+      setStatus(message || "Signed in successfully. Redirecting you now...", "success");
+      window.setTimeout(() => {
+        window.location.href = getSafeNextUrl();
+      }, 700);
+    }
+
     async function handleGoogleLogin(credential) {
       const { response, payload } = await sendJsonRequest("/api/auth/google", { credential });
       if (!response.ok) {
@@ -279,11 +411,7 @@
         return;
       }
       user = payload.user;
-      syncUi();
-      setStatus(`Signed in as ${user.name}. Redirecting you now...`, "success");
-      window.setTimeout(() => {
-        window.location.href = getSafeNextUrl();
-      }, 700);
+      await continueAfterAuth(`Signed in as ${user.name}.`);
     }
 
     async function init() {
@@ -305,7 +433,12 @@
         }
         syncUi();
         if (user) {
-          window.location.href = getSafeNextUrl();
+          if (hasPurchaseIntent()) {
+            setStatus(`Welcome back. Opening ${getPurchasePlanLabel()} checkout now...`, "success");
+            await startPurchaseCheckout();
+          } else {
+            window.location.href = getSafeNextUrl();
+          }
           return;
         }
         if (accessIntent === "news" && !user) {
@@ -328,11 +461,7 @@
         return;
       }
       user = payload.user;
-      syncUi();
-      setStatus(payload.message || "Logged in successfully.", "success");
-      window.setTimeout(() => {
-        window.location.href = getSafeNextUrl();
-      }, 700);
+      await continueAfterAuth(payload.message || "Logged in successfully.");
     });
 
     signupForm.addEventListener("submit", async (event) => {
@@ -358,11 +487,7 @@
         return;
       }
       user = payload.user;
-      syncUi();
-      setStatus(payload.message || "OTP verified successfully.", "success");
-      window.setTimeout(() => {
-        window.location.href = getSafeNextUrl();
-      }, 700);
+      await continueAfterAuth(payload.message || "OTP verified successfully.");
     });
 
     resendSignupOtpButton.addEventListener("click", async () => {
@@ -378,8 +503,15 @@
     logoutButton.addEventListener("click", async () => {
       await fetch(`${apiBase}/api/auth/logout`, { method: "POST", credentials: "include" });
       user = null;
+      purchaseCheckoutStarted = false;
+      purchaseContinueButton.disabled = false;
+      purchaseContinueButton.textContent = "Continue to Payment";
       syncUi();
       setStatus("Signed out successfully.", "success");
+    });
+
+    purchaseContinueButton.addEventListener("click", () => {
+      startPurchaseCheckout();
     });
 
     window.addEventListener("load", init);

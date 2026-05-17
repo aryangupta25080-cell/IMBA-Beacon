@@ -7,6 +7,8 @@ const { URL } = require("node:url");
 const { promisify } = require("node:util");
 const { OAuth2Client } = require("google-auth-library");
 const nodemailer = require("nodemailer");
+const { Pool } = require("pg");
+const Razorpay = require("razorpay");
 
 const HOST = process.env.HOST || "0.0.0.0";
 const PORT = Number(process.env.PORT || 3000);
@@ -38,11 +40,12 @@ if (existsSync(ENV_FILE)) {
   });
 }
 
+const DATABASE_URL = process.env.DATABASE_URL || "";
+const DATABASE_SSL = process.env.DATABASE_SSL !== "false";
+const DATABASE_POOL_MAX = Number(process.env.DATABASE_POOL_MAX || 10);
 const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID || "";
-const PHONEPE_CLIENT_ID = process.env.PHONEPE_CLIENT_ID || "";
-const PHONEPE_CLIENT_SECRET = process.env.PHONEPE_CLIENT_SECRET || "";
-const PHONEPE_CLIENT_VERSION = process.env.PHONEPE_CLIENT_VERSION || "";
-const PHONEPE_ENV = process.env.PHONEPE_ENV || "sandbox";
+const RAZORPAY_KEY_ID = process.env.RAZORPAY_KEY_ID || "";
+const RAZORPAY_KEY_SECRET = process.env.RAZORPAY_KEY_SECRET || "";
 const PAYMENTS_ENABLED = process.env.PAYMENTS_ENABLED === "true";
 const ADMIN_ACCESS_KEY = process.env.ADMIN_ACCESS_KEY || "";
 const EMAIL_OTP_EXPIRY_MINUTES = Number(process.env.EMAIL_OTP_EXPIRY_MINUTES || 10);
@@ -59,6 +62,8 @@ const FRONTEND_ORIGIN = process.env.FRONTEND_ORIGIN || "";
 
 const googleClient = GOOGLE_CLIENT_ID ? new OAuth2Client(GOOGLE_CLIENT_ID) : null;
 const sessionStore = new Map();
+let database = null;
+let razorpayClient = null;
 const PREMIUM_FEATURE_KEYS = [
   "liveClasses",
   "mockInterviews",
@@ -69,10 +74,6 @@ const PREMIUM_FEATURE_KEYS = [
   "newsBriefs"
 ];
 const scryptAsync = promisify(crypto.scrypt);
-const phonePeTokenCache = {
-  value: "",
-  expiresAt: 0
-};
 const otpTransporter = SMTP_HOST && SMTP_USER && SMTP_PASS
   ? nodemailer.createTransport({
       host: SMTP_HOST,
@@ -153,17 +154,156 @@ async function writeJsonFile(filePath, data) {
   await fs.writeFile(filePath, JSON.stringify(data, null, 2) + "\n", "utf8");
 }
 
+function safeParseJson(value, fallback) {
+  if (!value) return fallback;
+  if (typeof value === "object") return value;
+  try {
+    return JSON.parse(value);
+  } catch (error) {
+    return fallback;
+  }
+}
+
+function normalizeSqlParams(args) {
+  if (args.length === 1 && Array.isArray(args[0])) {
+    return args[0];
+  }
+
+  return args;
+}
+
+function toPostgresPlaceholders(sql) {
+  let placeholderIndex = 0;
+  return sql.replace(/\?/g, () => `$${++placeholderIndex}`);
+}
+
+function createDatabaseAdapter(pool) {
+  return {
+    async exec(sql) {
+      await pool.query(sql);
+    },
+    async get(sql, ...args) {
+      const params = normalizeSqlParams(args);
+      const result = await pool.query(toPostgresPlaceholders(sql), params);
+      return result.rows[0] || null;
+    },
+    async all(sql, ...args) {
+      const params = normalizeSqlParams(args);
+      const result = await pool.query(toPostgresPlaceholders(sql), params);
+      return result.rows;
+    },
+    async run(sql, ...args) {
+      const params = normalizeSqlParams(args);
+      return pool.query(toPostgresPlaceholders(sql), params);
+    }
+  };
+}
+
+async function getDatabase() {
+  if (database) return database;
+
+  await ensureDataStore();
+  if (!DATABASE_URL) {
+    throw new Error("DATABASE_URL is required. Add your Supabase Postgres connection string before starting the server.");
+  }
+
+  const pool = new Pool({
+    connectionString: DATABASE_URL,
+    max: Number.isFinite(DATABASE_POOL_MAX) && DATABASE_POOL_MAX > 0 ? DATABASE_POOL_MAX : 10,
+    ssl: DATABASE_SSL ? { rejectUnauthorized: false } : false
+  });
+
+  await pool.query("SELECT 1");
+  database = createDatabaseAdapter(pool);
+
+  await database.exec(`
+    CREATE TABLE IF NOT EXISTS users (
+      email TEXT PRIMARY KEY,
+      google_id TEXT,
+      name TEXT NOT NULL,
+      password_hash TEXT,
+      phone TEXT,
+      school_percentile DOUBLE PRECISION,
+      category TEXT,
+      picture TEXT,
+      provider TEXT NOT NULL DEFAULT 'beacon',
+      email_verified BOOLEAN NOT NULL DEFAULT FALSE,
+      created_at TIMESTAMPTZ,
+      last_login_at TIMESTAMPTZ,
+      course_access_json JSONB NOT NULL DEFAULT '{}'::jsonb
+    );
+
+    CREATE TABLE IF NOT EXISTS otp_codes (
+      email TEXT PRIMARY KEY,
+      purpose TEXT NOT NULL,
+      otp_hash TEXT NOT NULL,
+      expires_at TIMESTAMPTZ NOT NULL,
+      created_at TIMESTAMPTZ NOT NULL
+    );
+
+    CREATE TABLE IF NOT EXISTS sessions (
+      session_id TEXT PRIMARY KEY,
+      user_email TEXT NOT NULL,
+      user_json JSONB NOT NULL,
+      created_at TIMESTAMPTZ NOT NULL
+    );
+
+    CREATE TABLE IF NOT EXISTS waitlist (
+      id BIGSERIAL PRIMARY KEY,
+      name TEXT NOT NULL,
+      email TEXT NOT NULL UNIQUE,
+      phone TEXT NOT NULL,
+      school_percentile DOUBLE PRECISION NOT NULL,
+      category TEXT NOT NULL,
+      submitted_at TIMESTAMPTZ NOT NULL
+    );
+
+    CREATE TABLE IF NOT EXISTS payments (
+      order_id TEXT PRIMARY KEY,
+      plan_id TEXT NOT NULL,
+      plan_label TEXT NOT NULL,
+      amount INTEGER NOT NULL,
+      currency TEXT NOT NULL,
+      payment_id TEXT,
+      payment_mode TEXT,
+      bank_txn_id TEXT,
+      email TEXT NOT NULL,
+      name TEXT NOT NULL,
+      verified_at TIMESTAMPTZ NOT NULL
+    );
+  `);
+
+  await migrateLegacyData(database);
+  return database;
+}
+
 async function loadSessionStore() {
-  const storedSessions = await readJsonFile(SESSIONS_FILE);
-  Object.entries(storedSessions || {}).forEach(([sessionId, sessionUser]) => {
-    if (sessionId && sessionUser && typeof sessionUser === "object") {
-      sessionStore.set(sessionId, sessionUser);
+  const db = await getDatabase();
+  const sessionRows = await db.all("SELECT session_id, user_json FROM sessions");
+  sessionStore.clear();
+  sessionRows.forEach((row) => {
+    const sessionUser = safeParseJson(row.user_json, null);
+    if (row.session_id && sessionUser && typeof sessionUser === "object") {
+      sessionStore.set(row.session_id, sessionUser);
     }
   });
 }
 
 async function saveSessionStore() {
-  await writeJsonFile(SESSIONS_FILE, Object.fromEntries(sessionStore.entries()));
+  const db = await getDatabase();
+  await db.exec("DELETE FROM sessions");
+  const createdAt = new Date().toISOString();
+  for (const [sessionId, sessionUser] of sessionStore.entries()) {
+    await db.run(`
+      INSERT INTO sessions (session_id, user_email, user_json, created_at)
+      VALUES (?, ?, ?, ?)
+    `, [
+      sessionId,
+      normalizeEmail(sessionUser.email),
+      JSON.stringify(sessionUser),
+      createdAt
+    ]);
+  }
 }
 
 function sendJson(response, statusCode, payload, extraHeaders = {}) {
@@ -369,6 +509,245 @@ function normalizeCourseAccess(user) {
   };
 }
 
+function buildPurchasedCourseAccess(user, planId) {
+  const currentCourseAccess = normalizeCourseAccess(user);
+  return {
+    purchased: true,
+    planId,
+    grantedAt: currentCourseAccess.grantedAt || new Date().toISOString(),
+    featureAccess: PREMIUM_FEATURE_KEYS.reduce((accumulator, key) => {
+      accumulator[key] = true;
+      return accumulator;
+    }, {})
+  };
+}
+
+async function syncUserSessions(updatedUser) {
+  const email = normalizeEmail(updatedUser?.email);
+  if (!email) return;
+
+  Array.from(sessionStore.entries()).forEach(([sessionId, sessionUser]) => {
+    if (normalizeEmail(sessionUser?.email) === email) {
+      sessionStore.set(sessionId, updatedUser);
+    }
+  });
+
+  await saveSessionStore();
+}
+
+async function activatePlanForUser(user, planId) {
+  const persistedUser = await upsertUser({
+    ...user,
+    courseAccess: buildPurchasedCourseAccess(user, planId)
+  });
+
+  await syncUserSessions(persistedUser);
+  return persistedUser;
+}
+
+function mapUserRow(row) {
+  if (!row) return null;
+
+  return {
+    googleId: row.google_id || "",
+    name: row.name || "",
+    email: normalizeEmail(row.email),
+    passwordHash: row.password_hash || "",
+    phone: row.phone || "",
+    schoolPercentile: row.school_percentile === null || row.school_percentile === undefined
+      ? null
+      : Number(row.school_percentile),
+    category: row.category || "",
+    picture: row.picture || "",
+    provider: row.provider || "beacon",
+    emailVerified: Boolean(row.email_verified),
+    createdAt: row.created_at || "",
+    lastLoginAt: row.last_login_at || "",
+    courseAccess: normalizeCourseAccess({
+      courseAccess: safeParseJson(row.course_access_json, {})
+    })
+  };
+}
+
+function mapWaitlistRow(row) {
+  return {
+    name: row.name,
+    email: normalizeEmail(row.email),
+    phone: row.phone,
+    schoolPercentile: Number(row.school_percentile),
+    category: row.category,
+    submittedAt: row.submitted_at
+  };
+}
+
+async function upsertUserInDatabase(db, nextUser) {
+  const email = normalizeEmail(nextUser.email);
+  const existingRow = await db.get("SELECT * FROM users WHERE email = ?", email);
+  const mergedUser = {
+    ...(existingRow ? mapUserRow(existingRow) : {}),
+    ...nextUser,
+    email
+  };
+  const normalizedCourseAccess = normalizeCourseAccess(mergedUser);
+
+  await db.run(`
+    INSERT INTO users (
+      email,
+      google_id,
+      name,
+      password_hash,
+      phone,
+      school_percentile,
+      category,
+      picture,
+      provider,
+      email_verified,
+      created_at,
+      last_login_at,
+      course_access_json
+    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    ON CONFLICT(email) DO UPDATE SET
+      google_id = excluded.google_id,
+      name = excluded.name,
+      password_hash = excluded.password_hash,
+      phone = excluded.phone,
+      school_percentile = excluded.school_percentile,
+      category = excluded.category,
+      picture = excluded.picture,
+      provider = excluded.provider,
+      email_verified = excluded.email_verified,
+      created_at = excluded.created_at,
+      last_login_at = excluded.last_login_at,
+      course_access_json = excluded.course_access_json
+  `, [
+    email,
+    mergedUser.googleId || "",
+    mergedUser.name || email,
+    mergedUser.passwordHash || "",
+    mergedUser.phone || "",
+    mergedUser.schoolPercentile === null || mergedUser.schoolPercentile === undefined || mergedUser.schoolPercentile === ""
+      ? null
+      : Number(mergedUser.schoolPercentile),
+    mergedUser.category || "",
+    mergedUser.picture || "",
+    mergedUser.provider || "beacon",
+    Boolean(mergedUser.emailVerified),
+    mergedUser.createdAt || new Date().toISOString(),
+    mergedUser.lastLoginAt || "",
+    JSON.stringify(normalizedCourseAccess)
+  ]);
+
+  const storedRow = await db.get("SELECT * FROM users WHERE email = ?", email);
+  return mapUserRow(storedRow);
+}
+
+async function migrateLegacyData(db) {
+  const usersCount = await db.get("SELECT COUNT(*) AS count FROM users");
+  if (Number(usersCount?.count || 0) === 0) {
+    const users = await readJsonFile(USERS_FILE);
+    for (const user of users) {
+      await upsertUserInDatabase(db, user);
+    }
+  }
+
+  const otpCount = await db.get("SELECT COUNT(*) AS count FROM otp_codes");
+  if (Number(otpCount?.count || 0) === 0) {
+    const otpRecords = await readJsonFile(OTP_FILE);
+    for (const record of otpRecords) {
+      await db.run(`
+        INSERT INTO otp_codes (email, purpose, otp_hash, expires_at, created_at)
+        VALUES (?, ?, ?, ?, ?)
+        ON CONFLICT (email) DO UPDATE SET
+          purpose = EXCLUDED.purpose,
+          otp_hash = EXCLUDED.otp_hash,
+          expires_at = EXCLUDED.expires_at,
+          created_at = EXCLUDED.created_at
+      `, [
+        normalizeEmail(record.email),
+        record.purpose || "verify-email",
+        record.otpHash || "",
+        record.expiresAt || new Date().toISOString(),
+        record.createdAt || new Date().toISOString()
+      ]);
+    }
+  }
+
+  const sessionCount = await db.get("SELECT COUNT(*) AS count FROM sessions");
+  if (Number(sessionCount?.count || 0) === 0) {
+    const storedSessions = await readJsonFile(SESSIONS_FILE);
+    for (const [sessionId, sessionUser] of Object.entries(storedSessions || {})) {
+      if (!sessionId || !sessionUser || typeof sessionUser !== "object") continue;
+      await db.run(`
+        INSERT INTO sessions (session_id, user_email, user_json, created_at)
+        VALUES (?, ?, ?, ?)
+        ON CONFLICT (session_id) DO UPDATE SET
+          user_email = EXCLUDED.user_email,
+          user_json = EXCLUDED.user_json,
+          created_at = EXCLUDED.created_at
+      `, [
+        sessionId,
+        normalizeEmail(sessionUser.email),
+        JSON.stringify(sessionUser),
+        new Date().toISOString()
+      ]);
+    }
+  }
+
+  const waitlistCount = await db.get("SELECT COUNT(*) AS count FROM waitlist");
+  if (Number(waitlistCount?.count || 0) === 0) {
+    const waitlistEntries = await readJsonFile(WAITLIST_FILE);
+    for (const entry of waitlistEntries) {
+      await db.run(`
+        INSERT INTO waitlist (name, email, phone, school_percentile, category, submitted_at)
+        VALUES (?, ?, ?, ?, ?, ?)
+        ON CONFLICT (email) DO NOTHING
+      `, [
+        entry.name || "",
+        normalizeEmail(entry.email),
+        entry.phone || "",
+        Number(entry.schoolPercentile || 0),
+        entry.category || "",
+        entry.submittedAt || new Date().toISOString()
+      ]);
+    }
+  }
+
+  const paymentsCount = await db.get("SELECT COUNT(*) AS count FROM payments");
+  if (Number(paymentsCount?.count || 0) === 0) {
+    const payments = await readJsonFile(PAYMENTS_FILE);
+    for (const payment of payments) {
+      await db.run(`
+        INSERT INTO payments (
+          order_id,
+          plan_id,
+          plan_label,
+          amount,
+          currency,
+          payment_id,
+          payment_mode,
+          bank_txn_id,
+          email,
+          name,
+          verified_at
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        ON CONFLICT (order_id) DO NOTHING
+      `, [
+        payment.orderId || "",
+        payment.planId || "",
+        payment.planLabel || "",
+        Number(payment.amount || 0),
+        payment.currency || "INR",
+        payment.paymentId || "",
+        payment.paymentMode || "",
+        payment.bankTxnId || "",
+        normalizeEmail(payment.email),
+        payment.name || "",
+        payment.verifiedAt || new Date().toISOString()
+      ]);
+    }
+  }
+}
+
 function summarizeProfileStatus(user) {
   const fields = [user?.phone, user?.schoolPercentile, user?.category].filter((value) => value !== null && value !== undefined && String(value).trim() !== "");
   return {
@@ -412,68 +791,59 @@ async function verifySecret(value, storedHash) {
 }
 
 async function findUserByEmail(email) {
-  const users = await readJsonFile(USERS_FILE);
-  return users.find((entry) => entry.email === normalizeEmail(email)) || null;
+  const db = await getDatabase();
+  const row = await db.get("SELECT * FROM users WHERE email = ?", normalizeEmail(email));
+  return mapUserRow(row);
 }
 
 async function upsertUser(nextUser) {
-  const users = await readJsonFile(USERS_FILE);
-  const email = normalizeEmail(nextUser.email);
-  const existingIndex = users.findIndex((entry) => entry.email === email);
-  if (existingIndex >= 0) {
-    const mergedUser = { ...users[existingIndex], ...nextUser, email };
-    mergedUser.courseAccess = normalizeCourseAccess(mergedUser);
-    users[existingIndex] = mergedUser;
-  } else {
-    const createdUser = { ...nextUser, email };
-    createdUser.courseAccess = normalizeCourseAccess(createdUser);
-    users.push(createdUser);
-  }
-  await writeJsonFile(USERS_FILE, users);
-  return users.find((entry) => entry.email === email);
+  const db = await getDatabase();
+  return upsertUserInDatabase(db, nextUser);
 }
 
 async function createOtpRecord(email, purpose = "verify-email") {
   const otpCode = generateOtpCode();
   const otpHash = await hashSecret(otpCode);
-  const otpRecords = await readJsonFile(OTP_FILE);
   const normalizedEmail = normalizeEmail(email);
-  const filteredRecords = otpRecords.filter((entry) => entry.email !== normalizedEmail);
-
-  filteredRecords.push({
-    email: normalizedEmail,
+  const db = await getDatabase();
+  await db.run(`
+    INSERT INTO otp_codes (email, purpose, otp_hash, expires_at, created_at)
+    VALUES (?, ?, ?, ?, ?)
+    ON CONFLICT(email) DO UPDATE SET
+      purpose = excluded.purpose,
+      otp_hash = excluded.otp_hash,
+      expires_at = excluded.expires_at,
+      created_at = excluded.created_at
+  `, [
+    normalizedEmail,
     purpose,
     otpHash,
-    expiresAt: new Date(Date.now() + EMAIL_OTP_EXPIRY_MINUTES * 60 * 1000).toISOString(),
-    createdAt: new Date().toISOString()
-  });
-
-  await writeJsonFile(OTP_FILE, filteredRecords);
+    new Date(Date.now() + EMAIL_OTP_EXPIRY_MINUTES * 60 * 1000).toISOString(),
+    new Date().toISOString()
+  ]);
   return otpCode;
 }
 
 async function verifyOtpRecord(email, otp) {
-  const otpRecords = await readJsonFile(OTP_FILE);
   const normalizedEmail = normalizeEmail(email);
-  const existingRecord = otpRecords.find((entry) => entry.email === normalizedEmail);
+  const db = await getDatabase();
+  const existingRecord = await db.get("SELECT * FROM otp_codes WHERE email = ?", normalizedEmail);
 
   if (!existingRecord) {
     return { ok: false, message: "No OTP request found for this email." };
   }
 
-  if (new Date(existingRecord.expiresAt).getTime() < Date.now()) {
-    const remainingRecords = otpRecords.filter((entry) => entry.email !== normalizedEmail);
-    await writeJsonFile(OTP_FILE, remainingRecords);
+  if (new Date(existingRecord.expires_at).getTime() < Date.now()) {
+    await db.run("DELETE FROM otp_codes WHERE email = ?", normalizedEmail);
     return { ok: false, message: "This OTP has expired. Please request a fresh one." };
   }
 
-  const isValid = await verifySecret(String(otp || ""), existingRecord.otpHash);
+  const isValid = await verifySecret(String(otp || ""), existingRecord.otp_hash);
   if (!isValid) {
     return { ok: false, message: "Invalid OTP. Please try again." };
   }
 
-  const remainingRecords = otpRecords.filter((entry) => entry.email !== normalizedEmail);
-  await writeJsonFile(OTP_FILE, remainingRecords);
+  await db.run("DELETE FROM otp_codes WHERE email = ?", normalizedEmail);
   return { ok: true, purpose: existingRecord.purpose };
 }
 
@@ -520,60 +890,19 @@ async function sendOtpEmail(email, otpCode) {
   });
 }
 
-function getPhonePeHost() {
-  return PHONEPE_ENV === "production"
-    ? "https://api.phonepe.com/apis/pg"
-    : "https://api-preprod.phonepe.com/apis/pg-sandbox";
-}
-
-function getPhonePeAuthHost() {
-  return PHONEPE_ENV === "production"
-    ? "https://api.phonepe.com"
-    : "https://api-preprod.phonepe.com";
-}
-
-function getFrontendRedirectUrl(pathname = "/index.html", params = {}) {
-  const base = FRONTEND_ORIGIN || APP_BASE_URL;
-  const url = new URL(pathname, base.endsWith("/") ? base : `${base}/`);
-
-  Object.entries(params).forEach(([key, value]) => {
-    if (value !== undefined && value !== null && value !== "") {
-      url.searchParams.set(key, String(value));
-    }
-  });
-
-  return url.toString();
-}
-
-async function getPhonePeAccessToken() {
-  const now = Date.now();
-  if (phonePeTokenCache.value && phonePeTokenCache.expiresAt > now + 60_000) {
-    return phonePeTokenCache.value;
+function getRazorpayClient() {
+  if (!RAZORPAY_KEY_ID || !RAZORPAY_KEY_SECRET) {
+    return null;
   }
 
-  const response = await fetch(`${getPhonePeAuthHost()}/apis/identity-manager/v1/oauth/token`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/x-www-form-urlencoded"
-    },
-    body: new URLSearchParams({
-      client_id: PHONEPE_CLIENT_ID,
-      client_secret: PHONEPE_CLIENT_SECRET,
-      client_version: PHONEPE_CLIENT_VERSION,
-      grant_type: "client_credentials"
-    })
-  });
-
-  const payload = await response.json();
-
-  if (!response.ok || !payload?.access_token) {
-    throw new Error(payload?.message || "Unable to authorize with PhonePe.");
+  if (!razorpayClient) {
+    razorpayClient = new Razorpay({
+      key_id: RAZORPAY_KEY_ID,
+      key_secret: RAZORPAY_KEY_SECRET
+    });
   }
 
-  phonePeTokenCache.value = payload.access_token;
-  phonePeTokenCache.expiresAt = now + (Number(payload.expires_in || 900) * 1000);
-
-  return phonePeTokenCache.value;
+  return razorpayClient;
 }
 
 function getAdminAccessKey(request, url) {
@@ -588,6 +917,29 @@ function getAdminAccessKey(request, url) {
   }
 
   return String(url.searchParams.get("accessKey") || "").trim();
+}
+
+function buildClientConfig() {
+  return {
+    appBaseUrl: APP_BASE_URL,
+    frontendOrigin: FRONTEND_ORIGIN,
+    googleClientId: GOOGLE_CLIENT_ID,
+    authProviders: {
+      google: Boolean(GOOGLE_CLIENT_ID),
+      beaconPassword: true,
+      emailOtp: true
+    },
+    paymentsEnabled: PAYMENTS_ENABLED,
+    paymentProvider: "razorpay",
+    razorpayKeyId: RAZORPAY_KEY_ID,
+    plans: Object.values(PLAN_CATALOG).map((plan) => ({
+      id: plan.id,
+      label: plan.label,
+      amount: plan.amount,
+      currency: plan.currency,
+      description: plan.description
+    }))
+  };
 }
 
 function requireAdminAccess(request, response, url, corsHeaders = {}) {
@@ -653,24 +1005,25 @@ async function handleWaitlistSubmission(request, response) {
       return;
     }
 
-    const waitlist = await readJsonFile(WAITLIST_FILE);
-    const alreadyExists = waitlist.some((entry) => entry.email === email);
+    const db = await getDatabase();
+    const existingEntry = await db.get("SELECT email FROM waitlist WHERE email = ?", email);
 
-    if (alreadyExists) {
+    if (existingEntry) {
       sendJson(response, 409, { message: "This email is already on the waitlist." });
       return;
     }
 
-    waitlist.push({
+    await db.run(`
+      INSERT INTO waitlist (name, email, phone, school_percentile, category, submitted_at)
+      VALUES (?, ?, ?, ?, ?, ?)
+    `, [
       name,
       email,
       phone,
-      schoolPercentile: Number(schoolPercentile),
+      Number(schoolPercentile),
       category,
-      submittedAt: new Date().toISOString()
-    });
-
-    await writeJsonFile(WAITLIST_FILE, waitlist);
+      new Date().toISOString()
+    ]);
 
     sendJson(response, 201, {
       message: "Thanks! Your details have been received and you're on the IMBA Beacon waitlist now."
@@ -682,7 +1035,12 @@ async function handleWaitlistSubmission(request, response) {
 
 async function handleWaitlistList(response) {
   try {
-    const waitlist = await readJsonFile(WAITLIST_FILE);
+    const db = await getDatabase();
+    const waitlist = (await db.all(`
+      SELECT name, email, phone, school_percentile, category, submitted_at
+      FROM waitlist
+      ORDER BY submitted_at DESC
+    `)).map(mapWaitlistRow);
     sendJson(response, 200, {
       count: waitlist.length,
       entries: waitlist
@@ -696,7 +1054,12 @@ async function handleAdminWaitlist(request, response, url, corsHeaders) {
   if (!requireAdminAccess(request, response, url, corsHeaders)) return;
 
   try {
-    const waitlist = await readJsonFile(WAITLIST_FILE);
+    const db = await getDatabase();
+    const waitlist = (await db.all(`
+      SELECT name, email, phone, school_percentile, category, submitted_at
+      FROM waitlist
+      ORDER BY submitted_at DESC
+    `)).map(mapWaitlistRow);
     sendJson(response, 200, {
       count: waitlist.length,
       entries: waitlist
@@ -710,7 +1073,12 @@ async function handleAdminWaitlistCsv(request, response, url, corsHeaders) {
   if (!requireAdminAccess(request, response, url, corsHeaders)) return;
 
   try {
-    const waitlist = await readJsonFile(WAITLIST_FILE);
+    const db = await getDatabase();
+    const waitlist = (await db.all(`
+      SELECT name, email, phone, school_percentile, category, submitted_at
+      FROM waitlist
+      ORDER BY submitted_at DESC
+    `)).map(mapWaitlistRow);
     const csv = createWaitlistCsv(waitlist);
     response.writeHead(200, {
       "Content-Type": "text/csv; charset=utf-8",
@@ -728,9 +1096,10 @@ async function handleAdminUsers(request, response, url, corsHeaders) {
   if (!requireAdminAccess(request, response, url, corsHeaders)) return;
 
   try {
-    const users = await readJsonFile(USERS_FILE);
+    const db = await getDatabase();
+    const users = await db.all("SELECT * FROM users");
     const entries = users
-      .map((user) => getAdminUserRecord(user))
+      .map((row) => getAdminUserRecord(mapUserRow(row)))
       .sort((left, right) => new Date(right.createdAt || 0).getTime() - new Date(left.createdAt || 0).getTime());
 
     sendJson(response, 200, {
@@ -803,27 +1172,7 @@ async function handleAdminUserAccessUpdate(request, response, url, corsHeaders) 
 }
 
 function handleConfig(response) {
-  sendJson(response, 200, {
-    appBaseUrl: APP_BASE_URL,
-    frontendOrigin: FRONTEND_ORIGIN,
-    googleClientId: GOOGLE_CLIENT_ID,
-    authProviders: {
-      google: Boolean(GOOGLE_CLIENT_ID),
-      beaconPassword: true,
-      emailOtp: true
-    },
-    paymentsEnabled: PAYMENTS_ENABLED,
-    paymentProvider: "phonepe",
-    phonepeClientId: PHONEPE_CLIENT_ID,
-    phonepeHost: getPhonePeHost(),
-    plans: Object.values(PLAN_CATALOG).map((plan) => ({
-      id: plan.id,
-      label: plan.label,
-      amount: plan.amount,
-      currency: plan.currency,
-      description: plan.description
-    }))
-  });
+  sendJson(response, 200, buildClientConfig());
 }
 
 async function handleGoogleLogin(request, response) {
@@ -1165,48 +1514,6 @@ async function handleProfileUpdate(request, response) {
   }
 }
 
-async function createPhonePeOrder(plan, orderId, user) {
-  const accessToken = await getPhonePeAccessToken();
-  const redirectUrl = `${APP_BASE_URL.replace(/\s+/g, "")}/payment-callback?planId=${encodeURIComponent(plan.id)}&orderId=${encodeURIComponent(orderId)}`;
-
-  const response = await fetch(`${getPhonePeHost()}/checkout/v2/pay`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `O-Bearer ${accessToken}`
-    },
-    body: JSON.stringify({
-      merchantOrderId: orderId,
-      amount: plan.amount,
-      expireAfter: 1200,
-      metaInfo: {
-        udf1: user.email || "",
-        udf2: plan.id,
-        udf3: user.name || ""
-      },
-      paymentFlow: {
-        type: "PG_CHECKOUT",
-        message: `IMBA Beacon ${plan.label} plan`,
-        merchantUrls: {
-          redirectUrl
-        }
-      }
-    })
-  });
-
-  const payload = await response.json();
-  const checkoutUrl = payload?.redirectUrl || payload?.data?.redirectUrl || payload?.paymentUrl || "";
-
-  if (!response.ok || !checkoutUrl) {
-    throw new Error(payload?.message || "Unable to create PhonePe checkout session.");
-  }
-
-  return {
-    checkoutUrl,
-    raw: payload
-  };
-}
-
 async function handleCreateOrder(request, response) {
   const user = requireAuthenticatedUser(request, response);
   if (!user) return;
@@ -1218,9 +1525,10 @@ async function handleCreateOrder(request, response) {
     return;
   }
 
-  if (!PHONEPE_CLIENT_ID || !PHONEPE_CLIENT_SECRET || !PHONEPE_CLIENT_VERSION) {
+  const razorpay = getRazorpayClient();
+  if (!razorpay) {
     sendJson(response, 503, {
-      message: "PhonePe is not configured yet. Add PHONEPE_CLIENT_ID, PHONEPE_CLIENT_SECRET, and PHONEPE_CLIENT_VERSION."
+      message: "Razorpay is not configured yet. Add RAZORPAY_KEY_ID and RAZORPAY_KEY_SECRET."
     });
     return;
   }
@@ -1228,50 +1536,81 @@ async function handleCreateOrder(request, response) {
   try {
     const body = await parseRequestBody(request);
     const planId = String(body.planId || "").toLowerCase();
-    const plan = PLAN_CATALOG[planId];
+    const plan = planId ? PLAN_CATALOG[planId] : null;
 
-    if (!plan) {
+    if (planId && !plan) {
       sendJson(response, 400, { message: "Invalid plan selected." });
       return;
     }
 
-    const orderId = `IMBA_${plan.id}_${Date.now()}`.slice(0, 40);
-    const transaction = await createPhonePeOrder(plan, orderId, user);
+    const requestedAmount = plan ? plan.amount : Number.parseInt(String(body.amount || ""), 10);
+    const amount = Number.isFinite(requestedAmount) ? requestedAmount : NaN;
+    const currency = String(plan?.currency || body.currency || "INR").trim().toUpperCase() || "INR";
+    const fallbackReceipt = plan ? `IMBA_${plan.id}_${Date.now()}` : `IMBA_${Date.now()}`;
+    const receipt = String(body.receipt || fallbackReceipt)
+      .trim()
+      .replace(/[^a-zA-Z0-9_-]/g, "")
+      .slice(0, 40) || fallbackReceipt.slice(0, 40);
+
+    if (!Number.isInteger(amount) || amount < 100) {
+      sendJson(response, 400, { message: "Amount must be at least 100 paise." });
+      return;
+    }
+
+    const order = await razorpay.orders.create({
+      amount,
+      currency,
+      receipt,
+      notes: {
+        email: normalizeEmail(user.email),
+        name: user.name || "",
+        planId: plan?.id || "",
+        source: "imba-beacon"
+      }
+    });
 
     sendJson(response, 201, {
-      checkoutUrl: transaction.checkoutUrl,
-      orderId,
+      order_id: order.id,
+      amount: order.amount,
+      currency: order.currency,
+      receipt: order.receipt,
       plan: {
-        id: plan.id,
-        label: plan.label,
-        amount: plan.amount,
-        currency: plan.currency,
-        amountDisplay: (plan.amount / 100).toFixed(2)
-      },
-      user: getPublicUser(user)
+        id: plan?.id || "",
+        label: plan?.label || "",
+        amount: plan?.amount || amount,
+        currency: plan?.currency || currency,
+        amountDisplay: ((plan?.amount || amount) / 100).toFixed(2)
+      }
     });
   } catch (error) {
-    sendJson(response, 500, { message: error.message || "Unable to create PhonePe order." });
+    console.error("Razorpay order creation failed:", error);
+    const statusCode = error?.statusCode === 401 ? 401 : 500;
+    sendJson(response, statusCode, {
+      message: statusCode === 401
+        ? "Razorpay authentication failed. Check the configured key ID and key secret."
+        : (error.message || "Unable to create Razorpay order.")
+    });
   }
 }
 
-async function fetchPhonePeOrderStatus(orderId) {
-  const accessToken = await getPhonePeAccessToken();
-  const response = await fetch(`${getPhonePeHost()}/checkout/v2/order/${encodeURIComponent(orderId)}/status`, {
-    method: "GET",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `O-Bearer ${accessToken}`
-    }
-  });
-
-  const payload = await response.json();
-
-  if (!response.ok) {
-    throw new Error(payload?.message || "Unable to verify PhonePe payment status.");
+function verifyRazorpaySignature(orderId, paymentId, signature) {
+  if (!orderId || !paymentId || !signature || !RAZORPAY_KEY_SECRET) {
+    return false;
   }
 
-  return payload;
+  const expectedSignature = crypto
+    .createHmac("sha256", RAZORPAY_KEY_SECRET)
+    .update(`${orderId}|${paymentId}`)
+    .digest("hex");
+
+  if (expectedSignature.length !== signature.length) {
+    return false;
+  }
+
+  return crypto.timingSafeEqual(
+    Buffer.from(expectedSignature, "utf8"),
+    Buffer.from(signature, "utf8")
+  );
 }
 
 async function handleVerifyPayment(request, response) {
@@ -1285,59 +1624,92 @@ async function handleVerifyPayment(request, response) {
     return;
   }
 
-  if (!PHONEPE_CLIENT_ID || !PHONEPE_CLIENT_SECRET || !PHONEPE_CLIENT_VERSION) {
-    sendJson(response, 503, { message: "PhonePe verification is not configured yet." });
+  const razorpay = getRazorpayClient();
+  if (!razorpay) {
+    sendJson(response, 503, { message: "Razorpay verification is not configured yet." });
     return;
   }
 
   try {
     const body = await parseRequestBody(request);
-    const { planId, orderId } = body;
+    const orderId = String(body.razorpay_order_id || body.order_id || "").trim();
+    const paymentId = String(body.razorpay_payment_id || body.payment_id || "").trim();
+    const signature = String(body.razorpay_signature || body.signature || "").trim();
+    const hintedPlanId = String(body.planId || "").toLowerCase();
 
-    const plan = PLAN_CATALOG[String(planId || "").toLowerCase()];
-
-    if (!plan || !orderId) {
+    if (!orderId || !paymentId || !signature) {
       sendJson(response, 400, { message: "Missing payment verification details." });
       return;
     }
 
-    const statusPayload = await fetchPhonePeOrderStatus(orderId);
-    const txnInfo = statusPayload.data || {};
-    const state = String(txnInfo.state || statusPayload.state || "").toUpperCase();
-
-    if (state !== "COMPLETED") {
-      sendJson(response, 400, {
-        message: statusPayload.message || "Payment has not been completed successfully yet."
-      });
+    if (!verifyRazorpaySignature(orderId, paymentId, signature)) {
+      sendJson(response, 400, { message: "Payment signature mismatch. Do not mark this order as paid." });
       return;
     }
 
-    const payments = await readJsonFile(PAYMENTS_FILE);
-    const existingPayment = payments.find((payment) => payment.orderId === orderId);
+    const razorpayOrder = await razorpay.orders.fetch(orderId);
+    const resolvedPlanId = PLAN_CATALOG[hintedPlanId]
+      ? hintedPlanId
+      : String(razorpayOrder?.notes?.planId || "").toLowerCase();
+    const plan = PLAN_CATALOG[resolvedPlanId] || null;
+    const amount = Number(razorpayOrder?.amount || plan?.amount || 0);
+    const currency = String(razorpayOrder?.currency || plan?.currency || "INR");
+
+    const db = await getDatabase();
+    const existingPayment = await db.get("SELECT order_id FROM payments WHERE order_id = ?", orderId);
 
     if (!existingPayment) {
-      payments.push({
-        planId: plan.id,
-        planLabel: plan.label,
-        amount: plan.amount,
-        currency: plan.currency,
+      await db.run(`
+        INSERT INTO payments (
+          order_id,
+          plan_id,
+          plan_label,
+          amount,
+          currency,
+          payment_id,
+          payment_mode,
+          bank_txn_id,
+          email,
+          name,
+          verified_at
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      `, [
         orderId,
-        paymentId: txnInfo.transactionId || txnInfo.paymentDetails?.[0]?.transactionId || "",
-        paymentMode: txnInfo.paymentDetails?.[0]?.paymentMode || txnInfo.paymentInstrument || "",
-        bankTxnId: txnInfo.paymentDetails?.[0]?.rail?.utr || txnInfo.providerReferenceId || "",
-        email: user.email,
-        name: user.name,
-        verifiedAt: new Date().toISOString()
-      });
-
-      await writeJsonFile(PAYMENTS_FILE, payments);
+        plan?.id || "",
+        plan?.label || "Custom",
+        amount,
+        currency,
+        paymentId,
+        "Razorpay Standard Checkout",
+        "",
+        normalizeEmail(user.email),
+        user.name,
+        new Date().toISOString()
+      ]);
     }
 
+    const updatedUser = plan ? await activatePlanForUser(user, plan.id) : user;
+
     sendJson(response, 200, {
-      message: `Payment verified successfully for the ${plan.label} plan via PhonePe.`
+      message: plan
+        ? `Payment verified successfully. Your ${plan.label} plan is now active.`
+        : "Payment verified successfully.",
+      user: getPublicUser(updatedUser),
+      plan: plan ? {
+        id: plan.id,
+        label: plan.label,
+        amount: plan.amount,
+        currency: plan.currency
+      } : null
     });
   } catch (error) {
-    sendJson(response, 500, { message: error.message || "Unable to verify payment." });
+    console.error("Razorpay payment verification failed:", error);
+    const statusCode = error?.statusCode === 401 ? 401 : 500;
+    sendJson(response, statusCode, {
+      message: statusCode === 401
+        ? "Razorpay authentication failed. Check the configured key ID and key secret."
+        : (error.message || "Unable to verify payment.")
+    });
   }
 }
 
@@ -1353,22 +1725,7 @@ async function requestHandler(request, response) {
   }
 
   if (request.method === "GET" && pathname === "/api/config") {
-    sendJson(response, 200, {
-      appBaseUrl: APP_BASE_URL,
-      frontendOrigin: FRONTEND_ORIGIN,
-      googleClientId: GOOGLE_CLIENT_ID,
-      paymentsEnabled: PAYMENTS_ENABLED,
-      paymentProvider: "phonepe",
-      phonepeClientId: PHONEPE_CLIENT_ID,
-      phonepeHost: getPhonePeHost(),
-      plans: Object.values(PLAN_CATALOG).map((plan) => ({
-        id: plan.id,
-        label: plan.label,
-        amount: plan.amount,
-        currency: plan.currency,
-        description: plan.description
-      }))
-    }, corsHeaders);
+    sendJson(response, 200, buildClientConfig(), corsHeaders);
     return;
   }
 
@@ -1441,7 +1798,7 @@ async function requestHandler(request, response) {
     return;
   }
 
-  if (request.method === "POST" && pathname === "/api/payments/order") {
+  if (request.method === "POST" && (pathname === "/api/create-order" || pathname === "/api/payments/order")) {
     await handleCreateOrder(request, {
       writeHead: (...args) => response.writeHead(args[0], { ...args[1], ...corsHeaders }),
       end: (...args) => response.end(...args)
@@ -1449,7 +1806,7 @@ async function requestHandler(request, response) {
     return;
   }
 
-  if (request.method === "POST" && pathname === "/api/payments/verify") {
+  if (request.method === "POST" && (pathname === "/api/verify-payment" || pathname === "/api/payments/verify")) {
     await handleVerifyPayment(request, {
       writeHead: (...args) => response.writeHead(args[0], { ...args[1], ...corsHeaders }),
       end: (...args) => response.end(...args)
@@ -1466,11 +1823,10 @@ async function requestHandler(request, response) {
   }
 
   if (request.method === "GET" && pathname === "/api/waitlist") {
-    const waitlist = await readJsonFile(WAITLIST_FILE);
-    sendJson(response, 200, {
-      count: waitlist.length,
-      entries: waitlist
-    }, corsHeaders);
+    await handleWaitlistList({
+      writeHead: (...args) => response.writeHead(args[0], { ...args[1], ...corsHeaders }),
+      end: (...args) => response.end(...args)
+    });
     return;
   }
 
@@ -1491,21 +1847,6 @@ async function requestHandler(request, response) {
 
   if (request.method === "POST" && pathname === "/api/admin/users/access") {
     await handleAdminUserAccessUpdate(request, response, url, corsHeaders);
-    return;
-  }
-
-  if (request.method === "GET" && pathname === "/payment-callback") {
-    const redirectUrl = getFrontendRedirectUrl("/index.html", {
-      payment_return: "phonepe",
-      planId: url.searchParams.get("planId") || "",
-      orderId: url.searchParams.get("orderId") || ""
-    });
-
-    response.writeHead(302, {
-      Location: redirectUrl,
-      "Cache-Control": "no-store"
-    });
-    response.end();
     return;
   }
 
@@ -1537,6 +1878,7 @@ async function requestHandler(request, response) {
 
 async function startServer() {
   await ensureDataStore();
+  await getDatabase();
   await loadSessionStore();
 
   const server = http.createServer((request, response) => {

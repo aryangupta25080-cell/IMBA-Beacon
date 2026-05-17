@@ -17,6 +17,7 @@
 <link rel="preload" as="image" href="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=1600&q=80"/>
 <link rel="preload" as="image" href="https://images.unsplash.com/photo-1523240795612-9a054b0db644?auto=format&fit=crop&w=1600&q=80"/>
 <script src="https://accounts.google.com/gsi/client" async defer></script>
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
@@ -3032,7 +3033,6 @@ footer{
       this.bindEvents();
       this.renderGoogleButton();
       this.syncUi();
-      this.handlePaymentReturn();
     }
 
     async loadConfig() {
@@ -3124,7 +3124,7 @@ footer{
 
         this.user = payload.user;
         this.syncUi();
-        this.setStatus(`Signed in as ${this.user.name}. You can now register your plan interest and we will contact you with enrollment details.`, "success");
+        this.setStatus(`Signed in as ${this.user.name}. You can now continue to the secure checkout for your selected plan.`, "success");
       } catch (error) {
         this.setStatus("Unable to complete Google sign-in right now.", "error");
       }
@@ -3152,7 +3152,7 @@ footer{
 
     async startCheckout(planId, triggerButton) {
       if (!this.user) {
-        this.setStatus("Please sign in with Google before joining the waitlist.", "error");
+        this.setStatus("Please sign in with Google before starting checkout.", "error");
         return;
       }
 
@@ -3170,12 +3170,17 @@ footer{
         return;
       }
 
+      if (!this.config?.razorpayKeyId || typeof window.Razorpay !== "function") {
+        this.setStatus("Razorpay checkout could not be loaded right now.", "error");
+        return;
+      }
+
       triggerButton.disabled = true;
       const originalText = triggerButton.textContent;
-      triggerButton.textContent = "Preparing PhonePe...";
+      triggerButton.textContent = "Preparing checkout...";
 
       try {
-        const response = await fetch(`${this.apiBase}/api/payments/order`, {
+        const response = await fetch(`${this.apiBase}/api/create-order`, {
           method: "POST",
           credentials: "include",
           headers: {
@@ -3187,27 +3192,52 @@ footer{
         const payload = await response.json();
 
         if (!response.ok) {
-          this.setStatus(payload.message || "Unable to create PhonePe order.", "error");
+          this.setStatus(payload.message || "Unable to create Razorpay order.", "error");
           return;
         }
 
-        if (payload.checkoutUrl) {
-          window.location.href = payload.checkoutUrl;
-          return;
-        }
+        const razorpay = new window.Razorpay({
+          key: this.config.razorpayKeyId,
+          amount: payload.amount,
+          currency: payload.currency,
+          name: "IMBA Beacon",
+          description: `${plan.label} plan checkout`,
+          order_id: payload.order_id,
+          prefill: {
+            name: this.user.name || "",
+            email: this.user.email || "",
+            contact: this.user.phone || ""
+          },
+          theme: {
+            color: "#6a1f36"
+          },
+          modal: {
+            ondismiss: () => {
+              this.setStatus("Checkout was closed before payment completion.", "error");
+            }
+          },
+          handler: (paymentResponse) => {
+            this.verifyPayment(planId, paymentResponse);
+          }
+        });
 
-        this.setStatus("PhonePe order created, but hosted checkout URL is not available yet.", "error");
+        razorpay.on("payment.failed", (event) => {
+          const description = event?.error?.description || event?.error?.reason || "Payment failed.";
+          this.setStatus(description, "error");
+        });
+
+        razorpay.open();
       } catch (error) {
-        this.setStatus("Unable to initiate PhonePe payment right now.", "error");
+        this.setStatus("Unable to initiate Razorpay payment right now.", "error");
       } finally {
         triggerButton.disabled = false;
         triggerButton.textContent = originalText;
       }
     }
 
-    async verifyPayment(planId, orderId) {
+    async verifyPayment(planId, paymentDetails) {
       try {
-        const response = await fetch(`${this.apiBase}/api/payments/verify`, {
+        const response = await fetch(`${this.apiBase}/api/verify-payment`, {
           method: "POST",
           credentials: "include",
           headers: {
@@ -3215,7 +3245,9 @@ footer{
           },
           body: JSON.stringify({
             planId,
-            orderId
+            razorpay_order_id: paymentDetails.razorpay_order_id,
+            razorpay_payment_id: paymentDetails.razorpay_payment_id,
+            razorpay_signature: paymentDetails.razorpay_signature
           })
         });
 
@@ -3227,30 +3259,12 @@ footer{
         }
 
         this.setStatus(payload.message || "Payment verified successfully.", "success");
+        window.setTimeout(() => {
+          window.location.href = "./student.html";
+        }, 900);
       } catch (error) {
         this.setStatus("Payment completed, but verification could not be confirmed.", "error");
       }
-    }
-
-    handlePaymentReturn() {
-      const params = new URLSearchParams(window.location.search);
-      if (params.get("payment_return") !== "phonepe") {
-        return;
-      }
-
-      const planId = params.get("planId");
-      const orderId = params.get("orderId");
-
-      if (planId && orderId) {
-        this.verifyPayment(planId, orderId);
-      }
-
-      params.delete("payment_return");
-      params.delete("planId");
-      params.delete("orderId");
-      const nextQuery = params.toString();
-      const nextUrl = `${window.location.pathname}${nextQuery ? `?${nextQuery}` : ""}${window.location.hash || ""}`;
-      window.history.replaceState({}, document.title, nextUrl);
     }
 
     setStatus(message, type) {
