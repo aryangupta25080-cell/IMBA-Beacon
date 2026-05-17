@@ -633,7 +633,7 @@ async function upsertUserInDatabase(db, nextUser) {
     mergedUser.provider || "beacon",
     Boolean(mergedUser.emailVerified),
     mergedUser.createdAt || new Date().toISOString(),
-    mergedUser.lastLoginAt || "",
+    mergedUser.lastLoginAt || null,
     JSON.stringify(normalizedCourseAccess)
   ]);
 
