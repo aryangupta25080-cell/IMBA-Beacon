@@ -113,7 +113,7 @@ const PLAN_CATALOG = {
   }
 };
 
-const DEFAULT_COUPON_CODE = String(process.env.IMBA_COUPON_CODE || "IMBA10").trim().toUpperCase();
+const DEFAULT_COUPON_CODE = String(process.env.IMBA_COUPON_CODE || "IMDS10").trim().toUpperCase();
 const DEFAULT_COUPON_DISCOUNT_PERCENT = 10;
 
 function normalizeCouponCode(value) {
