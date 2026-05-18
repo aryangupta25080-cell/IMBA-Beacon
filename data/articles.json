@@ -1,0 +1,70 @@
+{
+  "defaultView": "daily",
+  "daily": [
+    {
+      "category": "National Affairs",
+      "date": "May 2026",
+      "title": "West Bengal 2026 Election",
+      "summary": "Deep dive into challenges, illegal voters and the SIR purge debate before the polls.",
+      "url": "./Bengal Elections.html",
+      "cta": "Read article",
+      "icon": "map-pin"
+    },
+    {
+      "category": "National Affairs",
+      "date": "May 2026",
+      "title": "Tamil Nadu 2026: TVK Victory Report",
+      "summary": "Comprehensive breakdown of the result, seat movement and the key political takeaway.",
+      "url": "./Tamil nadu elections.html",
+      "cta": "Read article",
+      "icon": "map-pin"
+    },
+    {
+      "category": "International Affairs",
+      "date": "May 2026",
+      "title": "PM Modi's 5-Nation Tour May 2026",
+      "summary": "Strategic deep dive into bilateral ties, trade deals and the broader geopolitical impact.",
+      "url": "./PM modi visit .html",
+      "cta": "Read article",
+      "icon": "world"
+    },
+    {
+      "category": "Education",
+      "date": "May 2026",
+      "title": "NEET Paper Leak Report: 2024-2026",
+      "summary": "Crisis overview, the retest debate and the policy implications students should understand.",
+      "url": "./IIT-Mandi-interview-prep-PDF (1).html",
+      "cta": "Read article",
+      "icon": "school"
+    }
+  ],
+  "weekly": [
+    {
+      "category": "Top News",
+      "date": "Weekly recap",
+      "title": "This week's most important political headline",
+      "summary": "Keep one flagship national story here so students revise the single most discussion-worthy update first.",
+      "url": "./Bengal Elections.html",
+      "cta": "Read article",
+      "icon": "sparkles"
+    },
+    {
+      "category": "Policy Watch",
+      "date": "Weekly recap",
+      "title": "This week's strongest governance or policy story",
+      "summary": "Use this card for the policy development students should be prepared to explain with a balanced opinion.",
+      "url": "./Tamil nadu elections.html",
+      "cta": "Read article",
+      "icon": "building-bank"
+    },
+    {
+      "category": "Interview Angle",
+      "date": "Weekly recap",
+      "title": "This week's best interview discussion topic",
+      "summary": "Use this slot for the story that gives students the strongest example for follow-up questions and opinion-based discussion.",
+      "url": "./PM modi visit .html",
+      "cta": "Read article",
+      "icon": "world"
+    }
+  ]
+}
