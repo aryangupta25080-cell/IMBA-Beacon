@@ -1301,14 +1301,14 @@ button{
 
     function renderSheets(plan) {
       const lectures = [
-        { title: "Lecture 1 Practice Sheet", url: "https://drive.google.com/uc?export=download&id=150n8jaPDmhrUQjEEq_ZI_nbpqsXfO4y8", view: "https://drive.google.com/file/d/150n8jaPDmhrUQjEEq_ZI_nbpqsXfO4y8/view" },
-        { title: "Lecture 2 Practice Sheet", url: "https://drive.google.com/uc?export=download&id=19sfHliA7QblUyXcNLanx4j7QF0fz8W-f", view: "https://drive.google.com/file/d/19sfHliA7QblUyXcNLanx4j7QF0fz8W-f/view" },
-        { title: "Lecture 3 Practice Sheet", url: "https://drive.google.com/uc?export=download&id=1T6QH1dvXMzt_bX4xEWTySj_HQ0tBml46", view: "https://drive.google.com/file/d/1T6QH1dvXMzt_bX4xEWTySj_HQ0tBml46/view" },
-        { title: "Lecture 4 Practice Sheet", url: "https://drive.google.com/uc?export=download&id=1d9S93hIFe2J8CH1NChcVaHAplYTBCD--", view: "https://drive.google.com/file/d/1d9S93hIFe2J8CH1NChcVaHAplYTBCD--/view" },
-        { title: "Lecture 5 Practice Sheet", url: "https://drive.google.com/uc?export=download&id=1nXLejdm0DhtNn5Uduoe5DfqxZ6rYKMEF", view: "https://drive.google.com/file/d/1nXLejdm0DhtNn5Uduoe5DfqxZ6rYKMEF/view" },
-        { title: "Lecture 6 Practice Sheet", url: "https://drive.google.com/uc?export=download&id=1qIxI0Bvu_nLjZ9-RW1JqHAIWmyTVsqor", view: "https://drive.google.com/file/d/1qIxI0Bvu_nLjZ9-RW1JqHAIWmyTVsqor/view" },
-        { title: "Lecture 7 Practice Sheet", url: "https://drive.google.com/uc?export=download&id=1qvoUIZZxs2odDPy2tjDiEzZicwoIr053", view: "https://drive.google.com/file/d/1qvoUIZZxs2odDPy2tjDiEzZicwoIr053/view" },
-        { title: "Lecture 8 Practice Sheet", url: "https://drive.google.com/uc?export=download&id=1woLrco4lqo4HtgclYSJnZGKTnewdXh5q", view: "https://drive.google.com/file/d/1woLrco4lqo4HtgclYSJnZGKTnewdXh5q/view" }
+        { title: "Lecture 1 Practice Sheet", id: "1woLrco4lqo4HtgclYSJnZGKTnewdXh5q" },
+        { title: "Lecture 2 Practice Sheet", id: "150n8jaPDmhrUQjEEq_ZI_nbpqsXfO4y8" },
+        { title: "Lecture 3 Practice Sheet", id: "1d9S93hIFe2J8CH1NChcVaHAplYTBCD--" },
+        { title: "Lecture 4 Practice Sheet", id: "1qIxI0Bvu_nLjZ9-RW1JqHAIWmyTVsqor" },
+        { title: "Lecture 5 Practice Sheet", id: "1T6QH1dvXMzt_bX4xEWTySj_HQ0tBml46" },
+        { title: "Lecture 6 Practice Sheet", id: "19sfHliA7QblUyXcNLanx4j7QF0fz8W-f" },
+        { title: "Lecture 7 Practice Sheet", id: "1qvoUIZZxs2odDPy2tjDiEzZicwoIr053" },
+        { title: "Lecture 8 Practice Sheet", id: "1nXLejdm0DhtNn5Uduoe5DfqxZ6rYKMEF" }
       ];
 
       const locked = plan === "none";
@@ -1317,14 +1317,14 @@ button{
         <section class="dashboard-section" id="section-sheets">
           <p class="section-label">Practice Sheets</p>
           <article class="dashboard-card ${locked ? "locked-card" : ""}">
-            <div class="sheet-row master-sheet-row" id="master-sheet-toggle" style="cursor:pointer;" onclick="(function(){var el=document.getElementById('master-sheet-expand');var icon=document.getElementById('master-chevron');var open=el.style.display==='block';el.style.display=open?'none':'block';icon.style.transform=open?'rotate(0deg)':'rotate(180deg)';})()">
+            <div class="sheet-row" style="cursor:pointer;" onclick="(function(){var el=document.getElementById('master-sheet-expand');var icon=document.getElementById('master-chevron');var open=el.style.display==='block';el.style.display=open?'none':'block';icon.style.transform=open?'rotate(0deg)':'rotate(180deg)';})()">
               <div class="sheet-info">
                 <div class="sheet-icon" style="background:linear-gradient(135deg,var(--amber-tint),var(--amber-soft));color:var(--maroon);">
                   <i class="ti ti-book-2"></i>
                 </div>
                 <div>
                   <strong>Master Sheets</strong>
-                  <span>8 Practice PDFs · All Lectures</span>
+                  <span>8 Practice PDFs · Lectures 1–8</span>
                 </div>
               </div>
               <div style="display:flex;align-items:center;gap:.6rem;">
@@ -1335,7 +1335,7 @@ button{
 
             <div id="master-sheet-expand" style="display:none;margin-top:.5rem;border-top:1px solid var(--border);padding-top:.75rem;">
               <div class="sheet-list">
-                ${lectures.map(function(lec, i) {
+                ${lectures.map(function(lec) {
                   return `
                     <div class="sheet-row" style="padding:.7rem .95rem;">
                       <div class="sheet-info">
@@ -1349,10 +1349,10 @@ button{
                       </div>
                       ${locked ? '<button class="sheet-btn pro-only" disabled>Locked</button>' : `
                         <div style="display:flex;gap:.5rem;">
-                          <a class="sheet-btn" href="${lec.view}" target="_blank" rel="noopener noreferrer" style="font-size:.82rem;padding:.6rem .8rem;">
+                          <a class="sheet-btn" href="https://drive.google.com/file/d/${lec.id}/view" target="_blank" rel="noopener noreferrer" style="font-size:.82rem;padding:.6rem .8rem;">
                             <i class="ti ti-eye" style="font-size:.9rem;"></i> Open
                           </a>
-                          <a class="sheet-btn" href="${lec.url}" target="_blank" rel="noopener noreferrer" style="font-size:.82rem;padding:.6rem .8rem;background:linear-gradient(135deg,var(--amber-soft),var(--amber));color:var(--maroon-deep);border:none;">
+                          <a class="sheet-btn" href="https://drive.google.com/uc?export=download&id=${lec.id}" target="_blank" rel="noopener noreferrer" style="font-size:.82rem;padding:.6rem .8rem;background:linear-gradient(135deg,var(--amber-soft),var(--amber));color:var(--maroon-deep);border:none;">
                             <i class="ti ti-download" style="font-size:.9rem;"></i> Download
                           </a>
                         </div>
