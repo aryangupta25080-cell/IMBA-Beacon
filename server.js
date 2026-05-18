@@ -1,6 +1,6 @@
 const http = require("node:http");
 const fs = require("node:fs/promises");
-const { createReadStream, existsSync } = require("node:fs");
+const { existsSync } = require("node:fs");
 const path = require("node:path");
 const crypto = require("node:crypto");
 const { URL } = require("node:url");
@@ -113,18 +113,8 @@ const PLAN_CATALOG = {
   }
 };
 
-const MIME_TYPES = {
-  ".html": "text/html; charset=utf-8",
-  ".css": "text/css; charset=utf-8",
-  ".js": "application/javascript; charset=utf-8",
-  ".json": "application/json; charset=utf-8",
-  ".jpeg": "image/jpeg",
-  ".jpg": "image/jpeg",
-  ".png": "image/png",
-  ".svg": "image/svg+xml",
-  ".ico": "image/x-icon",
-  ".webp": "image/webp"
-};
+
+
 
 async function ensureDataStore() {
   await fs.mkdir(DATA_DIR, { recursive: true });
@@ -339,33 +329,26 @@ function sendJson(response, statusCode, payload, extraHeaders = {}) {
   response.end(JSON.stringify(payload));
 }
 
-function sendNotFound(response) {
-  sendJson(response, 404, { message: "Resource not found." });
-}
-
-function serveFile(response, filePath) {
-  const ext = path.extname(filePath).toLowerCase();
-  const contentType = MIME_TYPES[ext] || "application/octet-stream";
-
-  response.writeHead(200, {
-    "Content-Type": contentType
-  });
-
-  createReadStream(filePath).pipe(response);
-}
 
 function normalizePathname(pathname) {
   if (pathname === "/") return "/index.html";
   return pathname;
 }
 
+const ALLOWED_ORIGINS = [
+  "https://imba-beacon.in",
+  "https://www.imba-beacon.in",
+  "https://imba-beacon.vercel.app",
+  "http://127.0.0.1:3000",
+  "http://localhost:3000"
+];
+
 function getAllowedOrigin(request) {
   const requestOrigin = request.headers.origin || "";
   if (!requestOrigin) return "";
   if (FRONTEND_ORIGIN && requestOrigin === FRONTEND_ORIGIN) return requestOrigin;
-  if (!FRONTEND_ORIGIN && (requestOrigin === "http://127.0.0.1:3000" || requestOrigin === "http://localhost:3000")) {
-    return requestOrigin;
-  }
+  if (ALLOWED_ORIGINS.includes(requestOrigin)) return requestOrigin;
+  if (requestOrigin.endsWith(".vercel.app")) return requestOrigin;
   return "";
 }
 
@@ -1883,29 +1866,11 @@ async function requestHandler(request, response) {
   }
 
   if (request.method !== "GET" && request.method !== "HEAD") {
-    sendJson(response, 405, { message: "Method not allowed." });
+    sendJson(response, 405, { message: "Method not allowed." }, corsHeaders);
     return;
   }
 
-  const safePath = path.normalize(path.join(ROOT_DIR, pathname));
-
-  if (!safePath.startsWith(ROOT_DIR)) {
-    sendNotFound(response);
-    return;
-  }
-
-  if (!existsSync(safePath)) {
-    sendNotFound(response);
-    return;
-  }
-
-  if (request.method === "HEAD") {
-    response.writeHead(200);
-    response.end();
-    return;
-  }
-
-  serveFile(response, safePath);
+  sendJson(response, 404, { message: "API route not found." }, corsHeaders);
 }
 
 async function startServer() {
