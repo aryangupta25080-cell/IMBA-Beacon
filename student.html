@@ -961,7 +961,7 @@ button{
       { id: "sheets", label: "Sheets", icon: "files", target: "section-sheets" },
       { id: "quiz", label: "Quiz", icon: "help-square-rounded", target: "section-quiz" },
       { id: "batch", label: "Batch Sessions", icon: "users-group", target: "section-batch" },
-      { id: "articles", label: "Articles", icon: "news", target: "section-articles" },
+      { id: "articles", label: "Articles", icon: "news", target: "section-articles", href: "./student-news.html" },
       { id: "profile", label: "Profile", icon: "user-circle", target: "section-profile" }
     ];
 
@@ -1175,8 +1175,9 @@ button{
       `;
 
       const navMarkup = NAV_ITEMS.map(function (item, index) {
+        const href = item.href || `#${item.target}`;
         return `
-          <a href="#${item.target}" class="sidebar-link${index === 0 ? " is-active" : ""}" data-nav-target="${item.target}">
+          <a href="${href}" class="sidebar-link${index === 0 ? " is-active" : ""}" data-nav-target="${item.target}"${item.href ? ` data-nav-href="${item.href}"` : ""}>
             <i class="ti ti-${item.icon}"></i>
             <span>${escapeHtml(item.label)}</span>
           </a>
@@ -1186,7 +1187,7 @@ button{
       sidebarNavNode.innerHTML = navMarkup;
       mobileNavNode.innerHTML = NAV_ITEMS.concat([{ id: "logout", label: "Logout", icon: "logout", target: "logout" }]).map(function (item, index) {
         return `
-          <button class="mobile-nav-link${index === 0 ? " is-active" : ""}" type="button" data-nav-target="${item.target}">
+          <button class="mobile-nav-link${index === 0 ? " is-active" : ""}" type="button" data-nav-target="${item.target}"${item.href ? ` data-nav-href="${item.href}"` : ""}>
             <i class="ti ti-${item.icon}"></i>
             <span>${escapeHtml(item.label)}</span>
           </button>
@@ -1868,8 +1869,14 @@ button{
       const navButton = event.target.closest("[data-nav-target]");
       if (navButton) {
         const target = navButton.getAttribute("data-nav-target");
+        const href = navButton.getAttribute("data-nav-href");
         if (target === "logout") {
           logout();
+          return;
+        }
+        if (href) {
+          event.preventDefault();
+          window.location.href = href;
           return;
         }
         const section = document.getElementById(target);
