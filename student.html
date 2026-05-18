@@ -1617,25 +1617,27 @@ button{
           body: JSON.stringify({ code, planId: "basic" })
         });
         const data = await response.json();
+        const catalog = getPlanCatalog();
 
         if (!response.ok || !data.valid) {
           activeCouponCode = "";
           msg.style.color = "#bb4357";
           msg.textContent = data.message || "Invalid coupon code.";
-          document.getElementById("price-basic") && (document.getElementById("price-basic").innerHTML = escapeHtml(formatPrice(currentConfig?.plans?.basic?.amount || 119900)));
-          document.getElementById("price-pro") && (document.getElementById("price-pro").innerHTML = escapeHtml(formatPrice(currentConfig?.plans?.pro?.amount || 179900)));
+          const pb = document.getElementById("price-basic");
+          const pp = document.getElementById("price-pro");
+          if (pb) pb.innerHTML = escapeHtml(formatPrice(catalog.basic.amount));
+          if (pp) pp.innerHTML = escapeHtml(formatPrice(catalog.pro.amount));
         } else {
           activeCouponCode = code;
           msg.style.color = "#2d7b52";
-          const savedBasic = Math.round((currentConfig?.plans?.basic?.amount || 119900) * data.discountPercent / 100);
-          const savedPro = Math.round((currentConfig?.plans?.pro?.amount || 179900) * data.discountPercent / 100);
-          const finalBasic = (currentConfig?.plans?.basic?.amount || 119900) - savedBasic;
-          const finalPro = (currentConfig?.plans?.pro?.amount || 179900) - savedPro;
-          msg.textContent = `✓ Coupon applied! ${data.discountPercent}% off on all plans.`;
+          const discountPercent = data.discountPercent;
+          const finalBasic = Math.max(100, Math.round(catalog.basic.amount * (1 - discountPercent / 100)));
+          const finalPro   = Math.max(100, Math.round(catalog.pro.amount   * (1 - discountPercent / 100)));
+          msg.textContent = `✓ Coupon applied! ${discountPercent}% off. ${data.remaining !== undefined ? data.remaining + " uses left." : ""}`;
           const pb = document.getElementById("price-basic");
           const pp = document.getElementById("price-pro");
-          if (pb) pb.innerHTML = `<span style="text-decoration:line-through;opacity:.5;font-size:1.3rem;">${escapeHtml(formatPrice(currentConfig?.plans?.basic?.amount || 119900))}</span> ${escapeHtml(formatPrice(finalBasic))}`;
-          if (pp) pp.innerHTML = `<span style="text-decoration:line-through;opacity:.5;font-size:1.3rem;">${escapeHtml(formatPrice(currentConfig?.plans?.pro?.amount || 179900))}</span> ${escapeHtml(formatPrice(finalPro))}`;
+          if (pb) pb.innerHTML = `<span style="text-decoration:line-through;opacity:.45;font-size:1.3rem;">${escapeHtml(formatPrice(catalog.basic.amount))}</span> ${escapeHtml(formatPrice(finalBasic))}`;
+          if (pp) pp.innerHTML = `<span style="text-decoration:line-through;opacity:.45;font-size:1.3rem;">${escapeHtml(formatPrice(catalog.pro.amount))}</span> ${escapeHtml(formatPrice(finalPro))}`;
         }
       } catch (error) {
         activeCouponCode = "";
