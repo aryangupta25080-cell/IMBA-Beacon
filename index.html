@@ -636,10 +636,11 @@ button,input{border:none}
 }
 .hero-scenes{
   position:relative;
+  display:grid;
+  overflow:hidden;
 }
 .hero-scene{
-  position:absolute;
-  inset:0;
+  grid-area:1/1;
   opacity:0;
   visibility:hidden;
   transform:translate3d(28px,0,0);
@@ -651,7 +652,7 @@ button,input{border:none}
     visibility 0s linear .82s;
 }
 .hero-scene.active{
-  position:relative;
+  grid-area:1/1;
   opacity:1;
   visibility:visible;
   transform:translate3d(0,0,0);
