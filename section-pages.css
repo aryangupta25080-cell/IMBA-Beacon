@@ -327,6 +327,46 @@ section{padding:4.5rem 0}
 .payment-status.error{color:#b33d4b}
 .payment-status.success{color:#7f6a1b}
 .payment-status.info{color:#7d5a16}
+.coupon-box{
+  margin:0 0 1rem;
+  padding:1rem 1.05rem;
+  border:1px solid rgba(106,31,54,.1);
+  border-radius:20px;
+  background:rgba(255,255,255,.88);
+  box-shadow:0 12px 28px rgba(106,31,54,.06);
+}
+.coupon-box strong{
+  display:block;
+  color:var(--maroon);
+  font-size:.94rem;
+}
+.coupon-box p{
+  margin-top:.2rem;
+  color:var(--muted);
+  font-size:.88rem;
+}
+.coupon-row{
+  display:flex;
+  align-items:center;
+  gap:.7rem;
+  flex-wrap:wrap;
+  margin-top:.75rem;
+}
+.coupon-row input{
+  flex:1 1 220px;
+  min-width:0;
+  padding:.88rem 1rem;
+  border:1px solid rgba(106,31,54,.12);
+  border-radius:16px;
+  background:#fff;
+  color:var(--ink);
+  font:inherit;
+  text-transform:uppercase;
+}
+.coupon-hint{
+  color:var(--muted);
+  font-size:.82rem;
+}
 .info-card{
   background:var(--surface);
   border:1px solid var(--line);

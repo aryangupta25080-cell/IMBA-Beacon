@@ -113,6 +113,52 @@ const PLAN_CATALOG = {
   }
 };
 
+const DEFAULT_COUPON_CODE = String(process.env.IMBA_COUPON_CODE || "IMBA10").trim().toUpperCase();
+const DEFAULT_COUPON_DISCOUNT_PERCENT = 10;
+
+function normalizeCouponCode(value) {
+  return String(value || "").trim().toUpperCase().replace(/\s+/g, "");
+}
+
+function formatAmountDisplay(amount, currency = "INR") {
+  const safeAmount = Number.isFinite(amount) ? amount : 0;
+  const prefix = currency === "INR" ? "₹" : `${currency} `;
+  return `${prefix}${(safeAmount / 100).toFixed(2)}`;
+}
+
+function resolveCoupon(plan, rawCouponCode) {
+  const couponCode = normalizeCouponCode(rawCouponCode);
+
+  if (!plan || !couponCode) {
+    return {
+      applied: false,
+      code: couponCode
+    };
+  }
+
+  if (!DEFAULT_COUPON_CODE || couponCode !== DEFAULT_COUPON_CODE) {
+    return {
+      applied: false,
+      code: couponCode,
+      message: "Invalid coupon code. Please check the code and try again."
+    };
+  }
+
+  const originalAmount = plan.amount;
+  const discountPercent = DEFAULT_COUPON_DISCOUNT_PERCENT;
+  const discountAmount = Math.round((originalAmount * discountPercent) / 100);
+  const finalAmount = Math.max(100, originalAmount - discountAmount);
+
+  return {
+    applied: true,
+    code: couponCode,
+    discountPercent,
+    originalAmount,
+    discountAmount,
+    finalAmount
+  };
+}
+
 
 
 
@@ -1552,13 +1598,21 @@ async function handleCreateOrder(request, response) {
     const body = await parseRequestBody(request);
     const planId = String(body.planId || "").toLowerCase();
     const plan = planId ? PLAN_CATALOG[planId] : null;
+    const coupon = resolveCoupon(plan, body.couponCode);
 
     if (planId && !plan) {
       sendJson(response, 400, { message: "Invalid plan selected." });
       return;
     }
 
-    const requestedAmount = plan ? plan.amount : Number.parseInt(String(body.amount || ""), 10);
+    if (coupon.code && !coupon.applied) {
+      sendJson(response, 400, { message: coupon.message || "Invalid coupon code." });
+      return;
+    }
+
+    const requestedAmount = plan
+      ? (coupon.applied ? coupon.finalAmount : plan.amount)
+      : Number.parseInt(String(body.amount || ""), 10);
     const amount = Number.isFinite(requestedAmount) ? requestedAmount : NaN;
     const currency = String(plan?.currency || body.currency || "INR").trim().toUpperCase() || "INR";
     const fallbackReceipt = plan ? `IMBA_${plan.id}_${Date.now()}` : `IMBA_${Date.now()}`;
@@ -1580,6 +1634,10 @@ async function handleCreateOrder(request, response) {
         email: normalizeEmail(user.email),
         name: user.name || "",
         planId: plan?.id || "",
+        couponCode: coupon.applied ? coupon.code : "",
+        discountPercent: coupon.applied ? String(coupon.discountPercent) : "",
+        originalAmount: coupon.applied ? String(coupon.originalAmount) : "",
+        discountAmount: coupon.applied ? String(coupon.discountAmount) : "",
         source: "imba-beacon"
       }
     });
@@ -1595,7 +1653,21 @@ async function handleCreateOrder(request, response) {
         amount: plan?.amount || amount,
         currency: plan?.currency || currency,
         amountDisplay: ((plan?.amount || amount) / 100).toFixed(2)
-      }
+      },
+      coupon: coupon.applied
+        ? {
+            applied: true,
+            code: coupon.code,
+            discountPercent: coupon.discountPercent,
+            originalAmount: coupon.originalAmount,
+            discountAmount: coupon.discountAmount,
+            finalAmount: coupon.finalAmount,
+            originalAmountDisplay: formatAmountDisplay(coupon.originalAmount, currency),
+            finalAmountDisplay: formatAmountDisplay(coupon.finalAmount, currency)
+          }
+        : {
+            applied: false
+          }
     });
   } catch (error) {
     console.error("Razorpay order creation failed:", error);

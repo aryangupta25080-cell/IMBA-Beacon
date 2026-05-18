@@ -659,6 +659,45 @@ button{
   gap:.45rem;
   color:var(--ink-soft);
 }
+.coupon-box{
+  margin-bottom:1rem;
+  padding:1rem 1.05rem;
+  border-radius:18px;
+  background:var(--surface-soft);
+  border:1px solid var(--border);
+}
+.coupon-box strong{
+  display:block;
+  color:var(--maroon);
+  font-size:.95rem;
+}
+.coupon-box p{
+  margin-top:.18rem;
+  color:var(--ink-soft);
+  font-size:.88rem;
+}
+.coupon-row{
+  display:flex;
+  align-items:center;
+  gap:.7rem;
+  flex-wrap:wrap;
+  margin-top:.72rem;
+}
+.coupon-row input{
+  flex:1 1 220px;
+  min-width:0;
+  padding:.9rem .98rem;
+  border-radius:14px;
+  border:1px solid var(--border);
+  background:#fff;
+  color:var(--ink);
+  font:inherit;
+  text-transform:uppercase;
+}
+.coupon-hint{
+  color:var(--ink-soft);
+  font-size:.82rem;
+}
 .profile-grid{
   display:grid;
   grid-template-columns:repeat(2,minmax(0,1fr));
@@ -861,6 +900,10 @@ button{
         .replace(/'/g, "&#39;");
     }
 
+    function normalizeCouponCode(value) {
+      return String(value || "").trim().toUpperCase().replace(/\s+/g, "");
+    }
+
     function normalizePlan(value) {
       return value === "basic" || value === "pro" || value === "none" ? value : "none";
     }
@@ -879,6 +922,11 @@ button{
         currency: "INR",
         maximumFractionDigits: 0
       }).format(amount);
+    }
+
+    function getDashboardCouponCode() {
+      const couponInput = document.getElementById("dashboard-coupon-code");
+      return normalizeCouponCode(couponInput ? couponInput.value : "");
     }
 
     function getPlanCatalog() {
@@ -1382,6 +1430,14 @@ button{
       return `
         <section class="dashboard-section">
           <p class="section-label">Upgrade</p>
+          <div class="coupon-box">
+            <strong>Have a coupon code?</strong>
+            <p>Enter it before payment and a valid code will reduce the Razorpay checkout amount.</p>
+            <div class="coupon-row">
+              <input type="text" id="dashboard-coupon-code" placeholder="Enter coupon code" autocomplete="off"/>
+              <span class="coupon-hint">Valid coupon applies 10% off at checkout.</span>
+            </div>
+          </div>
           <div class="plans-grid">
             <article class="plan-card">
               <span class="tag-pill amber">Basic</span>
@@ -1538,8 +1594,11 @@ button{
     }
 
     async function startCheckout(planId, triggerButton) {
+      const couponCode = getDashboardCouponCode();
+
       if (!currentUser) {
-        window.location.href = `./login.html?access=purchase&plan=${encodeURIComponent(planId)}&next=${encodeURIComponent("./student.html")}`;
+        const couponParam = couponCode ? `&coupon=${encodeURIComponent(couponCode)}` : "";
+        window.location.href = `./login.html?access=purchase&plan=${encodeURIComponent(planId)}&next=${encodeURIComponent("./student.html")}${couponParam}`;
         return;
       }
 
@@ -1569,13 +1628,21 @@ button{
           headers: {
             "Content-Type": "application/json"
           },
-          body: JSON.stringify({ planId: planId })
+          body: JSON.stringify({
+            planId: planId,
+            couponCode: couponCode
+          })
         });
 
         const payload = await response.json();
         if (!response.ok) {
           setStatus(payload.message || "Unable to create Razorpay order.", "error");
           return;
+        }
+
+        if (payload.coupon && payload.coupon.applied) {
+          const planLabel = planId === "pro" ? "Pro" : "Basic";
+          setStatus(`Coupon ${payload.coupon.code} applied. Final ${planLabel} checkout is ${payload.coupon.finalAmountDisplay}.`, "success");
         }
 
         const student = getStudentState(currentUser);

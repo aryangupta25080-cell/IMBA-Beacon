@@ -60,6 +60,7 @@
 .login-status.error{color:#b33d4b}
 .login-status.success{color:#7f6a1b}
 .login-status.info{color:#7d5a16}
+.purchase-coupon-row{margin-top:1rem}
 .purchase-continue-row{margin-top:.95rem}
 .purchase-continue-row[hidden]{display:none!important}
 .small-note{font-size:.84rem;color:var(--muted);margin-top:.7rem}
@@ -161,6 +162,16 @@
       </div>
 
       <p class="login-status" id="login-status" aria-live="polite"></p>
+      <div class="purchase-coupon-row" id="purchase-coupon-row" hidden>
+        <div class="coupon-box">
+          <strong>Coupon code</strong>
+          <p>If you have a valid coupon, enter it here before opening Razorpay checkout.</p>
+          <div class="coupon-row">
+            <input type="text" id="purchase-coupon-code" placeholder="Enter coupon code" autocomplete="off"/>
+            <span class="coupon-hint">Valid coupon applies 10% off.</span>
+          </div>
+        </div>
+      </div>
       <div class="inline-actions purchase-continue-row" id="purchase-continue-row" hidden>
         <button type="button" id="purchase-continue-btn">Continue to Payment</button>
       </div>
@@ -190,6 +201,8 @@
     const verifySignupOtpButton = document.getElementById("verify-signup-otp-btn");
     const resendSignupOtpButton = document.getElementById("resend-signup-otp-btn");
     const signupNote = document.getElementById("signup-note");
+    const purchaseCouponRow = document.getElementById("purchase-coupon-row");
+    const purchaseCouponInput = document.getElementById("purchase-coupon-code");
     const purchaseContinueRow = document.getElementById("purchase-continue-row");
     const purchaseContinueButton = document.getElementById("purchase-continue-btn");
     const signupDetailsPanel = document.getElementById("signup-details-panel");
@@ -204,6 +217,7 @@
     const searchParams = new URLSearchParams(window.location.search);
     const accessIntent = searchParams.get("access");
     const purchasePlan = searchParams.get("plan");
+    const purchaseCoupon = searchParams.get("coupon");
     const requestedNext = searchParams.get("next");
     let purchaseCheckoutStarted = false;
 
@@ -224,6 +238,10 @@
     function setStatus(message, type) {
       status.textContent = message;
       status.className = "login-status" + (type ? " " + type : "");
+    }
+
+    function normalizeCouponCode(value) {
+      return String(value || "").trim().toUpperCase().replace(/\s+/g, "");
     }
 
     function activateTab(target) {
@@ -262,6 +280,7 @@
         googleContainer.style.display = "";
       }
 
+      purchaseCouponRow.hidden = !hasPurchaseIntent();
       purchaseContinueRow.hidden = !(user && hasPurchaseIntent());
     }
 
@@ -318,6 +337,7 @@
 
     async function startPurchaseCheckout() {
       if (!hasPurchaseIntent() || !user || purchaseCheckoutStarted) return;
+      const couponCode = normalizeCouponCode(purchaseCouponInput ? purchaseCouponInput.value : "");
 
       if (!config?.paymentsEnabled) {
         setStatus("Online payments are temporarily disabled right now.", "error");
@@ -335,10 +355,17 @@
       purchaseContinueButton.textContent = "Preparing checkout...";
 
       try {
-        const { response, payload } = await sendJsonRequest("/api/create-order", { planId: purchasePlan });
+        const { response, payload } = await sendJsonRequest("/api/create-order", {
+          planId: purchasePlan,
+          couponCode
+        });
         if (!response.ok) {
           setStatus(payload.message || "Unable to create Razorpay order.", "error");
           return;
+        }
+
+        if (payload.coupon && payload.coupon.applied) {
+          setStatus(`Coupon ${payload.coupon.code} applied. Final ${getPurchasePlanLabel()} checkout is ${payload.coupon.finalAmountDisplay}.`, "success");
         }
 
         const razorpay = new window.Razorpay({
@@ -418,6 +445,9 @@
       try {
         await loadConfig();
         await loadSession();
+        if (purchaseCouponInput && purchaseCoupon) {
+          purchaseCouponInput.value = normalizeCouponCode(purchaseCoupon);
+        }
         if (config.googleClientId && window.google?.accounts?.id) {
           window.google.accounts.id.initialize({
             client_id: config.googleClientId,
