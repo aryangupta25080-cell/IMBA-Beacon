@@ -1301,14 +1301,11 @@ button{
 
     function renderSheets(plan) {
       const sheets = [
-        { title: "Introduction to IMBA Interview", meta: "Foundation Sheet · PDF", locked: false, url: "https://drive.google.com/uc?export=download&id=150n8jaPDmhrUQjEEq_ZI_nbpqsXfO4y8" },
-        { title: "Practice Sheets", meta: "Practice Sheet · PDF", locked: false, url: "https://drive.google.com/uc?export=download&id=19sfHliA7QblUyXcNLanx4j7QF0fz8W-f" },
-        { title: "Communication & Confidence Sheet", meta: "Practice Sheet · PDF", locked: false, url: "https://drive.google.com/uc?export=download&id=1T6QH1dvXMzt_bX4xEWTySj_HQ0tBml46" },
-        { title: "Lecture 4 Practice Sheet", meta: "Practice Sheet · PDF", locked: false, url: "https://drive.google.com/uc?export=download&id=1d9S93hIFe2J8CH1NChcVaHAplYTBCD--" },
-        { title: "Lecture 5 Practice Sheet", meta: "Practice Sheet · PDF", locked: false, url: "https://drive.google.com/uc?export=download&id=1nXLejdm0DhtNn5Uduoe5DfqxZ6rYKMEF" },
-        { title: "Lecture 6 Practice Sheet", meta: "Practice Sheet · PDF", locked: false, url: "https://drive.google.com/uc?export=download&id=1qIxI0Bvu_nLjZ9-RW1JqHAIWmyTVsqor" },
-        { title: "Advanced Mock Interview Sheet", meta: "Pro Sheet · PDF", locked: plan !== "pro", url: "https://drive.google.com/uc?export=download&id=1qvoUIZZxs2odDPy2tjDiEzZicwoIr053" },
-        { title: "Solution Sheet — All Rounds", meta: "Pro Sheet · PDF", locked: plan !== "pro", url: "https://drive.google.com/uc?export=download&id=1woLrco4lqo4HtgclYSJnZGKTnewdXh5q" }
+        { title: "Introduction to IMBA Interview", meta: "Foundation Sheet · PDF", locked: false },
+        { title: "Behavioural Prep Framework", meta: "Practice Sheet · PDF", locked: false },
+        { title: "Communication & Confidence Sheet", meta: "Practice Sheet · PDF", locked: false },
+        { title: "Advanced Mock Interview Sheet", meta: "Pro Sheet · PDF", locked: plan !== "pro" },
+        { title: "Solution Sheet — All Rounds", meta: "Pro Sheet · PDF", locked: plan !== "pro" }
       ];
 
       return `
@@ -1326,10 +1323,9 @@ button{
                         <span>${escapeHtml(sheet.meta)}</span>
                       </div>
                     </div>
-                    ${sheet.locked || plan === "none"
-                      ? `<button class="sheet-btn pro-only" type="button" disabled>${plan === "none" ? "Locked" : "Pro only"}</button>`
-                      : `<a class="sheet-btn" href="${escapeHtml(sheet.url)}" target="_blank" rel="noopener noreferrer">Download</a>`
-                    }
+                    <button class="sheet-btn${sheet.locked || plan === "none" ? " pro-only" : ""}" type="button" ${sheet.locked || plan === "none" ? "disabled" : `data-download-sheet="${escapeHtml(sheet.title)}"`}>
+                      ${sheet.locked || plan === "none" ? "Pro only" : "Download"}
+                    </button>
                   </div>
                 `;
               }).join("")}
