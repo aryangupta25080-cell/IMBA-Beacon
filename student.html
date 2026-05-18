@@ -1349,32 +1349,11 @@ button{
       return `
         <section class="dashboard-section">
           <p class="section-label">Upgrade</p>
-
-          <div style="margin-bottom:1rem;padding:1rem 1.2rem;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-md);box-shadow:var(--shadow);">
-            <p style="margin:0 0 .6rem;font-weight:700;font-size:.95rem;">Have a coupon code?</p>
-            <div style="display:flex;gap:.6rem;flex-wrap:wrap;">
-              <input
-                id="coupon-input"
-                type="text"
-                placeholder="Enter code e.g. IMBA10"
-                style="flex:1;min-width:160px;padding:.72rem 1rem;border:1px solid var(--border);border-radius:12px;font:inherit;font-size:.95rem;background:var(--surface-soft);color:var(--ink);outline:none;"
-              />
-              <button
-                id="coupon-apply-btn"
-                type="button"
-                onclick="applyCoupon()"
-                style="padding:.72rem 1.2rem;border-radius:12px;border:none;background:var(--maroon);color:#fff;font:inherit;font-weight:700;cursor:pointer;white-space:nowrap;">
-                Apply
-              </button>
-            </div>
-            <p id="coupon-msg" style="margin:.5rem 0 0;font-size:.88rem;min-height:1.2rem;"></p>
-          </div>
-
           <div class="plans-grid">
             <article class="plan-card">
               <span class="tag-pill amber">Basic</span>
               <h3>Basic Plan</h3>
-              <div class="plan-price" id="price-basic">${escapeHtml(formatPrice(catalog.basic.amount))}</div>
+              <div class="plan-price">${escapeHtml(formatPrice(catalog.basic.amount))}</div>
               <p class="plan-copy">Structured support for focused interview preparation.</p>
               <ul>
                 <li>3 mock interviews</li>
@@ -1391,7 +1370,7 @@ button{
             <article class="plan-card featured">
               <span class="tag-pill amber">Pro</span>
               <h3>Pro Plan</h3>
-              <div class="plan-price" id="price-pro">${escapeHtml(formatPrice(catalog.pro.amount))}</div>
+              <div class="plan-price">${escapeHtml(formatPrice(catalog.pro.amount))}</div>
               <p class="plan-copy">Expanded mentoring with deeper guided support.</p>
               <ul>
                 <li>4 mock interviews</li>
@@ -1590,65 +1569,6 @@ button{
       }
     }
 
-    let activeCouponCode = "";
-
-    async function applyCoupon() {
-      const input = document.getElementById("coupon-input");
-      const msg = document.getElementById("coupon-msg");
-      const btn = document.getElementById("coupon-apply-btn");
-      const code = (input?.value || "").trim().toUpperCase();
-
-      if (!code) {
-        msg.style.color = "var(--ink-soft)";
-        msg.textContent = "Please enter a coupon code.";
-        return;
-      }
-
-      btn.disabled = true;
-      btn.textContent = "Checking...";
-      msg.style.color = "var(--ink-soft)";
-      msg.textContent = "";
-
-      try {
-        const response = await fetch(`${apiBase}/api/apply-coupon`, {
-          method: "POST",
-          credentials: "include",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ code, planId: "basic" })
-        });
-        const data = await response.json();
-        const catalog = getPlanCatalog();
-
-        if (!response.ok || !data.valid) {
-          activeCouponCode = "";
-          msg.style.color = "#bb4357";
-          msg.textContent = data.message || "Invalid coupon code.";
-          const pb = document.getElementById("price-basic");
-          const pp = document.getElementById("price-pro");
-          if (pb) pb.innerHTML = escapeHtml(formatPrice(catalog.basic.amount));
-          if (pp) pp.innerHTML = escapeHtml(formatPrice(catalog.pro.amount));
-        } else {
-          activeCouponCode = code;
-          msg.style.color = "#2d7b52";
-          const discountPercent = data.discountPercent;
-          const finalBasic = Math.max(100, Math.round(catalog.basic.amount * (1 - discountPercent / 100)));
-          const finalPro   = Math.max(100, Math.round(catalog.pro.amount   * (1 - discountPercent / 100)));
-          msg.textContent = `✓ Coupon applied! ${discountPercent}% off. ${data.remaining !== undefined ? data.remaining + " uses left." : ""}`;
-          const pb = document.getElementById("price-basic");
-          const pp = document.getElementById("price-pro");
-          if (pb) pb.innerHTML = `<span style="text-decoration:line-through;opacity:.45;font-size:1.3rem;">${escapeHtml(formatPrice(catalog.basic.amount))}</span> ${escapeHtml(formatPrice(finalBasic))}`;
-          if (pp) pp.innerHTML = `<span style="text-decoration:line-through;opacity:.45;font-size:1.3rem;">${escapeHtml(formatPrice(catalog.pro.amount))}</span> ${escapeHtml(formatPrice(finalPro))}`;
-        }
-      } catch (error) {
-        activeCouponCode = "";
-        msg.style.color = "#bb4357";
-        msg.textContent = "Could not validate coupon right now.";
-      } finally {
-        btn.disabled = false;
-        btn.textContent = "Apply";
-      }
-    }
-
     async function startCheckout(planId, triggerButton) {
       if (!currentUser) {
         window.location.href = `./login.html?access=purchase&plan=${encodeURIComponent(planId)}&next=${encodeURIComponent("./student.html")}`;
@@ -1681,7 +1601,7 @@ button{
           headers: {
             "Content-Type": "application/json"
           },
-          body: JSON.stringify({ planId: planId, couponCode: activeCouponCode || undefined })
+          body: JSON.stringify({ planId: planId })
         });
 
         const payload = await response.json();
