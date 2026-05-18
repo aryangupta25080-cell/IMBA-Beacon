@@ -1224,13 +1224,13 @@ button{
 
           <article class="dashboard-card" style="margin-top:.95rem;">
             <div class="live-header">
-              <strong>Maths Mentoring</strong>
+              <strong>Maths Session</strong>
               <span class="track-tag pro">${mentoringUnlocked ? '<i class="ti ti-bolt"></i> Pro active' : '<i class="ti ti-lock"></i> Pro only'}</span>
             </div>
-            <p class="live-meta" style="margin-top:.55rem;">${mentoringUnlocked ? "Live maths mentoring sessions are unlocked in your Pro plan." : "This mentoring track opens after upgrading to Pro."}</p>
+            <p class="live-meta" style="margin-top:.55rem;">${mentoringUnlocked ? "One live maths session is unlocked in your Pro plan." : "This maths session opens after upgrading to Pro."}</p>
             <div style="margin-top:.95rem;">
               <button class="section-btn" type="button" ${mentoringUnlocked ? 'data-placeholder="mentoring"' : "disabled"}>
-                ${mentoringUnlocked ? "Open mentoring" : "Locked for Basic"}
+                ${mentoringUnlocked ? "Open maths session" : "Locked for Basic"}
               </button>
             </div>
           </article>
@@ -1369,7 +1369,7 @@ button{
                 <li>3 interview etiquettes sessions</li>
                 <li>Practice sheets</li>
                 <li>2 batch interaction sessions</li>
-                <li>Live maths mentoring sessions</li>
+                <li>1 live maths session</li>
               </ul>
               <div style="margin-top:1rem;">
                 <button class="cta-solid" type="button" data-plan-id="pro">Choose Pro</button>
@@ -1652,7 +1652,7 @@ button{
           quiz: "Quiz module can be connected to this tile next.",
           "mock-interviews": "Interview scheduling can be attached to this button next.",
           verbal: "Interview etiquettes session room can be connected here next.",
-          mentoring: "Maths mentoring room can be connected here next."
+          mentoring: "Maths session room can be connected here next."
         };
         setStatus(messages[feature] || "This module can be connected here next.", "success");
       }
