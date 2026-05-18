@@ -678,7 +678,7 @@ button{
 }
 .coupon-row{
   display:flex;
-  align-items:center;
+  align-items:stretch;
   gap:.7rem;
   flex-wrap:wrap;
   margin-top:.72rem;
@@ -694,9 +694,42 @@ button{
   font:inherit;
   text-transform:uppercase;
 }
-.coupon-hint{
+.coupon-action{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  min-width:110px;
+  padding:.9rem 1.15rem;
+  border:none;
+  border-radius:14px;
+  background:linear-gradient(135deg,var(--amber-soft),var(--amber));
+  color:var(--maroon);
+  font:inherit;
+  font-weight:800;
+  cursor:pointer;
+  box-shadow:0 10px 24px rgba(201,162,75,.18);
+  transition:transform .18s ease,box-shadow .18s ease,opacity .18s ease;
+}
+.coupon-action:hover{
+  transform:translateY(-1px);
+  box-shadow:0 14px 28px rgba(201,162,75,.22);
+}
+.coupon-action.is-applied{
+  background:rgba(45,123,82,.14);
+  color:#2d7b52;
+  box-shadow:none;
+}
+.coupon-feedback{
+  min-height:1.3rem;
+  margin-top:.62rem;
   color:var(--ink-soft);
-  font-size:.82rem;
+  font-size:.84rem;
+}
+.coupon-feedback.success{
+  color:#2d7b52;
+}
+.coupon-feedback.error{
+  color:#bb4357;
 }
 .profile-grid{
   display:grid;
@@ -927,6 +960,69 @@ button{
     function getDashboardCouponCode() {
       const couponInput = document.getElementById("dashboard-coupon-code");
       return normalizeCouponCode(couponInput ? couponInput.value : "");
+    }
+
+    function getCouponActionButton() {
+      return document.querySelector("[data-action='apply-coupon']");
+    }
+
+    function setCouponFeedback(message, type) {
+      const feedbackNode = document.getElementById("dashboard-coupon-feedback");
+      if (!feedbackNode) return;
+      feedbackNode.textContent = message || "";
+      feedbackNode.className = "coupon-feedback" + (type ? " " + type : "");
+    }
+
+    function syncCouponButtonState(applied) {
+      const couponButton = getCouponActionButton();
+      if (!couponButton) return;
+      couponButton.classList.toggle("is-applied", Boolean(applied));
+      couponButton.textContent = applied ? "Applied" : "Apply";
+    }
+
+    async function applyCouponCode(triggerButton) {
+      const couponCode = getDashboardCouponCode();
+      if (!couponCode) {
+        syncCouponButtonState(false);
+        setCouponFeedback("Enter a coupon code first.", "error");
+        return;
+      }
+
+      const originalLabel = triggerButton.textContent;
+      triggerButton.disabled = true;
+      triggerButton.textContent = "Checking...";
+
+      try {
+        const response = await fetch(`${apiBase}/api/apply-coupon`, {
+          method: "POST",
+          credentials: "include",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            planId: "basic",
+            code: couponCode
+          })
+        });
+
+        const payload = await response.json();
+        if (!response.ok || !payload.valid) {
+          syncCouponButtonState(false);
+          setCouponFeedback(payload.message || "This coupon could not be applied.", "error");
+          return;
+        }
+
+        syncCouponButtonState(true);
+        setCouponFeedback("Coupon applied. The discount will reflect when you choose a plan.", "success");
+      } catch (error) {
+        syncCouponButtonState(false);
+        setCouponFeedback("Unable to validate the coupon right now.", "error");
+      } finally {
+        triggerButton.disabled = false;
+        if (!triggerButton.classList.contains("is-applied")) {
+          triggerButton.textContent = originalLabel;
+        }
+      }
     }
 
     function getPlanCatalog() {
@@ -1435,8 +1531,9 @@ button{
             <p>Enter IMDS10 before payment to get 10% off in Razorpay checkout.</p>
             <div class="coupon-row">
               <input type="text" id="dashboard-coupon-code" placeholder="Enter coupon code" autocomplete="off"/>
-              <span class="coupon-hint">The discount shows only after the site creates a reduced-price order.</span>
+              <button class="coupon-action" type="button" data-action="apply-coupon">Apply</button>
             </div>
+            <div class="coupon-feedback" id="dashboard-coupon-feedback" aria-live="polite"></div>
           </div>
           <div class="plans-grid">
             <article class="plan-card">
@@ -1718,6 +1815,13 @@ button{
         return;
       }
 
+      const couponButton = event.target.closest("[data-action='apply-coupon']");
+      if (couponButton) {
+        event.preventDefault();
+        applyCouponCode(couponButton);
+        return;
+      }
+
       const purchaseButton = event.target.closest("[data-plan-id]");
       if (purchaseButton) {
         event.preventDefault();
@@ -1764,6 +1868,23 @@ button{
           mentoring: "Maths session room can be connected here next."
         };
         setStatus(messages[feature] || "This module can be connected here next.", "success");
+      }
+    });
+
+    document.addEventListener("input", function (event) {
+      if (event.target && event.target.id === "dashboard-coupon-code") {
+        syncCouponButtonState(false);
+        setCouponFeedback("", "");
+      }
+    });
+
+    document.addEventListener("keydown", function (event) {
+      if (event.key === "Enter" && event.target && event.target.id === "dashboard-coupon-code") {
+        event.preventDefault();
+        const couponButton = getCouponActionButton();
+        if (couponButton) {
+          applyCouponCode(couponButton);
+        }
       }
     });
 
