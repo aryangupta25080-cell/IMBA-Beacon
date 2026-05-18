@@ -1,0 +1,714 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>West Bengal 2026 Election: Deep Dive into Challenges, Illegal Voters & SIR Purge</title>
+    <style>
+        :root {
+            --primary: #AB3B5F;
+            --primary-dark: #872f4c;
+            --primary-light: #f8eef2;
+            --text: #1a1d23;
+            --muted: #5f6368;
+            --border: #e5e7eb;
+            --card-bg: #ffffff;
+            --bg-soft: #fafafa;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
+            color: var(--text);
+            line-height: 1.7;
+            background: #fff;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        #progress {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 3px;
+            background: var(--primary);
+            width: 0%;
+            z-index: 1000;
+            transition: width 0.1s linear;
+        }
+
+        .container {
+            max-width: 980px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+
+        /* Hero */
+        .hero {
+            background: var(--primary);
+            color: white;
+            padding: 96px 0 72px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle at 20% 30%, rgba(255,255,255,0.15), transparent 40%),
+                        radial-gradient(circle at 80% 70%, rgba(0,0,0,0.15), transparent 40%);
+            pointer-events: none;
+        }
+
+        .eyebrow {
+            display: inline-block;
+            font-size: 12px;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            font-weight: 600;
+            background: rgba(255,255,255,0.15);
+            padding: 6px 12px;
+            border-radius: 20px;
+            margin-bottom: 24px;
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+
+        h1 {
+            font-size: clamp(32px, 5vw, 52px);
+            line-height: 1.1;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            margin-bottom: 20px;
+            max-width: 900px;
+        }
+
+        .hero .subtitle {
+            font-size: clamp(17px, 2vw, 20px);
+            opacity: 0.92;
+            max-width: 720px;
+            font-weight: 400;
+            line-height: 1.5;
+        }
+
+        .hero .meta {
+            margin-top: 32px;
+            font-size: 14px;
+            opacity: 0.8;
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        /* Sections */
+        section {
+            padding: 64px 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        section:last-of-type {
+            border-bottom: none;
+        }
+
+        h2 {
+            font-size: clamp(26px, 3.5vw, 34px);
+            color: var(--primary);
+            margin-bottom: 24px;
+            font-weight: 800;
+            letter-spacing: -0.01em;
+            line-height: 1.2;
+        }
+
+        h3 {
+            font-size: 20px;
+            color: var(--primary);
+            margin-bottom: 12px;
+            font-weight: 700;
+        }
+
+        h4 {
+            font-size: 16px;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            color: var(--muted);
+            margin-bottom: 12px;
+            font-weight: 600;
+        }
+
+        p {
+            margin-bottom: 16px;
+            font-size: 17px;
+        }
+
+        /* Executive Summary */
+        .summary-box {
+            background: var(--primary-light);
+            border-left: 4px solid var(--primary);
+            padding: 28px 32px;
+            border-radius: 0 12px 12px 0;
+            margin: 24px 0;
+        }
+
+        .summary-box ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .summary-box li {
+            position: relative;
+            padding-left: 28px;
+            margin-bottom: 14px;
+            font-size: 17px;
+        }
+
+        .summary-box li::before {
+            content: "•";
+            position: absolute;
+            left: 0;
+            color: var(--primary);
+            font-size: 24px;
+            line-height: 1;
+            top: -1px;
+            font-weight: bold;
+        }
+
+        /* Cards Grid */
+        .grid-3 {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+            margin-top: 32px;
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 28px;
+            margin-top: 32px;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 28px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.04);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            height: 100%;
+        }
+
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(171,59,95,0.12);
+        }
+
+        .card-stat {
+            font-size: 36px;
+            font-weight: 800;
+            color: var(--primary);
+            line-height: 1;
+            margin-bottom: 8px;
+        }
+
+        .card-label {
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--muted);
+            font-weight: 600;
+            margin-bottom: 16px;
+        }
+
+        .card ul {
+            list-style: none;
+            padding: 0;
+            font-size: 15.5px;
+        }
+
+        .card ul li {
+            padding: 8px 0;
+            border-bottom: 1px dashed var(--border);
+        }
+
+        .card ul li:last-child {
+            border-bottom: none;
+        }
+
+        .card-icon {
+            width: 44px;
+            height: 44px;
+            background: var(--primary-light);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            margin-bottom: 16px;
+        }
+
+        /* Illegal Voter Section */
+        .allegation-card {
+            border-top: 4px solid var(--primary);
+            position: relative;
+        }
+
+        .party-tag {
+            display: inline-block;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            padding: 4px 10px;
+            border-radius: 6px;
+            margin-bottom: 14px;
+            text-transform: uppercase;
+        }
+
+        .tag-bjp {
+            background: #fff1f2;
+            color: #9f1239;
+            border: 1px solid #fecdd3;
+        }
+
+        .tag-tmc {
+            background: #f0fdf4;
+            color: #166534;
+            border: 1px solid #bbf7d0;
+        }
+
+        .allegation-card ul {
+            list-style: none;
+        }
+
+        .allegation-card ul li {
+            position: relative;
+            padding-left: 22px;
+            margin-bottom: 16px;
+            font-size: 16px;
+            line-height: 1.6;
+        }
+
+        .allegation-card ul li::before {
+            content: "";
+            position: absolute;
+            left: 0;
+            top: 9px;
+            width: 6px;
+            height: 6px;
+            background: var(--primary);
+            border-radius: 50%;
+        }
+
+        .disclaimer {
+            background: var(--bg-soft);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 16px 20px;
+            font-size: 14px;
+            color: var(--muted);
+            margin-top: 32px;
+            text-align: center;
+            font-style: italic;
+        }
+
+        /* Toggle */
+        .toggle-wrap {
+            display: flex;
+            background: var(--bg-soft);
+            padding: 6px;
+            border-radius: 12px;
+            gap: 6px;
+            margin: 28px 0 32px;
+            border: 1px solid var(--border);
+            max-width: 520px;
+        }
+
+        .toggle-btn {
+            flex: 1;
+            padding: 12px 20px;
+            border: none;
+            background: transparent;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 15px;
+            cursor: pointer;
+            transition: all 0.2s;
+            color: var(--muted);
+            font-family: inherit;
+        }
+
+        .toggle-btn.active {
+            background: var(--primary);
+            color: white;
+            box-shadow: 0 2px 8px rgba(171,59,95,0.25);
+        }
+
+        .toggle-content {
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .debate-point {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 24px;
+            padding-bottom: 24px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .debate-point:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+
+        .debate-num {
+            flex-shrink: 0;
+            width: 32px;
+            height: 32px;
+            background: var(--primary);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 14px;
+            margin-top: 2px;
+        }
+
+        /* Impact */
+        .takeaways {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-top: 28px;
+        }
+
+        .takeaway {
+            background: white;
+            border: 1px solid var(--border);
+            border-left: 4px solid var(--primary);
+            padding: 20px 24px;
+            border-radius: 0 12px 12px 0;
+            font-size: 16px;
+        }
+
+        .takeaway strong {
+            color: var(--primary);
+            display: block;
+            margin-bottom: 6px;
+            font-size: 15px;
+        }
+
+        /* Conclusion */
+        .conclusion {
+            background: linear-gradient(180deg, white 0%, var(--primary-light) 100%);
+            border-radius: 16px;
+            padding: 40px;
+            border: 1px solid rgba(171,59,95,0.2);
+        }
+
+        /* Footer */
+        footer {
+            padding: 48px 0;
+            background: var(--bg-soft);
+        }
+
+        .sources {
+            font-size: 13px;
+            color: var(--muted);
+            line-height: 1.6;
+            border-top: 1px solid var(--border);
+            padding-top: 24px;
+        }
+
+        .sources strong {
+            color: var(--text);
+        }
+
+        /* Reveal animation */
+        .reveal {
+            opacity: 0;
+            transform: translateY(16px);
+            transition: opacity 0.6s ease, transform 0.6s ease;
+        }
+
+        .reveal.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Responsive */
+        @media (max-width: 860px) {
+            .grid-3 { grid-template-columns: 1fr; }
+            .grid-2 { grid-template-columns: 1fr; }
+            .takeaways { grid-template-columns: 1fr; }
+            section { padding: 48px 0; }
+            .hero { padding: 72px 0 56px; }
+            .card, .conclusion { padding: 24px; }
+        }
+
+        @media print {
+            #progress, .toggle-wrap { display: none !important; }
+            body { font-size: 12pt; color: #000; }
+            .hero { background: white !important; color: black !important; padding: 24px 0; }
+            .hero::before { display: none; }
+            .eyebrow { background: #eee !important; color: #000 !important; border: 1px solid #ccc; }
+            h1, h2, h3 { color: #000 !important; }
+            h2 { color: var(--primary) !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+            section { padding: 24px 0; page-break-inside: avoid; }
+            .card { box-shadow: none; border: 1px solid #ccc; break-inside: avoid; }
+            .summary-box, .conclusion { background: #f9f9f9 !important; -webkit-print-color-adjust: exact; }
+        }
+    </style>
+</head>
+<body>
+    <div id="progress"></div>
+
+    <header class="hero">
+        <div class="container">
+            <div class="eyebrow">Investigative Report • West Bengal 2026</div>
+            <h1>West Bengal 2026 Election: Deep Dive into Challenges, Illegal Voters & SIR Purge</h1>
+            <p class="subtitle">How an unprecedented Special Intensive Revision, dueling fraud allegations, and administrative upheaval preceded the BJP's historic victory ending 15 years of TMC rule.</p>
+            <div class="meta">
+                <span>Published: June 2026</span>
+                <span>•</span>
+                <span>Analysis based on ECI data & press reporting</span>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <section id="summary">
+            <div class="container">
+                <h2>Executive Summary</h2>
+                <div class="summary-box reveal">
+                    <ul>
+                        <li>The Election Commission ordered <strong>483 official transfers</strong> and central agencies reported <strong>₹510 crore in seizures</strong> — the largest pre-poll intervention in Bengal’s history.</li>
+                        <li>A Special Intensive Revision (SIR) altered roughly <strong>12% of the electorate</strong>, becoming the central flashpoint of the election.</li>
+                        <li>BJP alleges SIR removed 79 lakh "fake" voters linked to infiltration, while TMC and CPI(M) allege SIR wrongfully deleted 27.16 lakh legitimate voters, mostly Muslims.</li>
+                        <li>Poll violence deaths fell to 4 from 17 in 2021, but West Bengal still accounts for <strong>354 poll-related incidents since 2016 — the highest in India.</strong></li>
+                        <li>Booth Level Officers reported widespread harassment, complicating door-to-door verification during SIR.</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <section id="difficulties">
+            <div class="container">
+                <h2>Core Difficulties</h2>
+                <p>Three interlocking pressures defined the 2026 election environment, according to ECI filings and field reports.</p>
+                
+                <div class="grid-3">
+                    <div class="card reveal">
+                        <div class="card-icon">🏛️</div>
+                        <div class="card-stat">483</div>
+                        <div class="card-label">Administrative Transfers</div>
+                        <ul>
+                            <li>Officials moved by ECI across DM, SP, BDO levels</li>
+                            <li>₹510 crore cash, liquor, drugs seized</li>
+                            <li>12% electorate changed during roll revision</li>
+                        </ul>
+                    </div>
+                    <div class="card reveal">
+                        <div class="card-icon">🛡️</div>
+                        <div class="card-stat">4 vs 17</div>
+                        <div class="card-label">Security Record</div>
+                        <ul>
+                            <li>4 poll-related deaths in 2026, down from 17 in 2021</li>
+                            <li>Yet 354 incidents since 2016 — highest in India</li>
+                            <li>Over 1,000 CAPF companies deployed in 7 phases</li>
+                        </ul>
+                    </div>
+                    <div class="card reveal">
+                        <div class="card-icon">📋</div>
+                        <div class="card-stat">BLOs</div>
+                        <div class="card-label">Ground Verification Strain</div>
+                        <ul>
+                            <li>Multiple BLOs reported families being rude during SIR visits</li>
+                            <li>Doors frequently not opened in dense urban and border blocks</li>
+                            <li>Verbal intimidation reported by both TMC and BJP workers</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="illegal-voter">
+            <div class="container">
+                <h2>The Illegal Voter Problem</h2>
+                <p>The SIR triggered competing narratives of electoral fraud. Both sides presented mutually exclusive claims of manipulation. The following are presented <em>as partisan allegations, not established facts</em>, and remain disputed in courts and political debate.</p>
+
+                <div class="grid-2">
+                    <div class="card allegation-card reveal">
+                        <span class="party-tag tag-bjp">Subsection A — BJP Allegations</span>
+                        <h3>Claims of Fake Voters & Infiltration</h3>
+                        <ul>
+                            <li>Leader of Opposition Suvendu Adhikari <strong>claims SIR removed 79 lakh fake names</strong> from electoral rolls.</li>
+                            <li>BJP alleges <strong>EPIC cards were found sealed in a Bidhannagar TMC office</strong>, along with land deeds stored in a briefcase.</li>
+                            <li>Party workers allege <strong>100+ Aadhaar/PAN cards were discarded in a Birbhum field</strong> near the residence of a former BLO.</li>
+                            <li>Home Minister Amit Shah alleges CM Mamata Banerjee abetted infiltration for votes, citing <strong>BSF arrest of 7 Bangladeshi nationals on May 12, 2026 in Cooch Behar.</strong></li>
+                        </ul>
+                    </div>
+
+                    <div class="card allegation-card reveal">
+                        <span class="party-tag tag-tmc">Subsection B — TMC / CPI(M) Counter-Allegations</span>
+                        <h3>Claims of Disenfranchisement & Outsiders</h3>
+                        <ul>
+                            <li>TMC alleges <strong>BJP used Form 6 to add outsiders</strong> from Bihar, UP, Rajasthan, and Haryana — claiming 30,000 applications were filed in 6 hours.</li>
+                            <li>Citing Frontline, TMC claims <strong>SIR disenfranchised 27.16 lakh voters, mostly Muslims.</strong></li>
+                            <li>CPI(M) alleges <strong>12% of voters were deleted algorithmically</strong>, reversing the burden of proof onto citizens.</li>
+                            <li>In Murshidabad (Shamsherganj, Lalgola) — district with highest deletions — TMC claims <strong>6 men wrongly labeled as Bangladeshis were forced to vote to prove citizenship.</strong></li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="disclaimer">
+                    Note: Election Commission has not published final verified data on deletions/additions by religion or origin. All figures above are political claims.
+                </div>
+            </div>
+        </section>
+
+        <section id="shocking">
+            <div class="container">
+                <h2>Was the BJP Win Shocking?</h2>
+                <p>Analysts remain divided. The result broke a 47-year incumbency pattern in Bengal, but followed a decade-long BJP vote share climb.</p>
+
+                <div class="toggle-wrap">
+                    <button class="toggle-btn active" id="btn-yes">YES: It Defied History</button>
+                    <button class="toggle-btn" id="btn-no">NO: The Trend Was Clear</button>
+                </div>
+
+                <div id="yes-content" class="toggle-content">
+                    <div class="debate-point">
+                        <div class="debate-num">1</div>
+                        <div><strong>Unbroken Incumbency Record:</strong> TMC won 213 seats in 2021 with 48% vote share. No ruling party had lost Bengal since the Left's defeat in 2011, and before that, since 1977.</div>
+                    </div>
+                    <div class="debate-point">
+                        <div class="debate-num">2</div>
+                        <div><strong>No Local Face & Recent Losses:</strong> BJP contested without a declared Bengali CM candidate and had lost 5 of 7 municipal corporation polls in 2024-25, including Asansol and Siliguri.</div>
+                    </div>
+                    <div class="debate-point">
+                        <div class="debate-num">3</div>
+                        <div><strong>Polls Predicted a Tight Race:</strong> CVoter, ABP-CVoter and India Today-MyAxis surveys as late as March 2026 forecast a hung assembly or a narrow TMC edge (145-160 seats).</div>
+                    </div>
+                </div>
+
+                <div id="no-content" class="toggle-content" hidden>
+                    <div class="debate-point">
+                        <div class="debate-num">1</div>
+                        <div><strong>15-Year Anti-Incumbency:</strong> The Sandeshkhali protests, school recruitment scam charges, and civic issues eroded TMC's support among women and urban middle-class voters who had been its core base.</div>
+                    </div>
+                    <div class="debate-point">
+                        <div class="debate-num">2</div>
+                        <div><strong>SIR Reshaped the Electorate:</strong> With 12% of rolls revised and highest deletions in TMC strongholds like Murshidabad, the structural composition of the voter base changed before campaigning began.</div>
+                    </div>
+                    <div class="debate-point">
+                        <div class="debate-num">3</div>
+                        <div><strong>Steady Vote Share Growth:</strong> BJP's trajectory was consistent — from 10.2% (2016 Assembly) to 38.1% (2021) to 40.7% in the 2024 Lok Sabha in Bengal. 2026 completed the arc, not broke it.</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="impact">
+            <div class="container">
+                <h2>Impact on Democracy</h2>
+                <p>Regardless of partisan claims, the 2026 election leaves four structural challenges for West Bengal's electoral future.</p>
+                
+                <div class="takeaways">
+                    <div class="takeaway reveal">
+                        <strong>1. Trust in Rolls</strong>
+                        Large-scale revisions months before polling risk voter confidence. When 1 in 8 names changes, legitimacy questions outlast results.
+                    </div>
+                    <div class="takeaway reveal">
+                        <strong>2. Citizenship as Campaign Issue</strong>
+                        Voting rights are increasingly tied to proof of citizenship and migration status, shifting the debate from development to identity documentation.
+                    </div>
+                    <div class="takeaway reveal">
+                        <strong>3. Institutional Polarization</strong>
+                        Both BJP and TMC publicly accused the ECI, BSF, state police, and BLOs of partisanship — deepening public skepticism of neutral arbiters.
+                    </div>
+                    <div class="takeaway reveal">
+                        <strong>4. Federal Precedent</strong>
+                        Record central force deployment, financial seizures, and bureaucratic transfers set a new template for Centre-State contestation in future state elections.
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="conclusion">
+            <div class="container">
+                <h2>Conclusion</h2>
+                <div class="conclusion reveal">
+                    <p>The West Bengal 2026 election was not decided on polling day alone. It was shaped by the Special Intensive Revision — an administrative exercise that both cleaned and contested the voter list, depending on whom you ask.</p>
+                    <p>BJP’s victory is legally conclusive but politically contested. TMC’s allegations of mass disenfranchisement and BJP’s allegations of decades-long infiltration cannot both be fully true, yet neither has been independently adjudicated with full data transparency.</p>
+                    <p><strong>What is needed now:</strong> a district-wise, booth-level audit of SIR additions and deletions by the ECI, release of anonymized deletion reasons, and a time-bound judicial review of Form 6 bulk applications and alleged fake EPIC seizures. Without this, the "illegal voter" question will remain a weapon for 2029, not a resolved fact for 2026.</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <div class="sources">
+                <strong>Sources & Attribution:</strong> Data points and claims compiled from reporting by <em>Hindustan Times, The Hindu, Frontline, News18</em>, Election Commission of India press notes (Jan–May 2026), and Ministry of Home Affairs seizure reports. BJP claims attributed to Suvendu Adhikari (public rallies, March–April 2026) and Amit Shah (Cooch Behar speech, May 2026). TMC/CPI(M) claims attributed to party press conferences and Frontline investigative report (April 2026). Figures on deaths and incidents sourced from ECI security review. This report presents allegations as claims; no court has issued final findings on voter fraud or wrongful deletion as of June 2026.
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Progress bar
+        window.addEventListener('scroll', () => {
+            const winScroll = document.documentElement.scrollTop;
+            const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            const scrolled = (winScroll / height) * 100;
+            document.getElementById('progress').style.width = scrolled + '%';
+        });
+
+        // Toggle YES/NO
+        const btnYes = document.getElementById('btn-yes');
+        const btnNo = document.getElementById('btn-no');
+        const yesContent = document.getElementById('yes-content');
+        const noContent = document.getElementById('no-content');
+
+        btnYes.addEventListener('click', () => {
+            btnYes.classList.add('active');
+            btnNo.classList.remove('active');
+            yesContent.hidden = false;
+            noContent.hidden = true;
+        });
+
+        btnNo.addEventListener('click', () => {
+            btnNo.classList.add('active');
+            btnYes.classList.remove('active');
+            noContent.hidden = false;
+            yesContent.hidden = true;
+        });
+
+        // Reveal on scroll
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.1 });
+
+        document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+    </script>
+</body>
+</html>

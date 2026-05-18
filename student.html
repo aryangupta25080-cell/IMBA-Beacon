@@ -706,6 +706,24 @@ button{
 .article-card{
   padding:1rem;
 }
+.article-card-action{
+  display:flex;
+  flex-direction:column;
+  height:100%;
+  text-align:left;
+  transition:transform .2s ease,border-color .2s ease,box-shadow .2s ease;
+}
+.article-card-action:hover{
+  transform:translateY(-2px);
+  border-color:rgba(106,31,54,.18);
+}
+.article-card-action .article-title{
+  flex:1;
+}
+.article-card-action .article-link{
+  margin-top:auto;
+  padding-top:1rem;
+}
 .article-meta{
   display:flex;
   align-items:center;
@@ -775,6 +793,61 @@ button{
 }
 .article-empty p{
   margin:.35rem 0 0;
+}
+.article-reader{
+  display:grid;
+  gap:1rem;
+}
+.article-reader-head{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:1rem;
+  flex-wrap:wrap;
+}
+.article-reader-back{
+  display:inline-flex;
+  align-items:center;
+  gap:.45rem;
+  padding:.82rem 1rem;
+  border:none;
+  border-radius:14px;
+  background:#fbf7f1;
+  color:var(--ink);
+  border:1px solid rgba(106,31,54,.10);
+  cursor:pointer;
+  font:inherit;
+  font-weight:700;
+  transition:transform .2s ease,box-shadow .2s ease;
+}
+.article-reader-back:hover{
+  transform:translateY(-1px);
+}
+.article-reader-copy h2{
+  margin:0;
+  font-family:"Merriweather",serif;
+  font-size:clamp(1.5rem,2.6vw,2.1rem);
+  line-height:1.18;
+}
+.article-reader-meta{
+  margin:.35rem 0 0;
+  color:var(--ink-soft);
+  font-size:.92rem;
+}
+.article-reader-frame-shell{
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:var(--radius-xl);
+  box-shadow:var(--shadow);
+  overflow:hidden;
+}
+.article-reader-frame{
+  display:block;
+  width:100%;
+  height:calc(100vh - 260px);
+  min-height:calc(100vh - 260px);
+  border:0;
+  background:#fff;
 }
 .profile-grid{
   display:grid;
@@ -900,6 +973,14 @@ button{
   .dashboard-content{
     padding-bottom:8rem;
   }
+  .article-reader-back{
+    width:100%;
+    justify-content:center;
+  }
+  .article-reader-frame{
+    height:70vh;
+    min-height:70vh;
+  }
 }
 </style>
 </head>
@@ -937,6 +1018,7 @@ button{
             <p class="status-line" id="dashboard-status" aria-live="polite"></p>
             <section class="stats-row" id="stats-row"></section>
             <div id="sections-root"></div>
+            <section class="article-reader" id="article-reader-root" hidden></section>
           </div>
         </div>
       </main>
@@ -961,7 +1043,7 @@ button{
       { id: "sheets", label: "Sheets", icon: "files", target: "section-sheets" },
       { id: "quiz", label: "Quiz", icon: "help-square-rounded", target: "section-quiz" },
       { id: "batch", label: "Batch Sessions", icon: "users-group", target: "section-batch" },
-      { id: "articles", label: "Articles", icon: "news", target: "section-articles", href: "./student-news.html" },
+      { id: "articles", label: "Articles", icon: "news", target: "section-articles" },
       { id: "profile", label: "Profile", icon: "user-circle", target: "section-profile" }
     ];
 
@@ -973,6 +1055,8 @@ button{
     const planPillsNode = document.getElementById("plan-pills");
     const statsRowNode = document.getElementById("stats-row");
     const sectionsRoot = document.getElementById("sections-root");
+    const articleReaderRoot = document.getElementById("article-reader-root");
+    const dashboardScrollNode = document.querySelector(".dashboard-scroll");
     const logoutButton = document.getElementById("logout-btn");
 
     let currentUser = null;
@@ -984,6 +1068,8 @@ button{
       weekly: []
     };
     let currentArticleView = "daily";
+    let activeArticle = null;
+    let articleReturnScrollTop = 0;
 
     function setStatus(message, type) {
       statusNode.textContent = message || "";
@@ -1052,6 +1138,73 @@ button{
       }
 
       return "";
+    }
+
+    function resetArticleReader() {
+      activeArticle = null;
+      articleReaderRoot.hidden = true;
+      articleReaderRoot.innerHTML = "";
+      statusNode.hidden = false;
+      statsRowNode.hidden = false;
+      sectionsRoot.hidden = false;
+    }
+
+    function renderArticleReader(article) {
+      return `
+        <div class="article-reader-head">
+          <button class="article-reader-back" type="button" data-close-article-reader>
+            <i class="ti ti-arrow-left"></i>
+            <span>Back to Dashboard</span>
+          </button>
+          <div class="article-reader-copy">
+            <p class="section-label">Articles</p>
+            <h2>${escapeHtml(article.title)}</h2>
+            <p class="article-reader-meta">${escapeHtml(article.category)} · ${escapeHtml(article.date)}</p>
+          </div>
+        </div>
+        <div class="article-reader-frame-shell">
+          <iframe class="article-reader-frame" src="${escapeHtml(article.url)}" title="${escapeHtml(article.title)}"></iframe>
+        </div>
+      `;
+    }
+
+    function openArticleReader(article) {
+      const href = getSafeArticleUrl(article && article.url);
+      if (!href) {
+        return;
+      }
+
+      articleReturnScrollTop = dashboardScrollNode ? dashboardScrollNode.scrollTop : 0;
+      activeArticle = {
+        url: href,
+        title: article && article.title ? String(article.title) : "Article",
+        category: article && article.category ? String(article.category) : "Articles",
+        date: article && article.date ? String(article.date) : "Latest update"
+      };
+
+      statusNode.hidden = true;
+      statsRowNode.hidden = true;
+      sectionsRoot.hidden = true;
+      articleReaderRoot.hidden = false;
+      articleReaderRoot.innerHTML = renderArticleReader(activeArticle);
+      updateActiveNav("section-articles");
+
+      if (dashboardScrollNode) {
+        dashboardScrollNode.scrollTo({ top: 0, behavior: "smooth" });
+      }
+    }
+
+    function closeArticleReader(options) {
+      const restoreScroll = Boolean(options && options.restoreScroll);
+      const nextScrollTop = articleReturnScrollTop;
+      resetArticleReader();
+      updateActiveNav("section-articles");
+
+      if (restoreScroll && dashboardScrollNode) {
+        requestAnimationFrame(function () {
+          dashboardScrollNode.scrollTo({ top: nextScrollTop, behavior: "smooth" });
+        });
+      }
     }
 
     function inferPlanFromUser(user) {
@@ -1547,10 +1700,28 @@ button{
             <div class="article-grid">
               ${articles.map(function (article) {
                 const href = getSafeArticleUrl(article.url);
-                const isExternal = /^https?:\/\//i.test(href);
+
+                if (!href) {
+                  return `
+                    <article class="article-card">
+                      <div class="article-meta">
+                        <span class="article-category">${escapeHtml(article.category)}</span>
+                        <span class="article-date">${escapeHtml(article.date)}</span>
+                      </div>
+                      <div class="article-title">
+                        <i class="ti ti-${escapeHtml(article.icon)}"></i>
+                        <div>
+                          <strong>${escapeHtml(article.title)}</strong>
+                          <p class="article-summary">${escapeHtml(article.summary)}</p>
+                        </div>
+                      </div>
+                      <span class="article-link is-muted">Link pending</span>
+                    </article>
+                  `;
+                }
 
                 return `
-                  <article class="article-card">
+                  <a class="article-card article-card-action" href="${escapeHtml(href)}" data-open-article="${escapeHtml(href)}" data-article-title="${escapeHtml(article.title)}" data-article-category="${escapeHtml(article.category)}" data-article-date="${escapeHtml(article.date)}">
                     <div class="article-meta">
                       <span class="article-category">${escapeHtml(article.category)}</span>
                       <span class="article-date">${escapeHtml(article.date)}</span>
@@ -1562,15 +1733,11 @@ button{
                         <p class="article-summary">${escapeHtml(article.summary)}</p>
                       </div>
                     </div>
-                    ${href ? `
-                      <a class="article-link" href="${escapeHtml(href)}"${isExternal ? ' target="_blank" rel="noopener noreferrer"' : ""}>
-                        <span>${escapeHtml(article.cta)}</span>
-                        <i class="ti ti-arrow-up-right"></i>
-                      </a>
-                    ` : `
-                      <span class="article-link is-muted">Link pending</span>
-                    `}
-                  </article>
+                    <span class="article-link">
+                      <span>${escapeHtml(article.cta)}</span>
+                      <i class="ti ti-arrow-up-right"></i>
+                    </span>
+                  </a>
                 `;
               }).join("")}
             </div>
@@ -1670,6 +1837,7 @@ button{
       renderTopbar(student);
       renderStats(student.plan);
       sectionsRoot.innerHTML = renderSections(student);
+      resetArticleReader();
       updateActiveNav("section-dashboard");
     }
 
@@ -1879,12 +2047,34 @@ button{
           window.location.href = href;
           return;
         }
+        if (activeArticle) {
+          resetArticleReader();
+        }
         const section = document.getElementById(target);
         if (section) {
           event.preventDefault();
           section.scrollIntoView({ behavior: "smooth", block: "start" });
           updateActiveNav(target);
         }
+        return;
+      }
+
+      const articleCard = event.target.closest("[data-open-article]");
+      if (articleCard) {
+        event.preventDefault();
+        openArticleReader({
+          url: articleCard.getAttribute("data-open-article"),
+          title: articleCard.getAttribute("data-article-title"),
+          category: articleCard.getAttribute("data-article-category"),
+          date: articleCard.getAttribute("data-article-date")
+        });
+        return;
+      }
+
+      const closeArticleButton = event.target.closest("[data-close-article-reader]");
+      if (closeArticleButton) {
+        event.preventDefault();
+        closeArticleReader({ restoreScroll: true });
         return;
       }
 
