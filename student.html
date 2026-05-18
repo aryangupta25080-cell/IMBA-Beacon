@@ -1405,8 +1405,8 @@ button{
     function renderSections(student) {
       return [
         renderFreeClass(),
-        renderLiveClass(student.plan),
         renderTracks(student.plan),
+        renderLiveClass(student.plan),
         renderBatchSessions(student.plan),
         renderSheets(student.plan),
         student.plan === "none" ? renderUpgradeSection() : "",
