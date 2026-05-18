@@ -1482,10 +1482,26 @@ button{
         renderLiveClass(student.plan),
         renderBatchSessions(student.plan),
         renderSheets(student.plan),
-        renderArticles(),
         student.plan === "none" ? renderUpgradeSection() : "",
         renderProfile(student)
       ].join("");
+    }
+
+    function scrollToHashSection() {
+      const hash = window.location.hash ? decodeURIComponent(window.location.hash.slice(1)) : "";
+      if (!hash) {
+        return;
+      }
+
+      const section = document.getElementById(hash);
+      if (!section) {
+        return;
+      }
+
+      requestAnimationFrame(function () {
+        section.scrollIntoView({ behavior: "auto", block: "start" });
+        updateActiveNav(hash);
+      });
     }
 
     function renderDashboard(student) {
@@ -1745,6 +1761,7 @@ button{
         }
 
         renderDashboard(getStudentState(currentUser));
+        scrollToHashSection();
         setStatus("Dashboard loaded successfully.", "success");
       })
       .catch(function (error) {
