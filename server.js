@@ -126,14 +126,11 @@ function formatAmountDisplay(amount, currency = "INR") {
   return `${prefix}${(safeAmount / 100).toFixed(2)}`;
 }
 
-function resolveCoupon(plan, rawCouponCode) {
+async function resolveCoupon(plan, rawCouponCode) {
   const couponCode = normalizeCouponCode(rawCouponCode);
 
   if (!plan || !couponCode) {
-    return {
-      applied: false,
-      code: couponCode
-    };
+    return { applied: false, code: couponCode };
   }
 
   if (!DEFAULT_COUPON_CODE || couponCode !== DEFAULT_COUPON_CODE) {
@@ -141,6 +138,26 @@ function resolveCoupon(plan, rawCouponCode) {
       applied: false,
       code: couponCode,
       message: "Invalid coupon code. Please check the code and try again."
+    };
+  }
+
+  // Check usage in DB
+  const db = await getDatabase();
+  await db.run(`
+    INSERT INTO coupons (code, used_count, max_uses)
+    VALUES (?, 0, 10)
+    ON CONFLICT(code) DO NOTHING
+  `, [couponCode]);
+
+  const row = await db.get("SELECT used_count, max_uses FROM coupons WHERE code = ?", couponCode);
+  const usedCount = row?.used_count || 0;
+  const maxUses = row?.max_uses || 10;
+
+  if (usedCount >= maxUses) {
+    return {
+      applied: false,
+      code: couponCode,
+      message: `Coupon limit reached. This code was valid for the first ${maxUses} students only.`
     };
   }
 
@@ -155,7 +172,8 @@ function resolveCoupon(plan, rawCouponCode) {
     discountPercent,
     originalAmount,
     discountAmount,
-    finalAmount
+    finalAmount,
+    remaining: maxUses - usedCount
   };
 }
 
@@ -330,6 +348,12 @@ async function getDatabase() {
       email TEXT NOT NULL,
       name TEXT NOT NULL,
       verified_at TIMESTAMPTZ NOT NULL
+    );
+
+    CREATE TABLE IF NOT EXISTS coupons (
+      code TEXT PRIMARY KEY,
+      used_count INTEGER NOT NULL DEFAULT 0,
+      max_uses INTEGER NOT NULL DEFAULT 10
     );
   `);
 
@@ -1598,7 +1622,7 @@ async function handleCreateOrder(request, response) {
     const body = await parseRequestBody(request);
     const planId = String(body.planId || "").toLowerCase();
     const plan = planId ? PLAN_CATALOG[planId] : null;
-    const coupon = resolveCoupon(plan, body.couponCode);
+    const coupon = await resolveCoupon(plan, body.couponCode);
 
     if (planId && !plan) {
       sendJson(response, 400, { message: "Invalid plan selected." });
@@ -1777,6 +1801,19 @@ async function handleVerifyPayment(request, response) {
 
     const updatedUser = plan ? await activatePlanForUser(user, plan.id) : user;
 
+    // Increment coupon usage if one was applied
+    const usedCouponCode = normalizeCouponCode(String(razorpayOrder?.notes?.couponCode || ""));
+    if (usedCouponCode && usedCouponCode === DEFAULT_COUPON_CODE) {
+      try {
+        await db.run(
+          "UPDATE coupons SET used_count = used_count + 1 WHERE code = ?",
+          [usedCouponCode]
+        );
+      } catch (couponError) {
+        console.error("Failed to increment coupon usage:", couponError);
+      }
+    }
+
     sendJson(response, 200, {
       message: plan
         ? `Payment verified successfully. Your ${plan.label} plan is now active.`
@@ -1882,6 +1919,31 @@ async function requestHandler(request, response) {
         "Set-Cookie": clearSessionCookie(request)
       }
     );
+    return;
+  }
+
+  if (request.method === "POST" && pathname === "/api/apply-coupon") {
+    const user = requireAuthenticatedUser(request, response);
+    if (!user) return;
+    try {
+      const body = await parseRequestBody(request);
+      const planId = String(body.planId || "basic").toLowerCase();
+      const plan = PLAN_CATALOG[planId] || PLAN_CATALOG.basic;
+      const coupon = await resolveCoupon(plan, body.code);
+      if (!coupon.applied) {
+        sendJson(response, 400, { valid: false, message: coupon.message || "Invalid coupon code." }, corsHeaders);
+      } else {
+        sendJson(response, 200, {
+          valid: true,
+          discountPercent: coupon.discountPercent,
+          discountAmount: coupon.discountAmount,
+          finalAmount: coupon.finalAmount,
+          remaining: coupon.remaining
+        }, corsHeaders);
+      }
+    } catch (error) {
+      sendJson(response, 500, { valid: false, message: "Could not validate coupon." }, corsHeaders);
+    }
     return;
   }
 
