@@ -659,45 +659,6 @@ button{
   gap:.45rem;
   color:var(--ink-soft);
 }
-.coupon-box{
-  margin-bottom:1rem;
-  padding:1rem 1.05rem;
-  border-radius:18px;
-  background:var(--surface-soft);
-  border:1px solid var(--border);
-}
-.coupon-box strong{
-  display:block;
-  color:var(--maroon);
-  font-size:.95rem;
-}
-.coupon-box p{
-  margin-top:.18rem;
-  color:var(--ink-soft);
-  font-size:.88rem;
-}
-.coupon-row{
-  display:flex;
-  align-items:center;
-  gap:.7rem;
-  flex-wrap:wrap;
-  margin-top:.72rem;
-}
-.coupon-row input{
-  flex:1 1 220px;
-  min-width:0;
-  padding:.9rem .98rem;
-  border-radius:14px;
-  border:1px solid var(--border);
-  background:#fff;
-  color:var(--ink);
-  font:inherit;
-  text-transform:uppercase;
-}
-.coupon-hint{
-  color:var(--ink-soft);
-  font-size:.82rem;
-}
 .profile-grid{
   display:grid;
   grid-template-columns:repeat(2,minmax(0,1fr));
@@ -900,10 +861,6 @@ button{
         .replace(/'/g, "&#39;");
     }
 
-    function normalizeCouponCode(value) {
-      return String(value || "").trim().toUpperCase().replace(/\s+/g, "");
-    }
-
     function normalizePlan(value) {
       return value === "basic" || value === "pro" || value === "none" ? value : "none";
     }
@@ -922,11 +879,6 @@ button{
         currency: "INR",
         maximumFractionDigits: 0
       }).format(amount);
-    }
-
-    function getDashboardCouponCode() {
-      const couponInput = document.getElementById("dashboard-coupon-code");
-      return normalizeCouponCode(couponInput ? couponInput.value : "");
     }
 
     function getPlanCatalog() {
@@ -1348,70 +1300,37 @@ button{
     }
 
     function renderSheets(plan) {
-      const lectures = [
-        { title: "Lecture 1 Practice Sheet", id: "1woLrco4lqo4HtgclYSJnZGKTnewdXh5q" },
-        { title: "Lecture 2 Practice Sheet", id: "150n8jaPDmhrUQjEEq_ZI_nbpqsXfO4y8" },
-        { title: "Lecture 3 Practice Sheet", id: "1d9S93hIFe2J8CH1NChcVaHAplYTBCD--" },
-        { title: "Lecture 4 Practice Sheet", id: "1qIxI0Bvu_nLjZ9-RW1JqHAIWmyTVsqor" },
-        { title: "Lecture 5 Practice Sheet", id: "1T6QH1dvXMzt_bX4xEWTySj_HQ0tBml46" },
-        { title: "Lecture 6 Practice Sheet", id: "19sfHliA7QblUyXcNLanx4j7QF0fz8W-f" },
-        { title: "Lecture 7 Practice Sheet", id: "1qvoUIZZxs2odDPy2tjDiEzZicwoIr053" },
-        { title: "Lecture 8 Practice Sheet", id: "1nXLejdm0DhtNn5Uduoe5DfqxZ6rYKMEF" }
+      const sheets = [
+        { title: "Introduction to IMBA Interview", meta: "Foundation Sheet · PDF", locked: false },
+        { title: "Behavioural Prep Framework", meta: "Practice Sheet · PDF", locked: false },
+        { title: "Communication & Confidence Sheet", meta: "Practice Sheet · PDF", locked: false },
+        { title: "Advanced Mock Interview Sheet", meta: "Pro Sheet · PDF", locked: plan !== "pro" },
+        { title: "Solution Sheet — All Rounds", meta: "Pro Sheet · PDF", locked: plan !== "pro" }
       ];
-
-      const locked = plan === "none";
 
       return `
         <section class="dashboard-section" id="section-sheets">
           <p class="section-label">Practice Sheets</p>
-          <article class="dashboard-card ${locked ? "locked-card" : ""}">
-            <div class="sheet-row" style="cursor:pointer;" onclick="(function(){var el=document.getElementById('master-sheet-expand');var icon=document.getElementById('master-chevron');var open=el.style.display==='block';el.style.display=open?'none':'block';icon.style.transform=open?'rotate(0deg)':'rotate(180deg)';})()">
-              <div class="sheet-info">
-                <div class="sheet-icon" style="background:linear-gradient(135deg,var(--amber-tint),var(--amber-soft));color:var(--maroon);">
-                  <i class="ti ti-book-2"></i>
-                </div>
-                <div>
-                  <strong>Master Sheets</strong>
-                  <span>8 Practice PDFs · Lectures 1–8</span>
-                </div>
-              </div>
-              <div style="display:flex;align-items:center;gap:.6rem;">
-                ${locked ? '<span class="sheet-btn pro-only" style="pointer-events:none;">Locked</span>' : '<span style="font-size:.85rem;color:var(--ink-soft);font-weight:600;">View all</span>'}
-                <i class="ti ti-chevron-down" id="master-chevron" style="font-size:1.1rem;color:var(--ink-soft);transition:transform .25s ease;"></i>
-              </div>
-            </div>
-
-            <div id="master-sheet-expand" style="display:none;margin-top:.5rem;border-top:1px solid var(--border);padding-top:.75rem;">
-              <div class="sheet-list">
-                ${lectures.map(function(lec) {
-                  return `
-                    <div class="sheet-row" style="padding:.7rem .95rem;">
-                      <div class="sheet-info">
-                        <div class="sheet-icon" style="width:32px;height:32px;font-size:.85rem;border-radius:10px;">
-                          <i class="ti ti-file-type-pdf"></i>
-                        </div>
-                        <div>
-                          <strong style="font-size:.95rem;">${escapeHtml(lec.title)}</strong>
-                          <span>Practice Sheet · PDF</span>
-                        </div>
+          <article class="dashboard-card ${plan === "none" ? "locked-card" : ""}">
+            <div class="sheet-list">
+              ${sheets.map(function (sheet) {
+                return `
+                  <div class="sheet-row">
+                    <div class="sheet-info">
+                      <div class="sheet-icon"><i class="ti ti-file-download"></i></div>
+                      <div>
+                        <strong>${escapeHtml(sheet.title)}</strong>
+                        <span>${escapeHtml(sheet.meta)}</span>
                       </div>
-                      ${locked ? '<button class="sheet-btn pro-only" disabled>Locked</button>' : `
-                        <div style="display:flex;gap:.5rem;">
-                          <a class="sheet-btn" href="https://drive.google.com/file/d/${lec.id}/view" target="_blank" rel="noopener noreferrer" style="font-size:.82rem;padding:.6rem .8rem;">
-                            <i class="ti ti-eye" style="font-size:.9rem;"></i> Open
-                          </a>
-                          <a class="sheet-btn" href="https://drive.google.com/uc?export=download&id=${lec.id}" target="_blank" rel="noopener noreferrer" style="font-size:.82rem;padding:.6rem .8rem;background:linear-gradient(135deg,var(--amber-soft),var(--amber));color:var(--maroon-deep);border:none;">
-                            <i class="ti ti-download" style="font-size:.9rem;"></i> Download
-                          </a>
-                        </div>
-                      `}
                     </div>
-                  `;
-                }).join("")}
-              </div>
+                    <button class="sheet-btn${sheet.locked || plan === "none" ? " pro-only" : ""}" type="button" ${sheet.locked || plan === "none" ? "disabled" : `data-download-sheet="${escapeHtml(sheet.title)}"`}>
+                      ${sheet.locked || plan === "none" ? "Pro only" : "Download"}
+                    </button>
+                  </div>
+                `;
+              }).join("")}
             </div>
-
-            ${locked ? `
+            ${plan === "none" ? `
               <div class="locked-message">
                 <i class="ti ti-lock"></i>
                 <div>
@@ -1430,19 +1349,32 @@ button{
       return `
         <section class="dashboard-section">
           <p class="section-label">Upgrade</p>
-          <div class="coupon-box">
-            <strong>Have a coupon code?</strong>
-            <p>Enter it before payment and a valid code will reduce the Razorpay checkout amount.</p>
-            <div class="coupon-row">
-              <input type="text" id="dashboard-coupon-code" placeholder="Enter coupon code" autocomplete="off"/>
-              <span class="coupon-hint">Valid coupon applies 10% off at checkout.</span>
+
+          <div style="margin-bottom:1rem;padding:1rem 1.2rem;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-md);box-shadow:var(--shadow);">
+            <p style="margin:0 0 .6rem;font-weight:700;font-size:.95rem;">Have a coupon code?</p>
+            <div style="display:flex;gap:.6rem;flex-wrap:wrap;">
+              <input
+                id="coupon-input"
+                type="text"
+                placeholder="Enter code e.g. IMBA10"
+                style="flex:1;min-width:160px;padding:.72rem 1rem;border:1px solid var(--border);border-radius:12px;font:inherit;font-size:.95rem;background:var(--surface-soft);color:var(--ink);outline:none;"
+              />
+              <button
+                id="coupon-apply-btn"
+                type="button"
+                onclick="applyCoupon()"
+                style="padding:.72rem 1.2rem;border-radius:12px;border:none;background:var(--maroon);color:#fff;font:inherit;font-weight:700;cursor:pointer;white-space:nowrap;">
+                Apply
+              </button>
             </div>
+            <p id="coupon-msg" style="margin:.5rem 0 0;font-size:.88rem;min-height:1.2rem;"></p>
           </div>
+
           <div class="plans-grid">
             <article class="plan-card">
               <span class="tag-pill amber">Basic</span>
               <h3>Basic Plan</h3>
-              <div class="plan-price">${escapeHtml(formatPrice(catalog.basic.amount))}</div>
+              <div class="plan-price" id="price-basic">${escapeHtml(formatPrice(catalog.basic.amount))}</div>
               <p class="plan-copy">Structured support for focused interview preparation.</p>
               <ul>
                 <li>3 mock interviews</li>
@@ -1459,7 +1391,7 @@ button{
             <article class="plan-card featured">
               <span class="tag-pill amber">Pro</span>
               <h3>Pro Plan</h3>
-              <div class="plan-price">${escapeHtml(formatPrice(catalog.pro.amount))}</div>
+              <div class="plan-price" id="price-pro">${escapeHtml(formatPrice(catalog.pro.amount))}</div>
               <p class="plan-copy">Expanded mentoring with deeper guided support.</p>
               <ul>
                 <li>4 mock interviews</li>
@@ -1500,6 +1432,70 @@ button{
       `;
     }
 
+    function renderArticles() {
+      const articles = [
+        {
+          file: "Bengal_Elections.html",
+          title: "West Bengal 2026 Election",
+          subtitle: "Deep dive into challenges, illegal voters & SIR purge",
+          category: "National Affairs",
+          date: "May 2026",
+          icon: "ti-map-pin"
+        },
+        {
+          file: "Tamil_nadu_elections.html",
+          title: "Tamil Nadu 2026: TVK Victory Report",
+          subtitle: "Comprehensive breakdown of results, seats and key takeaways",
+          category: "National Affairs",
+          date: "May 2026",
+          icon: "ti-map-pin"
+        },
+        {
+          file: "PM_modi_visit_.html",
+          title: "PM Modi's 5-Nation Tour May 2026",
+          subtitle: "Strategic deep dive — bilateral ties, trade deals and geopolitical impact",
+          category: "International Affairs",
+          date: "May 2026",
+          icon: "ti-world"
+        },
+        {
+          file: "IIT-Mandi-interview-prep-PDF__1_.html",
+          title: "NEET Paper Leak Report: 2024–2026",
+          subtitle: "Crisis overview, the retest debate and policy implications",
+          category: "Education",
+          date: "May 2026",
+          icon: "ti-school"
+        }
+      ];
+
+      return `
+        <section id="section-articles" class="dashboard-section">
+          <p class="section-label">Articles</p>
+          <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px">
+            ${articles.map(a => `
+              <a href="${a.file}" target="_blank" style="text-decoration:none;display:block">
+                <div class="sheet-card" style="padding:16px 18px;cursor:pointer;transition:box-shadow .15s;border-radius:var(--radius-md)">
+                  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+                    <span style="font-size:10px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;padding:3px 8px;border-radius:20px;background:rgba(171,59,95,.1);color:#AB3B5F">${a.category}</span>
+                    <span style="font-size:11px;color:var(--text-muted)">${a.date}</span>
+                  </div>
+                  <div style="display:flex;align-items:flex-start;gap:10px">
+                    <i class="ti ${a.icon}" style="font-size:18px;color:#AB3B5F;margin-top:2px;flex-shrink:0" aria-hidden="true"></i>
+                    <div>
+                      <div style="font-size:13px;font-weight:600;color:var(--text-main);line-height:1.4;margin-bottom:4px">${a.title}</div>
+                      <div style="font-size:12px;color:var(--text-muted);line-height:1.5">${a.subtitle}</div>
+                    </div>
+                  </div>
+                  <div style="margin-top:12px;display:flex;align-items:center;gap:5px;font-size:12px;color:#AB3B5F;font-weight:500">
+                    Read article <i class="ti ti-arrow-right" style="font-size:13px" aria-hidden="true"></i>
+                  </div>
+                </div>
+              </a>
+            `).join("")}
+          </div>
+        </section>`;
+    }
+
     function renderSections(student) {
       return [
         renderFreeClass(),
@@ -1507,6 +1503,7 @@ button{
         renderLiveClass(student.plan),
         renderBatchSessions(student.plan),
         renderSheets(student.plan),
+        renderArticles(),
         student.plan === "none" ? renderUpgradeSection() : "",
         renderProfile(student)
       ].join("");
@@ -1593,12 +1590,66 @@ button{
       }
     }
 
-    async function startCheckout(planId, triggerButton) {
-      const couponCode = getDashboardCouponCode();
+    let activeCouponCode = "";
 
+    async function applyCoupon() {
+      const input = document.getElementById("coupon-input");
+      const msg = document.getElementById("coupon-msg");
+      const btn = document.getElementById("coupon-apply-btn");
+      const code = (input?.value || "").trim().toUpperCase();
+
+      if (!code) {
+        msg.style.color = "var(--ink-soft)";
+        msg.textContent = "Please enter a coupon code.";
+        return;
+      }
+
+      btn.disabled = true;
+      btn.textContent = "Checking...";
+      msg.style.color = "var(--ink-soft)";
+      msg.textContent = "";
+
+      try {
+        const response = await fetch(`${apiBase}/api/apply-coupon`, {
+          method: "POST",
+          credentials: "include",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ code, planId: "basic" })
+        });
+        const data = await response.json();
+
+        if (!response.ok || !data.valid) {
+          activeCouponCode = "";
+          msg.style.color = "#bb4357";
+          msg.textContent = data.message || "Invalid coupon code.";
+          document.getElementById("price-basic") && (document.getElementById("price-basic").innerHTML = escapeHtml(formatPrice(currentConfig?.plans?.basic?.amount || 119900)));
+          document.getElementById("price-pro") && (document.getElementById("price-pro").innerHTML = escapeHtml(formatPrice(currentConfig?.plans?.pro?.amount || 179900)));
+        } else {
+          activeCouponCode = code;
+          msg.style.color = "#2d7b52";
+          const savedBasic = Math.round((currentConfig?.plans?.basic?.amount || 119900) * data.discountPercent / 100);
+          const savedPro = Math.round((currentConfig?.plans?.pro?.amount || 179900) * data.discountPercent / 100);
+          const finalBasic = (currentConfig?.plans?.basic?.amount || 119900) - savedBasic;
+          const finalPro = (currentConfig?.plans?.pro?.amount || 179900) - savedPro;
+          msg.textContent = `✓ Coupon applied! ${data.discountPercent}% off on all plans.`;
+          const pb = document.getElementById("price-basic");
+          const pp = document.getElementById("price-pro");
+          if (pb) pb.innerHTML = `<span style="text-decoration:line-through;opacity:.5;font-size:1.3rem;">${escapeHtml(formatPrice(currentConfig?.plans?.basic?.amount || 119900))}</span> ${escapeHtml(formatPrice(finalBasic))}`;
+          if (pp) pp.innerHTML = `<span style="text-decoration:line-through;opacity:.5;font-size:1.3rem;">${escapeHtml(formatPrice(currentConfig?.plans?.pro?.amount || 179900))}</span> ${escapeHtml(formatPrice(finalPro))}`;
+        }
+      } catch (error) {
+        activeCouponCode = "";
+        msg.style.color = "#bb4357";
+        msg.textContent = "Could not validate coupon right now.";
+      } finally {
+        btn.disabled = false;
+        btn.textContent = "Apply";
+      }
+    }
+
+    async function startCheckout(planId, triggerButton) {
       if (!currentUser) {
-        const couponParam = couponCode ? `&coupon=${encodeURIComponent(couponCode)}` : "";
-        window.location.href = `./login.html?access=purchase&plan=${encodeURIComponent(planId)}&next=${encodeURIComponent("./student.html")}${couponParam}`;
+        window.location.href = `./login.html?access=purchase&plan=${encodeURIComponent(planId)}&next=${encodeURIComponent("./student.html")}`;
         return;
       }
 
@@ -1628,21 +1679,13 @@ button{
           headers: {
             "Content-Type": "application/json"
           },
-          body: JSON.stringify({
-            planId: planId,
-            couponCode: couponCode
-          })
+          body: JSON.stringify({ planId: planId, couponCode: activeCouponCode || undefined })
         });
 
         const payload = await response.json();
         if (!response.ok) {
           setStatus(payload.message || "Unable to create Razorpay order.", "error");
           return;
-        }
-
-        if (payload.coupon && payload.coupon.applied) {
-          const planLabel = planId === "pro" ? "Pro" : "Basic";
-          setStatus(`Coupon ${payload.coupon.code} applied. Final ${planLabel} checkout is ${payload.coupon.finalAmountDisplay}.`, "success");
         }
 
         const student = getStudentState(currentUser);
