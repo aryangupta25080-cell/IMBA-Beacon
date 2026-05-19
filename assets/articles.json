@@ -22,31 +22,13 @@
   ],
   "weekly": [
     {
-      "category": "Top News",
-      "date": "Weekly recap",
-      "title": "This week's most important political headline",
-      "summary": "Keep one flagship national story here so students revise the single most discussion-worthy update first.",
-      "url": "./Bengal_Elections.html",
+      "category": "Weekly Brief",
+      "date": "13-16 May 2026",
+      "title": "Weekly Business Brief: Week 1",
+      "summary": "A weekly business intelligence brief covering education, banking, markets, energy, geopolitics, corporate policy and next-week watchpoints.",
+      "url": "./weekly-business-brief-week-1.html",
       "cta": "Read article",
       "icon": "sparkles"
-    },
-    {
-      "category": "Policy Watch",
-      "date": "Weekly recap",
-      "title": "This week's strongest governance or policy story",
-      "summary": "Use this card for the policy development students should be prepared to explain with a balanced opinion.",
-      "url": "./Tamil_nadu_elections.html",
-      "cta": "Read article",
-      "icon": "building-bank"
-    },
-    {
-      "category": "Interview Angle",
-      "date": "Weekly recap",
-      "title": "This week's best interview discussion topic",
-      "summary": "Use this slot for the story that gives students the strongest example for follow-up questions and opinion-based discussion.",
-      "url": "./PM_modi_visit_.html",
-      "cta": "Read article",
-      "icon": "world"
     }
   ],
   "important": [

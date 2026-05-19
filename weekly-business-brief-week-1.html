@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Weekly Business Brief • 13–16 May 2026</title>
+<style>
+:root {
+  --primary: #692240;
+  --accent: #AA3B5C;
+  --bg: #ffffff;
+  --text: #1a1a1a;
+  --muted: #5a5a5a;
+  --border: #f0e6ea;
+  --card-shadow: 0 1px 3px rgba(0,0,0,0.04), 0 8px 24px rgba(105,34,64,0.06);
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Inter, Helvetica, Arial, sans-serif;
+  background: #fcf9fa;
+  color: var(--text);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+.page {
+  max-width: 900px;
+  margin: 0 auto;
+  background: var(--bg);
+  min-height: 100vh;
+  box-shadow: 0 0 40px rgba(105,34,64,0.08);
+}
+header {
+  background: linear-gradient(135deg, #692240 0%, #AA3B5C 100%);
+  color: white;
+  padding: 56px 32px 48px;
+  position: relative;
+  overflow: hidden;
+}
+header::before {
+  content: "";
+  position: absolute;
+  top: -60%;
+  right: -15%;
+  width: 700px;
+  height: 700px;
+  background: radial-gradient(circle, rgba(255,255,255,0.18) 0%, transparent 65%);
+  pointer-events: none;
+}
+header::after {
+  content: "";
+  position: absolute;
+  bottom: -30%;
+  left: -10%;
+  width: 500px;
+  height: 500px;
+  background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 60%);
+  pointer-events: none;
+}
+.header-content { position: relative; z-index: 2; }
+.header-tag {
+  display: inline-block;
+  background: rgba(255,255,255,0.15);
+  border: 1px solid rgba(255,255,255,0.25);
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  margin-bottom: 16px;
+  backdrop-filter: blur(4px);
+}
+h1 {
+  font-size: 2.6rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  margin-bottom: 10px;
+}
+.subtitle {
+  font-size: 1.05rem;
+  opacity: 0.92;
+  font-weight: 400;
+  max-width: 600px;
+}
+.print-btn {
+  position: absolute;
+  top: 24px;
+  right: 24px;
+  z-index: 3;
+  background: rgba(255,255,255,0.12);
+  color: white;
+  border: 1px solid rgba(255,255,255,0.3);
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.print-btn:hover { background: rgba(255,255,255,0.2); transform: translateY(-1px); }
+
+main { padding: 32px 0 48px; }
+.section-heading {
+  color: var(--accent);
+  text-transform: uppercase;
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  margin: 36px 32px 16px;
+}
+.card {
+  background: white;
+  margin: 0 24px 24px;
+  padding: 28px 32px;
+  border-radius: 14px;
+  border: 1px solid var(--border);
+  border-left: 4px solid var(--primary);
+  box-shadow: var(--card-shadow);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+.card:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.05), 0 12px 32px rgba(105,34,64,0.1); }
+.meta {
+  display: inline-block;
+  background: #f9f1f4;
+  color: var(--primary);
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  margin-bottom: 14px;
+  border: 1px solid #f0e6ea;
+}
+.card h3 {
+  font-size: 1.4rem;
+  color: var(--primary);
+  margin-bottom: 18px;
+  font-weight: 700;
+  line-height: 1.3;
+}
+.card p { margin-bottom: 12px; color: var(--text); font-size: 0.98rem; }
+.card p:last-child { margin-bottom: 0; }
+.card strong { color: var(--primary); font-weight: 600; }
+.key-points {
+  list-style: none;
+  margin: 16px 0 0;
+  padding: 0;
+}
+.key-points li {
+  position: relative;
+  padding-left: 24px;
+  margin-bottom: 12px;
+  font-size: 0.96rem;
+  line-height: 1.55;
+}
+.key-points li::before {
+  content: "•";
+  position: absolute;
+  left: 0;
+  top: 0;
+  color: var(--accent);
+  font-weight: 800;
+  font-size: 1.2rem;
+  line-height: 1.2;
+}
+.summary-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.summary-list li {
+  padding: 12px 0 12px 28px;
+  position: relative;
+  border-bottom: 1px dashed var(--border);
+  font-size: 1rem;
+  line-height: 1.5;
+}
+.summary-list li:last-child { border-bottom: none; }
+.summary-list li::before {
+  content: "→";
+  position: absolute;
+  left: 0;
+  color: var(--accent);
+  font-weight: 700;
+}
+.stat-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  margin: 20px 0;
+  padding: 20px;
+  background: #fdf7f9;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+}
+.stat {
+  text-align: center;
+}
+.stat-value {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--primary);
+  line-height: 1.1;
+}
+.stat-label {
+  font-size: 0.75rem;
+  color: var(--muted);
+  margin-top: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+.note {
+  background: #fff9fb;
+  border-left: 3px solid var(--accent);
+  padding: 14px 16px;
+  margin-top: 18px;
+  border-radius: 0 8px 8px 0;
+  font-size: 0.92rem;
+  color: var(--muted);
+}
+.watch-grid {
+  display: grid;
+  gap: 12px;
+  margin-top: 12px;
+}
+.watch-item {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  padding: 12px 0;
+  border-bottom: 1px solid #f5f0f2;
+}
+.watch-item:last-child { border-bottom: none; }
+.watch-dot {
+  width: 8px;
+  height: 8px;
+  background: var(--accent);
+  border-radius: 50%;
+  margin-top: 7px;
+  flex-shrink: 0;
+}
+footer {
+  text-align: center;
+  padding: 32px;
+  color: var(--muted);
+  font-size: 0.85rem;
+  border-top: 1px solid var(--border);
+  margin-top: 24px;
+}
+
+@media (max-width: 720px) {
+  header { padding: 48px 24px 40px; }
+  h1 { font-size: 2rem; }
+  .print-btn { top: 16px; right: 16px; padding: 6px 12px; }
+  .section-heading { margin-left: 24px; margin-right: 24px; }
+  .card { margin: 0 16px 20px; padding: 22px 20px; }
+  .stat-grid { grid-template-columns: 1fr; gap: 12px; }
+  main { padding: 24px 0; }
+}
+@media print {
+  body { background: white; }
+  .page { box-shadow: none; }
+  .print-btn { display: none; }
+  .card { break-inside: avoid; box-shadow: none; border: 1px solid #ddd; }
+  header { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+}
+</style>
+<link rel="stylesheet" href="./assets/article-theme.css">
+</head>
+<body>
+<nav class="imba-article-nav">
+  <a class="imba-article-brand" href="./articles.html">
+    <span>IB</span>
+    <strong>IMBA Beacon<small>Weekly Article Brief</small></strong>
+  </a>
+  <a class="imba-article-back" href="./articles.html">← Back to Articles</a>
+</nav>
+<div class="page">
+  <header>
+    <button class="print-btn" onclick="window.print()">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg>
+      Print
+    </button>
+    <div class="header-content">
+      <div class="header-tag">India Business Intelligence</div>
+      <h1>Weekly Business Brief</h1>
+      <div class="subtitle">13–16 May 2026 • India's most important stories, explained in depth</div>
+    </div>
+  </header>
+
+  <main>
+    <h2 class="section-heading">Executive Summary</h2>
+    <div class="card" style="border-left-color: var(--accent);">
+      <span class="meta">This Week</span>
+      <ul class="summary-list">
+        <li><strong>NEET cancellation shocks 2.3mn students:</strong> NTA scrapped NEET-UG 2026 after widespread paper leak, ordering a 21 June re-test and a shift to computer-based testing from 2027.</li>
+        <li><strong>PSBs hit record ₹1.98 lakh cr profit:</strong> Public sector banks posted their fourth straight profitable year on 15.7% credit growth and GNPA falling to a historic 1.93%.</li>
+        <li><strong>Markets tumble as rupee nears 96 and Brent >$107:</strong> Sensex fell 1,456 points on 13 May, rupee hit record lows of 96.35, prompting RBI intervention and a gold duty hike to 15%.</li>
+        <li><strong>India launches $20bn offshore energy hunt amid Hormuz tensions:</strong> 'Samudra Manthan' aims for 150,000 line km of seismic data as Iran threatens tolls on Strait of Hormuz traffic.</li>
+      </ul>
+    </div>
+
+    <h2 class="section-heading">Section 1</h2>
+    <div class="card">
+      <span class="meta">Education</span>
+      <h3>Education in Crisis – NEET-UG 2026 Cancelled</h3>
+      <p><strong>What happened:</strong> The National Testing Agency cancelled the NEET-UG held on 3 May after confirmed paper leak allegations. The CBI registered a case on 12 May; a re-exam is set for 21 June. The government announced NEET will move to computer-based testing from 2027.</p>
+      <p><strong>Scale:</strong> Approximately 23 lakh candidates across 551 cities were affected. Leaked papers were allegedly sold for ₹2-25 lakh through organized networks operating on Telegram and WhatsApp.</p>
+      <p><strong>Investigation:</strong> 9+ arrests including a Pune professor, with searches across Maharashtra, Rajasthan, and Haryana. Reports indicate 135 of 180 questions matched the leaked material circulated 48 hours before the exam.</p>
+      <div class="note">
+        <strong>Why it matters:</strong> This is the second major NTA failure after the 2024 NEET controversy. It erodes trust in central exams, creates severe mental and financial stress for families, and delays the entire medical admission calendar. A Supreme Court plea now seeks a complete NTA overhaul.
+      </div>
+      <p style="margin-top:14px;"><strong>Outlook:</strong> A CBT shift may reduce physical leaks but raises significant digital divide concerns for students from Tier-2/3 cities with poor testing infrastructure.</p>
+    </div>
+
+    <h2 class="section-heading">Section 2</h2>
+    <div class="card">
+      <span class="meta">Banking</span>
+      <h3>Banking – PSBs Hit Historic High</h3>
+      <p><strong>Numbers:</strong> PSB net profit rose 11.2% YoY to ₹1.98 trillion in FY26, marking the fourth straight profitable year. SBI led with ₹80,032 crore, followed by Bank of Baroda at ₹20,021 crore and PNB at ₹16,904 crore.</p>
+      <div class="stat-grid">
+        <div class="stat">
+          <div class="stat-value">15.7%</div>
+          <div class="stat-label">Credit Growth</div>
+        </div>
+        <div class="stat">
+          <div class="stat-value">1.93%</div>
+          <div class="stat-label">GNPA (Historic Low)</div>
+        </div>
+        <div class="stat">
+          <div class="stat-value">10.6%</div>
+          <div class="stat-label">Deposit Growth</div>
+        </div>
+      </div>
+      <p><strong>Drivers:</strong> Strong corporate loan demand, recoveries from written-off accounts via IBC, and treasury gains. Asset quality improved sharply across all 12 PSBs.</p>
+      <p><strong>Why it matters:</strong> Clean balance sheets enable PSBs to fund the government's capex push. Record dividends from PSBs (estimated ₹35,000+ crore) are now crucial to the fiscal math amid rising subsidy pressures from oil and fertilisers.</p>
+      <p><strong>Risk:</strong> Profitability has been partly driven by a high interest rate regime. Net Interest Margin compression is likely ahead as the RBI is expected to cut rates in H2 FY27 to support growth.</p>
+    </div>
+
+    <h2 class="section-heading">Section 3</h2>
+    <div class="card">
+      <span class="meta">Markets</span>
+      <h3>Markets & Macro – Selloff and Rupee Pressure</h3>
+      <p><strong>Tuesday 13 May:</strong> Sensex fell 1,456 points to 74,559, Nifty dropped 436 points to 23,380 – the worst single-day fall since March. Selling was led by FPIs in financials and IT.</p>
+      <p><strong>Currency & Oil:</strong> The rupee opened at ~95.6 and later touched a record intraday low of 96.25-96.35 during the week. Brent crude traded in a $107-111 range, up nearly 18% month-on-month.</p>
+      <p><strong>Policy response:</strong> The government hiked gold and silver import duty to 15% (about 18% effective with cess) to curb non-essential dollar demand. The RBI intervened aggressively via spot and forward dollar sales, estimated at over $8 billion.</p>
+      <div class="note">
+        <strong>Analysis:</strong> The combination of FPI outflows ($3.2bn in May so far) plus an oil price shock is creating twin-deficit stress. The rupee has fallen 5.5% since the Iran-Israel war escalated in late April, threatening imported inflation.
+      </div>
+    </div>
+
+    <h2 class="section-heading">Section 4</h2>
+    <div class="card">
+      <span class="meta">Energy</span>
+      <h3>Energy Security – $20 Billion Offshore Push</h3>
+      <p><strong>Announcement:</strong> Petroleum Minister Hardeep Puri announced India will invest over $20 billion in offshore seismic data acquisition under the 'Samudra Manthan' mission.</p>
+      <p><strong>Scope:</strong> The plan covers 150,000 line km across Bengal-Purnea, Mahanadi, Krishna-Godavari, Cauvery, and Andaman basins. ONGC has floated an $18-20 billion deepwater rig tender for 8-10 rigs.</p>
+      <p><strong>Context:</strong> India imports ~85% of its crude oil. The mission targets 100 exploratory wells per year and aims to raise domestic reserves from 1.6 to 2 billion tonnes by 2035.</p>
+      <ul class="key-points">
+        <li><strong>Why now:</strong> Iran war has pushed Brent above $111, exposing vulnerability.</li>
+        <li>Strategic petroleum reserves to be expanded from 74 days to 90-day import cover.</li>
+        <li>Focus on gas-rich Andaman to reduce LNG import dependence.</li>
+      </ul>
+    </div>
+
+    <h2 class="section-heading">Section 5</h2>
+    <div class="card">
+      <span class="meta">Geopolitics</span>
+      <h3>Geopolitics – Hormuz Toll Threat</h3>
+      <p><strong>Iran's move:</strong> On 16 May, Iranian lawmaker Ebrahim Azizi said Iran is designing a mechanism to "manage Hormuz traffic," with fees for navigation services. He stated only vessels from "cooperating" nations would benefit.</p>
+      <p><strong>Diplomatic track:</strong> Iran FM Abbas Araghchi, visiting Delhi on 14 May, assured that Hormuz would remain open to all except nations at war with Iran, and promised "special facilitation" for Indian tankers and insurance.</p>
+      <p><strong>Oman response:</strong> Oman, which co-manages the strait, rejected any unilateral fees, citing UNCLOS transit passage rights which guarantee free navigation.</p>
+      <div class="note">
+        <strong>Implication for India:</strong> Over 60% of India's crude and 45% of LNG passes through Hormuz. Even a modest $50,000-100,000 per tanker fee would add $1.5-2 billion annually to the import bill, directly justifying the urgency of Samudra Manthan.
+      </div>
+    </div>
+
+    <h2 class="section-heading">Section 6</h2>
+    <div class="card">
+      <span class="meta">Corporate</span>
+      <h3>Corporate & Policy Signals</h3>
+      <ul class="key-points">
+        <li><strong>Bharti Airtel:</strong> Sunil Mittal reappointed chairman for 5 years from October 2026. Board approved ₹28,200 crore share swap to raise Airtel Africa stake to 72%.</li>
+        <li><strong>JSW MG Motor:</strong> Announced localisation of battery pack and motor assembly in Halol, aiming to build a full Indian EV core by 2028 to qualify for PLI.</li>
+        <li><strong>IMD + AI:</strong> IMD launched new AI-augmented forecast models with Google DeepMind. Monsoon onset over Kerala expected 26 May – 5 days early – boosting Kharif prospects.</li>
+        <li><strong>Fertiliser subsidy:</strong> Due to weak rupee and high gas prices, the fertiliser subsidy bill could rise by ₹70,000 crore to ₹2.41 trillion in FY27, Finance Ministry estimates.</li>
+      </ul>
+    </div>
+
+    <h2 class="section-heading">Section 7</h2>
+    <div class="card" style="border-left-color: var(--accent);">
+      <span class="meta">Forward Look</span>
+      <h3>What to Watch Next Week</h3>
+      <div class="watch-grid">
+        <div class="watch-item">
+          <div class="watch-dot"></div>
+          <div><strong>CBI NEET arrests</strong> and Supreme Court hearing on NTA overhaul petition on 20 May</div>
+        </div>
+        <div class="watch-item">
+          <div class="watch-dot"></div>
+          <div><strong>RBI FX intervention scale</strong> – watch forward book data and rupee stability around 96</div>
+        </div>
+        <div class="watch-item">
+          <div class="watch-dot"></div>
+          <div><strong>Hormuz fee mechanism</strong> – expected unveiling by Iran's parliament committee</div>
+        </div>
+        <div class="watch-item">
+          <div class="watch-dot"></div>
+          <div><strong>Monsoon progress</strong> and Kharif sowing intentions, critical for food inflation</div>
+        </div>
+        <div class="watch-item">
+          <div class="watch-dot"></div>
+          <div><strong>Q4 earnings tail:</strong> Tata Steel guiding ₹6,000/tonne price hike for June quarter</div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    Compiled from Business Standard Delhi editions 13-16 May 2026 • For internal circulation
+  </footer>
+</div>
+</body>
+</html>
