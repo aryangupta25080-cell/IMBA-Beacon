@@ -333,6 +333,19 @@ button{
   justify-content:space-between;
   gap:1rem;
 }
+.free-sessions-grid{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:1rem;
+}
+.free-sessions-grid .free-class-card{
+  min-height:178px;
+  align-items:flex-start;
+  flex-direction:column;
+}
+.free-sessions-grid .cta-outline{
+  margin-top:auto;
+}
 .tag-pill{
   display:inline-flex;
   align-items:center;
@@ -932,6 +945,9 @@ button{
     flex-direction:column;
     align-items:flex-start;
   }
+  .free-sessions-grid{
+    grid-template-columns:1fr;
+  }
   .cta-outline,
   .cta-solid,
   .section-btn,
@@ -1284,17 +1300,30 @@ button{
       return `
         <section class="dashboard-section" id="section-dashboard">
           <p class="section-label">Free Sessions</p>
-          <article class="free-class-card">
-            <div>
-              <span class="tag-pill amber"><i class="ti ti-gift"></i> Available for all students</span>
-              <h2>Introductory Interview Prep Class</h2>
-              <p>1 complimentary interview session — login required, no purchase required</p>
-            </div>
-            <a class="cta-outline" href="./free-session-register.html?type=interview">
-              <span>Register Interview Session</span>
-              <i class="ti ti-arrow-up-right"></i>
-            </a>
-          </article>
+          <div class="free-sessions-grid">
+            <article class="free-class-card">
+              <div>
+                <span class="tag-pill amber"><i class="ti ti-gift"></i> Available for all students</span>
+                <h2>Introductory Interview Prep Class</h2>
+                <p>1 complimentary interview session — login required, no purchase required</p>
+              </div>
+              <a class="cta-outline" href="./free-session-register.html?type=interview">
+                <span>Register Interview Session</span>
+                <i class="ti ti-arrow-up-right"></i>
+              </a>
+            </article>
+            <article class="free-class-card" id="section-batch">
+              <div>
+                <span class="tag-pill amber"><i class="ti ti-users-group"></i> Available for all students</span>
+                <h2>Batch Interaction Session</h2>
+                <p>Complimentary batch interaction — login required, no purchase required</p>
+              </div>
+              <a class="cta-outline" href="./free-session-register.html?type=batch">
+                <span>Register Batch Interaction</span>
+                <i class="ti ti-arrow-up-right"></i>
+              </a>
+            </article>
+          </div>
         </section>
       `;
     }
@@ -1492,22 +1521,7 @@ button{
     }
 
     function renderBatchSessions(plan) {
-      return `
-        <section class="dashboard-section" id="section-batch">
-          <p class="section-label">Free Batch Interaction</p>
-          <article class="free-class-card">
-            <div>
-              <span class="tag-pill amber"><i class="ti ti-users-group"></i> Available for all students</span>
-              <h2>Batch Interaction Session</h2>
-              <p>Complimentary batch interaction — login required, no purchase required</p>
-            </div>
-            <a class="cta-outline" href="./free-session-register.html?type=batch">
-              <span>Register Batch Interaction</span>
-              <i class="ti ti-arrow-up-right"></i>
-            </a>
-          </article>
-        </section>
-      `;
+      return "";
     }
 
     function renderSheets(plan) {
