@@ -1753,11 +1753,11 @@ button{
     function renderSections(student) {
       return [
         renderFreeClass(),
+        student.plan === "none" ? renderUpgradeSection() : "",
         renderTracks(student.plan),
         renderLiveClass(student.plan),
         renderBatchSessions(student.plan),
         renderSheets(student.plan),
-        student.plan === "none" ? renderUpgradeSection() : "",
         renderProfile(student)
       ].join("");
     }
