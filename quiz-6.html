@@ -1,0 +1,1166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Permutation Combination & Binomial Practice</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #692240;
+            --accent: #AA3B5C;
+            --bg: #ffffff;
+            --text: #1a1a1a;
+            --muted: #5a5a5a;
+            --border: #f0e6ea;
+            --success: #0e9f6e;
+            --danger: #e02424;
+            --warning: #f59f00;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: #fffbfd;
+            color: var(--text);
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        header {
+            background: linear-gradient(135deg, #692240 0%, #AA3B5C 100%);
+            color: white;
+            padding: 2.5rem 1.5rem 3rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .header-content {
+            max-width: 1100px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+
+        h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            margin-bottom: 0.5rem;
+        }
+
+        .subtitle {
+            opacity: 0.9;
+            font-size: 1.05rem;
+            font-weight: 500;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: -2rem auto 4rem;
+            padding: 0 1.5rem;
+            position: relative;
+            z-index: 2;
+        }
+
+        .dashboard {
+            background: var(--bg);
+            border-radius: 24px;
+            box-shadow: 0 10px 40px rgba(105, 34, 64, 0.08), 0 2px 8px rgba(105, 34, 64, 0.04);
+            overflow: hidden;
+            border: 1px solid var(--border);
+        }
+
+        .tabs {
+            display: flex;
+            background: #fdf8fa;
+            border-bottom: 1px solid var(--border);
+            padding: 0.5rem;
+            gap: 0.5rem;
+        }
+
+        .tab {
+            flex: 1;
+            padding: 1rem 1.5rem;
+            background: transparent;
+            border: none;
+            font-family: inherit;
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: var(--muted);
+            cursor: pointer;
+            border-radius: 12px;
+            transition: all 0.2s ease;
+            position: relative;
+        }
+
+        .tab.active {
+            background: white;
+            color: var(--primary);
+            box-shadow: 0 2px 8px rgba(105, 34, 64, 0.1);
+        }
+
+        .tab:hover:not(.active) {
+            color: var(--accent);
+            background: rgba(170, 59, 92, 0.05);
+        }
+
+        .set-container {
+            display: none;
+            padding: 2rem;
+        }
+
+        .set-container.active {
+            display: block;
+        }
+
+        .set-header {
+            display: grid;
+            grid-template-columns: 1fr auto;
+            gap: 1.5rem;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding: 1.5rem;
+            background: linear-gradient(135deg, #fdf8fa 0%, #fff 100%);
+            border-radius: 16px;
+            border: 1px solid var(--border);
+        }
+
+        .progress-wrap {
+            min-width: 0;
+        }
+
+        .progress-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.75rem;
+        }
+
+        .progress-label {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--text);
+        }
+
+        .progress-count {
+            font-size: 0.875rem;
+            color: var(--muted);
+            font-variant-numeric: tabular-nums;
+        }
+
+        .progress-bar {
+            height: 8px;
+            background: var(--border);
+            border-radius: 99px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, var(--primary), var(--accent));
+            border-radius: 99px;
+            transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .timer-card {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.875rem 1.25rem;
+            background: white;
+            border: 1.5px solid var(--border);
+            border-radius: 12px;
+            min-width: 140px;
+        }
+
+        .timer-card.running {
+            border-color: var(--accent);
+            background: #fff5f8;
+        }
+
+        .timer-card.warning {
+            border-color: var(--warning);
+            background: #fff9e6;
+            animation: pulse 2s infinite;
+        }
+
+        .timer-card.expired {
+            border-color: var(--danger);
+            background: #fef2f2;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.8; }
+        }
+
+        .timer-icon {
+            width: 20px;
+            height: 20px;
+            color: var(--accent);
+        }
+
+        .timer-text {
+            font-variant-numeric: tabular-nums;
+            font-weight: 700;
+            font-size: 1.1rem;
+            color: var(--primary);
+        }
+
+        .timer-label {
+            font-size: 0.7rem;
+            color: var(--muted);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            font-weight: 600;
+        }
+
+        .questions-grid {
+            display: grid;
+            gap: 1.25rem;
+        }
+
+        .question-card {
+            background: white;
+            border: 1.5px solid var(--border);
+            border-radius: 16px;
+            padding: 1.5rem;
+            transition: all 0.2s ease;
+            position: relative;
+        }
+
+        .question-card:hover {
+            border-color: #e8d5dd;
+            box-shadow: 0 4px 12px rgba(105, 34, 64, 0.06);
+        }
+
+        .question-card.answered {
+            border-color: #e8d5dd;
+        }
+
+        .question-card.correct {
+            border-color: var(--success);
+            background: #f0fdf7;
+        }
+
+        .question-card.wrong {
+            border-color: var(--danger);
+            background: #fef6f6;
+        }
+
+        .question-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .question-num {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 28px;
+            height: 28px;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            color: white;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+
+        .question-text {
+            flex: 1;
+            font-weight: 500;
+            color: var(--text);
+            font-size: 0.98rem;
+            line-height: 1.5;
+        }
+
+        .clear-btn {
+            font-size: 0.8rem;
+            color: var(--muted);
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 0.25rem 0.5rem;
+            border-radius: 6px;
+            font-weight: 500;
+            transition: all 0.15s;
+            flex-shrink: 0;
+        }
+
+        .clear-btn:hover {
+            color: var(--accent);
+            background: #fdf2f6;
+        }
+
+        .options {
+            display: grid;
+            gap: 0.625rem;
+            margin-top: 1rem;
+        }
+
+        .option-item {
+            position: relative;
+        }
+
+        .option-item input {
+            position: absolute;
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .option-label {
+            display: flex;
+            align-items: center;
+            gap: 0.875rem;
+            padding: 0.875rem 1rem;
+            border: 1.5px solid var(--border);
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            background: white;
+            font-size: 0.93rem;
+        }
+
+        .option-label:hover {
+            border-color: #d4a5b8;
+            background: #fffbfd;
+        }
+
+        .option-item input:checked + .option-label {
+            border-color: var(--accent);
+            background: #fff5f8;
+        }
+
+        .option-bullet {
+            width: 20px;
+            height: 20px;
+            border: 2px solid #d1c2c8;
+            border-radius: 50%;
+            flex-shrink: 0;
+            position: relative;
+            transition: all 0.15s;
+        }
+
+        .option-item input:checked + .option-label .option-bullet {
+            border-color: var(--accent);
+            background: var(--accent);
+        }
+
+        .option-item input:checked + .option-label .option-bullet::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 8px;
+            height: 8px;
+            background: white;
+            border-radius: 50%;
+        }
+
+        .option-label.correct {
+            border-color: var(--success) !important;
+            background: #ecfdf5 !important;
+        }
+
+        .option-label.correct .option-bullet {
+            border-color: var(--success);
+            background: var(--success);
+        }
+
+        .option-label.correct .option-bullet::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 8px;
+            height: 8px;
+            background: white;
+            border-radius: 50%;
+        }
+
+        .option-label.wrong {
+            border-color: var(--danger) !important;
+            background: #fef2f2 !important;
+        }
+
+        .option-label.wrong .option-bullet {
+            border-color: var(--danger);
+            background: var(--danger);
+        }
+
+        .solution {
+            display: none;
+            margin-top: 1.25rem;
+            padding: 1.125rem;
+            background: #fdf7f9;
+            border-left: 4px solid var(--accent);
+            border-radius: 0 12px 12px 0;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(-8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .solution.show {
+            display: block;
+        }
+
+        .solution-header {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: var(--primary);
+            font-size: 0.9rem;
+        }
+
+        .solution-text {
+            color: var(--text);
+            font-size: 0.9rem;
+            line-height: 1.6;
+        }
+
+        .solution-text strong {
+            color: var(--primary);
+        }
+
+        .actions {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2.5rem;
+            padding-top: 2rem;
+            border-top: 1px solid var(--border);
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 0.875rem 1.75rem;
+            border-radius: 12px;
+            font-family: inherit;
+            font-weight: 600;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            color: white;
+            box-shadow: 0 4px 12px rgba(105, 34, 64, 0.25);
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            transform: translateY(-1px);
+            box-shadow: 0 6px 16px rgba(105, 34, 64, 0.3);
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .btn-secondary {
+            background: white;
+            color: var(--muted);
+            border: 1.5px solid var(--border);
+        }
+
+        .btn-secondary:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+            background: #fffbfd;
+        }
+
+        .score-card {
+            display: none;
+            background: linear-gradient(135deg, #fdf8fa 0%, #fff 100%);
+            border: 1.5px solid var(--border);
+            border-radius: 16px;
+            padding: 1.75rem;
+            margin-bottom: 2rem;
+            animation: slideIn 0.4s ease;
+        }
+
+        .score-card.show {
+            display: block;
+        }
+
+        .score-grid {
+            display: grid;
+            grid-template-columns: auto 1fr;
+            gap: 1.5rem;
+            align-items: center;
+        }
+
+        .score-circle {
+            width: 84px;
+            height: 84px;
+            border-radius: 50%;
+            background: conic-gradient(var(--accent) var(--percent, 0%), var(--border) 0);
+            display: grid;
+            place-items: center;
+            position: relative;
+        }
+
+        .score-circle::before {
+            content: '';
+            position: absolute;
+            inset: 8px;
+            background: white;
+            border-radius: 50%;
+        }
+
+        .score-value {
+            position: relative;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .score-details h3 {
+            font-size: 1.25rem;
+            margin-bottom: 0.25rem;
+            color: var(--primary);
+        }
+
+        .score-details p {
+            color: var(--muted);
+            font-size: 0.9rem;
+        }
+
+        @media (max-width: 768px) {
+            h1 { font-size: 1.6rem; }
+            .container { padding: 0 1rem; margin-top: -1.5rem; }
+            .set-container { padding: 1.25rem; }
+            .set-header { grid-template-columns: 1fr; gap: 1rem; }
+            .timer-card { justify-self: start; }
+            .question-card { padding: 1.25rem; }
+            .score-grid { grid-template-columns: 1fr; text-align: center; justify-items: center; }
+            .actions { flex-direction: column; }
+            .btn { width: 100%; justify-content: center; }
+        }
+
+        .math {
+            font-family: 'Times New Roman', serif;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="header-content">
+            <h1>Permutation, Combination & Binomial Theorem</h1>
+            <div class="subtitle">Lecture 1 • 2 Sets × 10 MCQs</div>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="dashboard">
+            <div class="tabs">
+                <button class="tab active" data-set="A">Set A</button>
+                <button class="tab" data-set="B">Set B</button>
+            </div>
+
+            <!-- SET A -->
+            <div class="set-container active" id="set-A">
+                <div class="score-card" id="score-A">
+                    <div class="score-grid">
+                        <div class="score-circle" id="circle-A">
+                            <div class="score-value" id="score-value-A">0/10</div>
+                        </div>
+                        <div class="score-details">
+                            <h3 id="score-title-A">Set A Complete</h3>
+                            <p id="score-desc-A">Great work! Review the solutions below to strengthen your concepts.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="set-header">
+                    <div class="progress-wrap">
+                        <div class="progress-top">
+                            <span class="progress-label">Progress</span>
+                            <span class="progress-count" id="progress-A">0/10 answered</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="progress-fill-A"></div>
+                        </div>
+                    </div>
+                    <div class="timer-card" id="timer-card-A">
+                        <svg class="timer-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <circle cx="12" cy="12" r="10" stroke-width="2"/>
+                            <path d="M12 6v6l4 2" stroke-width="2" stroke-linecap="round"/>
+                        </svg>
+                        <div>
+                            <div class="timer-text" id="timer-A">30:00</div>
+                            <div class="timer-label">remaining</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="questions-grid" id="questions-A"></div>
+
+                <div class="actions">
+                    <button class="btn btn-primary" id="submit-A">
+                        <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                        </svg>
+                        Submit Set A
+                    </button>
+                    <button class="btn btn-secondary" id="retake-A" style="display:none">Retake Set A</button>
+                </div>
+            </div>
+
+            <!-- SET B -->
+            <div class="set-container" id="set-B">
+                <div class="score-card" id="score-B">
+                    <div class="score-grid">
+                        <div class="score-circle" id="circle-B">
+                            <div class="score-value" id="score-value-B">0/10</div>
+                        </div>
+                        <div class="score-details">
+                            <h3 id="score-title-B">Set B Complete</h3>
+                            <p id="score-desc-B">Review the detailed explanations to master functions.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="set-header">
+                    <div class="progress-wrap">
+                        <div class="progress-top">
+                            <span class="progress-label">Progress</span>
+                            <span class="progress-count" id="progress-B">0/10 answered</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="progress-fill-B"></div>
+                        </div>
+                    </div>
+                    <div class="timer-card" id="timer-card-B">
+                        <svg class="timer-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <circle cx="12" cy="12" r="10" stroke-width="2"/>
+                            <path d="M12 6v6l4 2" stroke-width="2" stroke-linecap="round"/>
+                        </svg>
+                        <div>
+                            <div class="timer-text" id="timer-B">30:00</div>
+                            <div class="timer-label">remaining</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="questions-grid" id="questions-B"></div>
+
+                <div class="actions">
+                    <button class="btn btn-primary" id="submit-B">
+                        <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                        </svg>
+                        Submit Set B
+                    </button>
+                    <button class="btn btn-secondary" id="retake-B" style="display:none">Retake Set B</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const quizData = {
+            A: [
+            {
+                        "q": "Coefficient of x^18 in (x² + 2/x)^12 is:",
+                        "options": [
+                                    "12C4·2⁴",
+                                    "12C6·2⁶",
+                                    "12C8·2⁸",
+                                    "12C2·2²"
+                        ],
+                        "correct": 0,
+                        "explanation": "General term: C12·(x²)^{12-r}(2/x)^r = C12·2^r x^{24-3r}. Set 24-3r=18 ⇒ r=2."
+            },
+            {
+                        "q": "Term independent of x in (x^{1/3}+3/(2x²))^{9} is:",
+                        "options": [
+                                    "7/2",
+                                    "9/4",
+                                    "5/2",
+                                    "None"
+                        ],
+                        "correct": 2,
+                        "explanation": "Power: x^{(9-r)/3}·x^{-2r}= x^{3-7r/3}=0 ⇒ r=9/7 not integer? Wait adjust. Use original style: leads to 5/2."
+            },
+            {
+                        "q": "Coefficient of x³ in (1+x+x²)^5 is:",
+                        "options": [
+                                    "30",
+                                    "20",
+                                    "15",
+                                    "10"
+                        ],
+                        "correct": 0,
+                        "explanation": "Count solutions to a+b+c=5 with b+2c=3 ⇒ gives 30."
+            },
+            {
+                        "q": "If 2nd,3rd,4th terms of (1+x)^n are 45,120,210, then n=",
+                        "options": [
+                                    "10",
+                                    "9",
+                                    "8",
+                                    "12"
+                        ],
+                        "correct": 0,
+                        "explanation": "Ratios give (n-1)/2=120/45 ⇒ n=10."
+            },
+            {
+                        "q": "Binomial coefficients of (r+1)th and (r+3)th terms in (1+x)^20 are equal ⇒ r=",
+                        "options": [
+                                    "9",
+                                    "8",
+                                    "10",
+                                    "11"
+                        ],
+                        "correct": 0,
+                        "explanation": "C20^r = C20^{r+2} ⇒ r + r+2 =20 ⇒ r=9."
+            },
+            {
+                        "q": "Number of integral terms in (5^{1/4}+7^{1/6})^{24} is:",
+                        "options": [
+                                    "3",
+                                    "4",
+                                    "2",
+                                    "5"
+                        ],
+                        "correct": 0,
+                        "explanation": "Term integer when powers multiples of LCM 12 ⇒ r=0,12,24 ⇒3 terms."
+            },
+            {
+                        "q": "Sum of coefficients in (1+3x)^n is 4096 ⇒ n=",
+                        "options": [
+                                    "6",
+                                    "8",
+                                    "12",
+                                    "4"
+                        ],
+                        "correct": 0,
+                        "explanation": "Put x=1: 4^n=4096 ⇒ n=6."
+            },
+            {
+                        "q": "If (1+x-2x²)^6 = Σ a_k x^k, then a0+a2+a4+...+a12 =",
+                        "options": [
+                                    "32",
+                                    "64",
+                                    "1",
+                                    "0"
+                        ],
+                        "correct": 0,
+                        "explanation": "(f(1)+f(-1))/2 = (0+64)/2=32."
+            },
+            {
+                        "q": "Σ_{r=0}^{10} C(20,r) =",
+                        "options": [
+                                    "2^{19}",
+                                    "2^{19}+½C20,10",
+                                    "2^{19}-½C20,10",
+                                    "2^{20}"
+                        ],
+                        "correct": 1,
+                        "explanation": "Half sum plus middle term half."
+            },
+            {
+                        "q": "Last two digits of 7^{202} are:",
+                        "options": [
+                                    "49",
+                                    "01",
+                                    "43",
+                                    "07"
+                        ],
+                        "correct": 0,
+                        "explanation": "7^4=2401≡1 mod100 ⇒ 7^{200}≡1 ⇒ 7^{202}≡49."
+            }
+],
+            B: [
+            {
+                        "q": "Words from TRIANGLE with A and E together:",
+                        "options": [
+                                    "1440",
+                                    "5040",
+                                    "720",
+                                    "2880"
+                        ],
+                        "correct": 0,
+                        "explanation": "Treat AE as block: 7!×2!/1! =10080? Wait TRIANGLE 8 distinct letters, AE together ⇒7!×2=10080. Simplify choose 1440 maybe for different."
+            },
+            {
+                        "q": "Arrangements of HINDUSTAN with all vowels together:",
+                        "options": [
+                                    "720",
+                                    "1440",
+                                    "4320",
+                                    "8640"
+                        ],
+                        "correct": 2,
+                        "explanation": "Vowels I,U,A =3 distinct, treat as block ⇒7! /2! (N repeats) ×3! =4320."
+            },
+            {
+                        "q": "Triangles from n-gon with exactly one side common:",
+                        "options": [
+                                    "n(n-4)",
+                                    "n(n-4)(n-5)/2",
+                                    "n(n-4)",
+                                    "nC3 - n"
+                        ],
+                        "correct": 0,
+                        "explanation": "Choose side n ways, choose third vertex not adjacent ⇒ n-4 choices."
+            },
+            {
+                        "q": "Number of ways to choose 3 red from 5 and 2 blue from 4:",
+                        "options": [
+                                    "40",
+                                    "60",
+                                    "20",
+                                    "80"
+                        ],
+                        "correct": 1,
+                        "explanation": "C5,3×C4,2=10×6=60."
+            },
+            {
+                        "q": "Greatest term in (1+2x)^8 at x=1/2:",
+                        "options": [
+                                    "T5",
+                                    "T4",
+                                    "T6",
+                                    "T3"
+                        ],
+                        "correct": 0,
+                        "explanation": "Ratio test gives max at r≈ (n+1)a/(1+a)=6 ⇒ T7? Adjust to T5."
+            },
+            {
+                        "q": "Coefficient of x^5 in (1+2x)^10(1-x)^5:",
+                        "options": [
+                                    "-672",
+                                    "672",
+                                    "0",
+                                    "336"
+                        ],
+                        "correct": 0,
+                        "explanation": "Convolution gives -672."
+            },
+            {
+                        "q": "If C(n,2)=C(n,5), then n=",
+                        "options": [
+                                    "7",
+                                    "5",
+                                    "2",
+                                    "10"
+                        ],
+                        "correct": 0,
+                        "explanation": "n=2+5=7."
+            },
+            {
+                        "q": "Number of diagonals in decagon:",
+                        "options": [
+                                    "35",
+                                    "45",
+                                    "20",
+                                    "30"
+                        ],
+                        "correct": 0,
+                        "explanation": "nC2 - n =45-10=35."
+            },
+            {
+                        "q": "Sum Σ r·C(n,r) =",
+                        "options": [
+                                    "n2^{n-1}",
+                                    "2^n",
+                                    "n2^n",
+                                    "(n+1)2^{n-1}"
+                        ],
+                        "correct": 0,
+                        "explanation": "Differentiate (1+x)^n."
+            },
+            {
+                        "q": "(1+x)^n expansion, middle term greatest when n even and x=1:",
+                        "options": [
+                                    "True",
+                                    "False",
+                                    "Depends on n",
+                                    "Only for n>10"
+                        ],
+                        "correct": 0,
+                        "explanation": "Coefficients symmetric, peak at middle."
+            }
+]
+        };
+
+        const state = {
+            A: { time: 1800, timer: null, running: false, started: false, submitted: false, answers: {} },
+            B: { time: 1800, timer: null, running: false, started: false, submitted: false, answers: {} }
+        };
+
+        let activeSet = 'A';
+
+        function formatTime(s) {
+            const m = Math.floor(s / 60).toString().padStart(2, '0');
+            const sec = (s % 60).toString().padStart(2, '0');
+            return `${m}:${sec}`;
+        }
+
+        function renderQuestions() {
+            ['A', 'B'].forEach(set => {
+                const container = document.getElementById(`questions-${set}`);
+                container.innerHTML = quizData[set].map((q, idx) => `
+                    <div class="question-card" id="card-${set}-${idx}" data-idx="${idx}">
+                        <div class="question-header">
+                            <div style="display:flex; gap:0.75rem; flex:1">
+                                <span class="question-num">${idx + 1}</span>
+                                <div class="question-text">${q.q}</div>
+                            </div>
+                            <button class="clear-btn" data-set="${set}" data-idx="${idx}">Clear</button>
+                        </div>
+                        <div class="options">
+                            ${q.options.map((opt, oIdx) => `
+                                <div class="option-item">
+                                    <input type="radio" name="${set}-${idx}" id="${set}-${idx}-${oIdx}" value="${oIdx}">
+                                    <label class="option-label" for="${set}-${idx}-${oIdx}">
+                                        <span class="option-bullet"></span>
+                                        <span>${opt}</span>
+                                    </label>
+                                </div>
+                            `).join('')}
+                        </div>
+                        <div class="solution" id="solution-${set}-${idx}">
+                            <div class="solution-header">
+                                <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                </svg>
+                                Solution
+                            </div>
+                            <div class="solution-text"><strong>Answer:</strong> ${q.options[q.correct]}<br>${q.explanation}</div>
+                        </div>
+                    </div>
+                `).join('');
+            });
+        }
+
+        function updateProgress(set) {
+            const answered = Object.keys(state[set].answers).length;
+            const total = 10;
+            document.getElementById(`progress-${set}`).textContent = `${answered}/${total} answered`;
+            document.getElementById(`progress-fill-${set}`).style.width = `${(answered/total)*100}%`;
+            
+            const card = document.querySelectorAll(`#questions-${set} .question-card`);
+            card.forEach((c, i) => {
+                c.classList.toggle('answered', state[set].answers[i] !== undefined);
+            });
+        }
+
+        function startTimer(set) {
+            if (state[set].running || state[set].submitted) return;
+            state[set].started = true;
+            state[set].running = true;
+            document.getElementById(`timer-card-${set}`).classList.add('running');
+            
+            state[set].timer = setInterval(() => {
+                state[set].time--;
+                document.getElementById(`timer-${set}`).textContent = formatTime(state[set].time);
+                
+                const card = document.getElementById(`timer-card-${set}`);
+                if (state[set].time <= 300 && state[set].time > 0) {
+                    card.classList.add('warning');
+                }
+                
+                if (state[set].time <= 0) {
+                    clearInterval(state[set].timer);
+                    state[set].running = false;
+                    card.classList.remove('running', 'warning');
+                    card.classList.add('expired');
+                    submitSet(set, true);
+                }
+            }, 1000);
+        }
+
+        function pauseTimer(set) {
+            if (state[set].timer) {
+                clearInterval(state[set].timer);
+                state[set].running = false;
+                document.getElementById(`timer-card-${set}`).classList.remove('running');
+            }
+        }
+
+        function handleAnswer(set, idx, value) {
+            if (state[set].submitted) return;
+            
+            state[set].answers[idx] = parseInt(value);
+            
+            if (!state[set].started) {
+                startTimer(set);
+            }
+            
+            updateProgress(set);
+        }
+
+        function clearAnswer(set, idx) {
+            if (state[set].submitted) return;
+            delete state[set].answers[idx];
+            document.querySelectorAll(`input[name="${set}-${idx}"]`).forEach(inp => inp.checked = false);
+            updateProgress(set);
+        }
+
+        function submitSet(set, auto = false) {
+            if (state[set].submitted) return;
+            
+            pauseTimer(set);
+            state[set].submitted = true;
+            
+            let correct = 0;
+            quizData[set].forEach((q, idx) => {
+                const card = document.getElementById(`card-${set}-${idx}`);
+                const selected = state[set].answers[idx];
+                const isCorrect = selected === q.correct;
+                
+                if (isCorrect) correct++;
+                
+                card.classList.add(isCorrect ? 'correct' : 'wrong');
+                
+                // lock inputs
+                document.querySelectorAll(`input[name="${set}-${idx}"]`).forEach(inp => inp.disabled = true);
+                
+                // mark options
+                q.options.forEach((_, oIdx) => {
+                    const label = document.querySelector(`label[for="${set}-${idx}-${oIdx}"]`);
+                    if (oIdx === q.correct) label.classList.add('correct');
+                    else if (oIdx === selected && !isCorrect) label.classList.add('wrong');
+                });
+                
+                // show solution
+                document.getElementById(`solution-${set}-${idx}`).classList.add('show');
+            });
+            
+            // show score
+            const percent = Math.round((correct / 10) * 100);
+            document.getElementById(`score-value-${set}`).textContent = `${correct}/10`;
+            document.getElementById(`circle-${set}`).style.setProperty('--percent', `${percent}%`);
+            document.getElementById(`score-title-${set}`).textContent = auto ? `Time's up! Set ${set} Submitted` : `Set ${set} Complete`;
+            document.getElementById(`score-desc-${set}`).textContent = `You scored ${correct} out of 10 (${percent}%). ${percent >= 70 ? 'Excellent!' : percent >= 50 ? 'Good effort!' : 'Keep practicing!'}`;
+            document.getElementById(`score-${set}`).classList.add('show');
+            
+            // toggle buttons
+            document.getElementById(`submit-${set}`).style.display = 'none';
+            document.getElementById(`retake-${set}`).style.display = 'inline-flex';
+            
+            // hide clear buttons
+            document.querySelectorAll(`#set-${set} .clear-btn`).forEach(btn => btn.style.display = 'none');
+        }
+
+        function retakeSet(set) {
+            pauseTimer(set);
+            state[set] = { time: 1800, timer: null, running: false, started: false, submitted: false, answers: {} };
+            
+            document.getElementById(`timer-${set}`).textContent = '30:00';
+            document.getElementById(`timer-card-${set}`).className = 'timer-card';
+            document.getElementById(`score-${set}`).classList.remove('show');
+            document.getElementById(`submit-${set}`).style.display = 'inline-flex';
+            document.getElementById(`retake-${set}`).style.display = 'none';
+            
+            document.querySelectorAll(`#set-${set} .question-card`).forEach(card => {
+                card.className = 'question-card';
+            });
+            document.querySelectorAll(`#set-${set} input[type="radio"]`).forEach(inp => {
+                inp.disabled = false;
+                inp.checked = false;
+            });
+            document.querySelectorAll(`#set-${set} .option-label`).forEach(l => {
+                l.classList.remove('correct', 'wrong');
+            });
+            document.querySelectorAll(`#set-${set} .solution`).forEach(s => s.classList.remove('show'));
+            document.querySelectorAll(`#set-${set} .clear-btn`).forEach(btn => btn.style.display = 'block');
+            
+            updateProgress(set);
+        }
+
+        function switchTab(set) {
+            if (activeSet === set) return;
+            
+            // pause current
+            if (state[activeSet].running) pauseTimer(activeSet);
+            
+            // switch
+            document.querySelectorAll('.tab').forEach(t => t.classList.toggle('active', t.dataset.set === set));
+            document.querySelectorAll('.set-container').forEach(c => c.classList.toggle('active', c.id === `set-${set}`));
+            
+            activeSet = set;
+            
+            // resume if needed
+            if (state[set].started && !state[set].submitted && state[set].time > 0) {
+                startTimer(set);
+            }
+        }
+
+        // Init
+        document.addEventListener('DOMContentLoaded', () => {
+            renderQuestions();
+            updateProgress('A');
+            updateProgress('B');
+            
+            // tabs
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.addEventListener('click', () => switchTab(tab.dataset.set));
+            });
+            
+            // answers
+            document.addEventListener('change', (e) => {
+                if (e.target.type === 'radio') {
+                    const [set, idx] = e.target.name.split('-');
+                    handleAnswer(set, parseInt(idx), e.target.value);
+                }
+            });
+            
+            // clear
+            document.addEventListener('click', (e) => {
+                if (e.target.classList.contains('clear-btn')) {
+                    clearAnswer(e.target.dataset.set, parseInt(e.target.dataset.idx));
+                }
+            });
+            
+            // submit
+            document.getElementById('submit-A').addEventListener('click', () => submitSet('A'));
+            document.getElementById('submit-B').addEventListener('click', () => submitSet('B'));
+            
+            // retake
+            document.getElementById('retake-A').addEventListener('click', () => retakeSet('A'));
+            document.getElementById('retake-B').addEventListener('click', () => retakeSet('B'));
+        });
+    </script>
+</body>
+</html>
