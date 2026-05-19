@@ -115,9 +115,18 @@ const PLAN_CATALOG = {
 
 const DEFAULT_COUPON_CODE = String(process.env.IMBA_COUPON_CODE || "IMDS10").trim().toUpperCase();
 const DEFAULT_COUPON_DISCOUNT_PERCENT = 10;
+const FREE_SESSION_TYPES = {
+  interview: "Free Interview Session",
+  batch: "Free Batch Interaction Session"
+};
 
 function normalizeCouponCode(value) {
   return String(value || "").trim().toUpperCase().replace(/\s+/g, "");
+}
+
+function normalizeFreeSessionType(value) {
+  const sessionType = String(value || "").trim().toLowerCase();
+  return Object.prototype.hasOwnProperty.call(FREE_SESSION_TYPES, sessionType) ? sessionType : "";
 }
 
 function formatAmountDisplay(amount, currency = "INR") {
@@ -361,6 +370,18 @@ async function getDatabase() {
       code TEXT PRIMARY KEY,
       used_count INTEGER NOT NULL DEFAULT 0,
       max_uses INTEGER NOT NULL DEFAULT 10
+    );
+
+    CREATE TABLE IF NOT EXISTS free_session_registrations (
+      id BIGSERIAL PRIMARY KEY,
+      session_type TEXT NOT NULL,
+      session_label TEXT NOT NULL,
+      name TEXT NOT NULL,
+      email TEXT NOT NULL,
+      phone TEXT NOT NULL,
+      school_percentile DOUBLE PRECISION NOT NULL,
+      registered_at TIMESTAMPTZ NOT NULL,
+      UNIQUE (session_type, email)
     );
   `);
 
@@ -1606,6 +1627,97 @@ async function handleProfileUpdate(request, response) {
   }
 }
 
+async function handleFreeSessionRegistration(request, response) {
+  const sessionUser = requireAuthenticatedUser(request, response);
+  if (!sessionUser) return;
+
+  try {
+    const body = await parseRequestBody(request);
+    const sessionType = normalizeFreeSessionType(body.sessionType);
+    const name = String(body.name || "").trim();
+    const phone = String(body.phone || "").trim();
+    const schoolPercentile = String(body.schoolPercentile || "").trim();
+    const email = normalizeEmail(sessionUser.email);
+
+    if (!sessionType) {
+      sendJson(response, 400, { message: "Please select a valid free session." });
+      return;
+    }
+
+    if (name.length < 2) {
+      sendJson(response, 400, { message: "Please enter your full name." });
+      return;
+    }
+
+    if (!isValidPhone(phone)) {
+      sendJson(response, 400, { message: "Please enter a valid 10-digit phone number." });
+      return;
+    }
+
+    if (!isValidPercentile(schoolPercentile)) {
+      sendJson(response, 400, { message: "Please enter a valid JEE percentile between 0 and 100." });
+      return;
+    }
+
+    const db = await getDatabase();
+    const sessionLabel = FREE_SESSION_TYPES[sessionType];
+    const registeredAt = new Date().toISOString();
+
+    await db.run(`
+      INSERT INTO free_session_registrations (
+        session_type,
+        session_label,
+        name,
+        email,
+        phone,
+        school_percentile,
+        registered_at
+      )
+      VALUES (?, ?, ?, ?, ?, ?, ?)
+      ON CONFLICT (session_type, email) DO UPDATE SET
+        session_label = excluded.session_label,
+        name = excluded.name,
+        phone = excluded.phone,
+        school_percentile = excluded.school_percentile,
+        registered_at = excluded.registered_at
+    `, [
+      sessionType,
+      sessionLabel,
+      name,
+      email,
+      phone,
+      Number(schoolPercentile),
+      registeredAt
+    ]);
+
+    const persistedUser = await upsertUser({
+      ...sessionUser,
+      name,
+      phone,
+      schoolPercentile: Number(schoolPercentile)
+    });
+
+    const cookies = parseCookies(request);
+    const sessionId = cookies[SESSION_COOKIE];
+    if (sessionId) {
+      sessionStore.set(sessionId, persistedUser);
+      await saveSessionStore();
+    }
+
+    sendJson(response, 200, {
+      message: `Registration confirmed for ${sessionLabel}. The session link will be uploaded one hour prior to the session on the website and will also be sent through email.`,
+      registration: {
+        sessionType,
+        sessionLabel,
+        registeredAt
+      },
+      user: getPublicUser(persistedUser)
+    });
+  } catch (error) {
+    sendJson(response, 400, { message: error.message || "Unable to complete registration." });
+  }
+}
+
 async function handleCreateOrder(request, response) {
   const user = requireAuthenticatedUser(request, response);
   if (!user) return;
@@ -1886,6 +1998,14 @@ async function requestHandler(request, response) {
 
   if (request.method === "POST" && pathname === "/api/auth/profile") {
     await handleProfileUpdate(request, {
+      writeHead: (...args) => response.writeHead(args[0], { ...args[1], ...corsHeaders }),
+      end: (...args) => response.end(...args)
+    });
+    return;
+  }
+
+  if (request.method === "POST" && pathname === "/api/free-session/register") {
+    await handleFreeSessionRegistration(request, {
       writeHead: (...args) => response.writeHead(args[0], { ...args[1], ...corsHeaders }),
       end: (...args) => response.end(...args)
     });

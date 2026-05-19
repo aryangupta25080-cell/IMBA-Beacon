@@ -1283,17 +1283,17 @@ button{
     function renderFreeClass() {
       return `
         <section class="dashboard-section" id="section-dashboard">
-          <p class="section-label">Free Class</p>
+          <p class="section-label">Free Sessions</p>
           <article class="free-class-card">
             <div>
               <span class="tag-pill amber"><i class="ti ti-gift"></i> Available for all students</span>
               <h2>Introductory Interview Prep Class</h2>
-              <p>1 complimentary session — no purchase required</p>
+              <p>1 complimentary interview session — login required, no purchase required</p>
             </div>
-            <button class="cta-outline" type="button" data-action="join-free-class">
-              <span>Join Free Class</span>
+            <a class="cta-outline" href="./free-session-register.html?type=interview">
+              <span>Register Interview Session</span>
               <i class="ti ti-arrow-up-right"></i>
-            </button>
+            </a>
           </article>
         </section>
       `;
@@ -1492,53 +1492,20 @@ button{
     }
 
     function renderBatchSessions(plan) {
-      if (plan === "none") {
-        return `
-          <section class="dashboard-section" id="section-batch">
-            <p class="section-label">Batch Sessions</p>
-            <article class="dashboard-card locked-card">
-              <div class="batch-grid">
-                <div class="batch-card">
-                  <strong>Current batch interaction</strong>
-                  <p>Peer interaction and mentor moderation unlock after purchase.</p>
-                  <span>Schedule shared by mentor</span>
-                </div>
-              </div>
-              <div class="locked-message">
-                <i class="ti ti-lock"></i>
-                <div>
-                  <strong>Batch sessions unlock after purchase</strong>
-                  <span>Enroll in Basic or Pro to join the current batch.</span>
-                </div>
-              </div>
-            </article>
-          </section>
-        `;
-      }
-
-      const sessions = plan === "pro"
-        ? [
-            { title: "Batch Interaction Round 1", copy: "Schedule TBA by mentor" },
-            { title: "Batch Interaction Round 2", copy: "Priority interaction with the current cohort" }
-          ]
-        : [
-            { title: "Batch Interaction Round", copy: "Schedule TBA by mentor" }
-          ];
-
       return `
         <section class="dashboard-section" id="section-batch">
-          <p class="section-label">Batch Sessions</p>
-          <div class="batch-grid ${plan === "pro" ? "pro" : ""}">
-            ${sessions.map(function (session, index) {
-              return `
-                <article class="batch-card">
-                  <strong>${escapeHtml(session.title)}</strong>
-                  <p>${escapeHtml(session.copy)}</p>
-                  <span>Session ${index + 1}</span>
-                </article>
-              `;
-            }).join("")}
-          </div>
+          <p class="section-label">Free Batch Interaction</p>
+          <article class="free-class-card">
+            <div>
+              <span class="tag-pill amber"><i class="ti ti-users-group"></i> Available for all students</span>
+              <h2>Batch Interaction Session</h2>
+              <p>Complimentary batch interaction — login required, no purchase required</p>
+            </div>
+            <a class="cta-outline" href="./free-session-register.html?type=batch">
+              <span>Register Batch Interaction</span>
+              <i class="ti ti-arrow-up-right"></i>
+            </a>
+          </article>
         </section>
       `;
     }
