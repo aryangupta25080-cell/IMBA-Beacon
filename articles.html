@@ -448,6 +448,8 @@ button{
   }
   .article-switch button{
     flex:1;
+    min-width:0;
+    padding:.68rem .6rem;
   }
   .article-grid{
     grid-template-columns:1fr;
@@ -534,7 +536,8 @@ button{
     let articleLibrary = {
       defaultView: "daily",
       daily: [],
-      weekly: []
+      weekly: [],
+      important: []
     };
     let currentArticleView = "daily";
 
@@ -557,7 +560,10 @@ button{
     }
 
     function normalizeArticleView(value) {
-      return value === "weekly" ? "weekly" : "daily";
+      if (value === "weekly" || value === "important") {
+        return value;
+      }
+      return "daily";
     }
 
     function normalizeArticleItem(item) {
@@ -576,11 +582,19 @@ button{
       return {
         defaultView: normalizeArticleView(payload && payload.defaultView),
         daily: Array.isArray(payload && payload.daily) ? payload.daily.map(normalizeArticleItem) : [],
-        weekly: Array.isArray(payload && payload.weekly) ? payload.weekly.map(normalizeArticleItem) : []
+        weekly: Array.isArray(payload && payload.weekly) ? payload.weekly.map(normalizeArticleItem) : [],
+        important: Array.isArray(payload && payload.important) ? payload.important.map(normalizeArticleItem) : []
       };
     }
 
     function getArticleViewMeta(view) {
+      if (view === "important") {
+        return {
+          title: "Important articles",
+          copy: "High-priority reads students should revise before interviews."
+        };
+      }
+
       if (view === "weekly") {
         return {
           title: "Weekly top news",
@@ -713,6 +727,7 @@ button{
             <div class="article-switch" role="tablist" aria-label="Article categories">
               <button type="button" data-article-view="daily" class="${view === "daily" ? "is-active" : ""}" aria-pressed="${view === "daily" ? "true" : "false"}">Daily</button>
               <button type="button" data-article-view="weekly" class="${view === "weekly" ? "is-active" : ""}" aria-pressed="${view === "weekly" ? "true" : "false"}">Weekly</button>
+              <button type="button" data-article-view="important" class="${view === "important" ? "is-active" : ""}" aria-pressed="${view === "important" ? "true" : "false"}">Important</button>
             </div>
           </div>
           ${articles.length ? `
@@ -776,7 +791,8 @@ button{
         return {
           defaultView: "daily",
           daily: [],
-          weekly: []
+          weekly: [],
+          important: []
         };
       }
     }

@@ -66,5 +66,43 @@
       "cta": "Read article",
       "icon": "world"
     }
+  ],
+  "important": [
+    {
+      "category": "Must Read",
+      "date": "May 2026",
+      "title": "West Bengal 2026 Election",
+      "summary": "A high-priority politics brief for election, voter-roll and governance discussion points.",
+      "url": "./Bengal_Elections.html",
+      "cta": "Read article",
+      "icon": "pin"
+    },
+    {
+      "category": "Must Read",
+      "date": "May 2026",
+      "title": "Tamil Nadu 2026: TVK Victory Report",
+      "summary": "Important for understanding regional politics, result interpretation and leadership narratives.",
+      "url": "./Tamil_nadu_elections.html",
+      "cta": "Read article",
+      "icon": "pin"
+    },
+    {
+      "category": "Global Affairs",
+      "date": "May 2026",
+      "title": "PM Modi's 5-Nation Tour May 2026",
+      "summary": "A useful international-relations example for trade, diplomacy and geopolitical follow-up questions.",
+      "url": "./PM_modi_visit_.html",
+      "cta": "Read article",
+      "icon": "world"
+    },
+    {
+      "category": "Education Policy",
+      "date": "May 2026",
+      "title": "NEET Paper Leak Report: 2024-2026",
+      "summary": "Important for education policy, exam integrity and public trust discussion in interviews.",
+      "url": "./IIT-Mandi-interview-prep-PDF__1_.html",
+      "cta": "Read article",
+      "icon": "school"
+    }
   ]
 }
