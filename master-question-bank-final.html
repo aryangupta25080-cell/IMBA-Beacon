@@ -1,0 +1,769 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>iMBA IIT Mandi — Interview Questions Bank</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@700;800;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #692240;
+            --primary-light: #AA3B5C;
+            --dark: #1A0B12;
+            --light: #FFFFFF;
+            --white: #FFFFFF;
+            --gray: #6B5A62;
+            --muted: #8A6F7C;
+            --border: #EADFE3;
+            --surface: #FCF9FA;
+        }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        html {
+            scroll-behavior: smooth;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--surface);
+            color: var(--dark);
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+        }
+        h1, h2, h3 {
+            font-family: 'Playfair Display', serif;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+        }
+
+        /* HERO */
+        .hero {
+            height: 100vh;
+            min-height: 700px;
+            display: flex;
+            overflow: hidden;
+        }
+        .hero-left {
+            width: 48%;
+            background: linear-gradient(90deg, var(--primary) 0%, var(--primary-light) 100%);
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            padding: 4vw;
+            position: relative;
+        }
+        .hero-left::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle at 30% 20%, rgba(255,255,255,0.15) 0%, transparent 40%),
+                        radial-gradient(circle at 80% 80%, rgba(0,0,0,0.1) 0%, transparent 40%);
+        }
+        .hero-title {
+            color: white;
+            font-size: clamp(3.5rem, 8vw, 7.5rem);
+            line-height: 0.82;
+            text-align: right;
+            position: relative;
+            z-index: 2;
+        }
+        .hero-title span {
+            display: block;
+            font-weight: 900;
+        }
+        .hero-right {
+            width: 52%;
+            background: var(--white);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 6vw;
+            position: relative;
+            background-image: 
+                radial-gradient(var(--primary) 0.5px, transparent 0.5px),
+                radial-gradient(var(--primary) 0.5px, transparent 0.5px);
+            background-size: 36px 36px;
+            background-position: 0 0, 18px 18px;
+            background-color: white;
+            opacity: 1;
+        }
+        .hero-right::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(180deg, rgba(255,255,255,0.92) 0%, rgba(255,255,255,0.96) 100%);
+        }
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            max-width: 560px;
+        }
+        .badge {
+            display: inline-block;
+            background: linear-gradient(90deg, var(--primary) 0%, var(--primary-light) 100%);
+            color: white;
+            padding: 10px 18px;
+            border-radius: 100px;
+            font-size: 13px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            margin-bottom: 28px;
+            box-shadow: 0 8px 20px rgba(105,34,64,0.18);
+        }
+        .hero-content h1 {
+            font-size: clamp(2.5rem, 5vw, 4.2rem);
+            line-height: 1.05;
+            color: var(--dark);
+            margin-bottom: 20px;
+        }
+        .hero-content p {
+            font-size: 18px;
+            color: var(--gray);
+            margin-bottom: 40px;
+        }
+        .hero-meta {
+            display: flex;
+            gap: 24px;
+            font-size: 14px;
+            color: var(--gray);
+        }
+        .hero-meta strong {
+            color: var(--dark);
+            display: block;
+            font-weight: 600;
+        }
+        .scroll-indicator {
+            position: absolute;
+            bottom: 40px;
+            left: 6vw;
+            font-size: 13px;
+            color: var(--gray);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            animation: bounce 2s infinite;
+        }
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-6px); }
+        }
+
+        /* NAV */
+        .sticky-nav {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: rgba(255,255,255,0.9);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border);
+        }
+        .nav-inner {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 14px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .nav-logo {
+            font-weight: 700;
+            font-size: 16px;
+            color: var(--dark);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .nav-logo::before {
+            content: '';
+            width: 8px;
+            height: 8px;
+            background: linear-gradient(90deg, var(--primary) 0%, var(--primary-light) 100%);
+            border-radius: 50%;
+        }
+        .nav-links {
+            display: flex;
+            gap: 6px;
+            overflow-x: auto;
+            scrollbar-width: none;
+        }
+        .nav-links::-webkit-scrollbar { display: none; }
+        .nav-links a {
+            padding: 8px 14px;
+            border-radius: 100px;
+            text-decoration: none;
+            color: var(--gray);
+            font-size: 13.5px;
+            font-weight: 500;
+            white-space: nowrap;
+            transition: all 0.2s;
+        }
+        .nav-links a:hover, .nav-links a.active {
+            background: linear-gradient(90deg, var(--primary) 0%, var(--primary-light) 100%);
+            color: white;
+        }
+
+        /* MAIN */
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 80px 24px 120px;
+        }
+        .section-card {
+            margin-bottom: 72px;
+            scroll-margin-top: 90px;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeUp 0.6s forwards;
+        }
+        @keyframes fadeUp {
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .section-header {
+            background: linear-gradient(90deg, var(--primary) 0%, var(--primary-light) 100%);
+            color: white;
+            padding: 28px 36px;
+            border-radius: 24px 24px 0 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .section-header h2 {
+            font-size: clamp(1.5rem, 3vw, 2rem);
+            margin: 0;
+        }
+        .section-count {
+            background: rgba(255,255,255,0.2);
+            padding: 6px 14px;
+            border-radius: 100px;
+            font-size: 13px;
+            font-weight: 600;
+            backdrop-filter: blur(4px);
+        }
+        .section-body {
+            background: var(--white);
+            padding: 36px;
+            border-radius: 0 0 24px 24px;
+            box-shadow: 0 16px 32px -12px rgba(105,34,64,0.08), 0 1px 3px rgba(105,34,64,0.05);
+            border: 1px solid var(--border);
+            border-top: none;
+        }
+
+        /* QUESTIONS */
+        .q-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 14px 28px;
+        }
+        .q-item {
+            display: flex;
+            gap: 16px;
+            align-items: flex-start;
+            padding: 16px 14px;
+            border-radius: 14px;
+            transition: all 0.25s ease;
+        }
+        .q-item:hover {
+            background: var(--surface);
+            transform: translateX(4px);
+        }
+        .q-num {
+            width: 38px;
+            height: 38px;
+            min-width: 38px;
+            background: linear-gradient(90deg, var(--primary) 0%, var(--primary-light) 100%);
+            color: white;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 14px;
+            box-shadow: 0 6px 14px rgba(105,34,64,0.22);
+        }
+        .q-text {
+            padding-top: 6px;
+            color: var(--dark);
+            font-size: 15.5px;
+            line-height: 1.5;
+        }
+
+        /* MATHS */
+        .math-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 24px;
+        }
+        .math-card {
+            background: var(--white);
+            border: 1px solid var(--border);
+            border-left: 4px solid var(--primary);
+            border-radius: 18px;
+            padding: 26px;
+            transition: all 0.3s ease;
+            height: 100%;
+        }
+        .math-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 16px 30px -10px rgba(105,34,64,0.12);
+        }
+        .math-head {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+        .math-icon {
+            width: 44px;
+            height: 44px;
+            background: var(--surface);
+            color: var(--primary);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            font-weight: 700;
+            font-family: 'Playfair Display', serif;
+        }
+        .math-card h3 {
+            font-size: 1.25rem;
+            color: var(--dark);
+        }
+        .math-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .math-list li {
+            font-size: 14.5px;
+            color: #334155;
+            padding-left: 18px;
+            position: relative;
+            line-height: 1.5;
+        }
+        .math-list li::before {
+            content: '•';
+            position: absolute;
+            left: 0;
+            color: var(--primary);
+            font-weight: 700;
+        }
+
+        /* CHEMISTRY */
+        .chem-grid {
+            column-count: 3;
+            column-gap: 20px;
+        }
+        .chem-card {
+            break-inside: avoid;
+            background: var(--white);
+            border: 1px solid var(--border);
+            border-top: 3px solid var(--primary);
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 20px;
+            transition: all 0.25s ease;
+        }
+        .chem-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 24px -8px rgba(105,34,64,0.08);
+        }
+        .chem-num {
+            color: var(--primary);
+            font-weight: 700;
+            font-size: 13px;
+            margin-bottom: 6px;
+            display: block;
+        }
+        .chem-text {
+            font-size: 14.5px;
+            color: var(--dark);
+            line-height: 1.5;
+        }
+
+        /* ETIQUETTE */
+        .etiquette-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+        }
+        .et-item {
+            background: var(--surface);
+            padding: 20px;
+            border-radius: 16px;
+            border: 1px solid var(--border);
+            font-size: 14.5px;
+            line-height: 1.5;
+            transition: all 0.2s;
+        }
+        .et-item:hover {
+            background: var(--white);
+            border-color: var(--primary-light);
+        }
+        .et-item strong {
+            color: var(--primary);
+            display: block;
+            margin-bottom: 4px;
+            font-weight: 700;
+        }
+
+        /* FOOTER */
+        .footer {
+            text-align: center;
+            padding: 60px 24px 100px;
+            color: var(--gray);
+            font-size: 14px;
+        }
+        .footer-note {
+            display: inline-block;
+            background: white;
+            border: 1px solid var(--border);
+            padding: 10px 20px;
+            border-radius: 100px;
+            font-weight: 500;
+        }
+
+        /* PRINT BUTTON */
+        .print-btn {
+            position: fixed;
+            bottom: 28px;
+            right: 28px;
+            background: linear-gradient(90deg, var(--primary) 0%, var(--primary-light) 100%);
+            color: white;
+            border: none;
+            padding: 14px 22px;
+            border-radius: 100px;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            box-shadow: 0 10px 30px rgba(105,34,64,0.25), 0 2px 6px rgba(105,34,64,0.22);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            z-index: 200;
+            transition: all 0.2s;
+        }
+        .print-btn:hover {
+            transform: translateY(-2px) scale(1.03);
+            box-shadow: 0 14px 36px rgba(233,75,110,0.45);
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 960px) {
+            .hero { flex-direction: column; height: auto; }
+            .hero-left, .hero-right { width: 100%; }
+            .hero-left { height: 38vh; min-height: 300px; justify-content: center; }
+            .hero-title { text-align: center; font-size: clamp(3rem, 14vw, 5rem); }
+            .hero-right { padding: 60px 24px 80px; }
+            .scroll-indicator { display: none; }
+            .q-grid { grid-template-columns: 1fr; }
+            .math-grid { grid-template-columns: 1fr; }
+            .chem-grid { column-count: 2; }
+            .etiquette-grid { grid-template-columns: 1fr; }
+            .section-body { padding: 24px; }
+            .section-header { padding: 22px 24px; }
+        }
+        @media (max-width: 640px) {
+            .chem-grid { column-count: 1; }
+            .nav-inner { padding: 12px 16px; }
+            .container { padding: 60px 16px 100px; }
+        }
+
+        /* PRINT */
+        @media print {
+            body { background: white; }
+            .hero { height: auto; min-height: auto; page-break-after: always; }
+            .hero-left { height: 250px; }
+            .sticky-nav, .print-btn, .scroll-indicator { display: none !important; }
+            .container { padding-top: 0; }
+            .section-card { break-inside: avoid; box-shadow: none; margin-bottom: 30px; }
+            .section-body, .section-header, .q-num, .badge, .math-icon {
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+            .section-body { box-shadow: none; border: 1px solid #eee; }
+            .q-item:hover, .math-card:hover, .chem-card:hover { transform: none; box-shadow: none; }
+        }
+    </style>
+</head>
+<body>
+    <!-- HERO -->
+    <section class="hero">
+        <div class="hero-left">
+            <div class="hero-title">
+                <span>iMBA</span>
+                <span>IIT</span>
+                <span>MANDI</span>
+            </div>
+        </div>
+        <div class="hero-right">
+            <div class="hero-content">
+                <span class="badge">Maths & Chemistry Focused Edition</span>
+                <h1>Interview<br>Questions Bank</h1>
+                <p>A curated, premium prep companion for the Integrated MBA admissions interview at IIT Mandi School of Management. Clean, focused, and exam-room ready.</p>
+                <div class="hero-meta">
+                    <div><strong>68</strong> Total Questions</div>
+                    <div><strong>7</strong> Sections</div>
+                    <div><strong>2026</strong> Edition</div>
+                </div>
+            <div class="scroll-indicator">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M19 12l-7 7-7-7"/></svg>
+                Scroll to explore
+            </div>
+        </div>
+    </section>
+
+    <!-- NAV -->
+    <nav class="sticky-nav">
+        <div class="nav-inner">
+            <div class="nav-logo">iMBA Bank</div>
+            <div class="nav-links">
+                <a href="#personal" class="active">Personal</a>
+                <a href="#leadership">Leadership</a>
+                <a href="#imba">iMBA Specific</a>
+                <a href="#business">Business</a>
+                <a href="#maths">Mathematics</a>
+                <a href="#chemistry">Chemistry</a>
+                <a href="#etiquette">Etiquette</a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container">
+        <!-- PERSONAL -->
+        <section id="personal" class="section-card" style="animation-delay: 0.1s">
+            <div class="section-header">
+                <h2>1. Personal & HR</h2>
+                <span class="section-count">10 Questions</span>
+            </div>
+            <div class="section-body">
+                <div class="q-grid">
+                    <div class="q-item"><div class="q-num">01</div><div class="q-text">Tell me about yourself in 90 seconds — beyond what's on your form.</div></div>
+                    <div class="q-item"><div class="q-num">02</div><div class="q-text">Why Mandi, why now — what draws you specifically to IIT Mandi?</div></div>
+                    <div class="q-item"><div class="q-num">03</div><div class="q-text">What are your three core strengths with evidence from school/life?</div></div>
+                    <div class="q-item"><div class="q-num">04</div><div class="q-text">What is one genuine weakness you are actively working on?</div></div>
+                    <div class="q-item"><div class="q-num">05</div><div class="q-text">Describe a time you failed and what you learned systematically.</div></div>
+                    <div class="q-item"><div class="q-num">06</div><div class="q-text">Who is your role model in business or science and why?</div></div>
+                    <div class="q-item"><div class="q-num">07</div><div class="q-text">Where do you see yourself in 5 years post-iMBA?</div></div>
+                    <div class="q-item"><div class="q-num">08</div><div class="q-text">What do you do outside academics? How have your hobbies shaped you?</div></div>
+                    <div class="q-item"><div class="q-num">09</div><div class="q-text">Describe a conflict in a team and how you resolved it.</div></div>
+                    <div class="q-item"><div class="q-num">10</div><div class="q-text">If not selected today, what is your concrete Plan B?</div></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- LEADERSHIP -->
+        <section id="leadership" class="section-card" style="animation-delay: 0.15s">
+            <div class="section-header">
+                <h2>2. Leadership & Teamwork</h2>
+                <span class="section-count">12 Questions</span>
+            </div>
+            <div class="section-body">
+                <div class="q-grid">
+                    <div class="q-item"><div class="q-num">01</div><div class="q-text">Tell us about a time you led without formal authority.</div></div>
+                    <div class="q-item"><div class="q-num">02</div><div class="q-text">Describe a school/club initiative you started from scratch.</div></div>
+                    <div class="q-item"><div class="q-num">03</div><div class="q-text">How do you motivate peers who are disengaged?</div></div>
+                    <div class="q-item"><div class="q-num">04</div><div class="q-text">Give an example of a tough, unpopular decision you made.</div></div>
+                    <div class="q-item"><div class="q-num">05</div><div class="q-text">How do you handle critical feedback?</div></div>
+                    <div class="q-item"><div class="q-num">06</div><div class="q-text">Describe leading during uncertainty (event, online shift, etc).</div></div>
+                    <div class="q-item"><div class="q-num">07</div><div class="q-text">What is your leadership style — give proof, not theory.</div></div>
+                    <div class="q-item"><div class="q-num">08</div><div class="q-text">How do you build diversity of thought in a team?</div></div>
+                    <div class="q-item"><div class="q-num">09</div><div class="q-text">Share a time you delegated well vs. one you micromanaged.</div></div>
+                    <div class="q-item"><div class="q-num">10</div><div class="q-text">How do you balance academics with leadership roles?</div></div>
+                    <div class="q-item"><div class="q-num">11</div><div class="q-text">Describe turning around a failing team effort.</div></div>
+                    <div class="q-item"><div class="q-num">12</div><div class="q-text">What would your teammates say about working with you?</div></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- IMBA -->
+        <section id="imba" class="section-card" style="animation-delay: 0.2s">
+            <div class="section-header">
+                <h2>3. iMBA Specific</h2>
+                <span class="section-count">8 Questions</span>
+            </div>
+            <div class="section-body">
+                <div class="q-grid">
+                    <div class="q-item"><div class="q-num">01</div><div class="q-text">Why integrated MBA at 18 vs. BBA then MBA?</div></div>
+                    <div class="q-item"><div class="q-num">02</div><div class="q-text">How will you contribute to the early batches of iMBA at IIT Mandi?</div></div>
+                    <div class="q-item"><div class="q-num">03</div><div class="q-text">iMBA blends tech + management — which side excites you more?</div></div>
+                    <div class="q-item"><div class="q-num">04</div><div class="q-text">What startup idea would you explore in Mandi's ecosystem?</div></div>
+                    <div class="q-item"><div class="q-num">05</div><div class="q-text">How does studying management in an IIT differ from an IIM?</div></div>
+                    <div class="q-item"><div class="q-num">06</div><div class="q-text">Explain one recent business news with an IIT-tech angle.</div></div>
+                    <div class="q-item"><div class="q-num">07</div><div class="q-text">Are you comfortable with coding/data courses in iMBA?</div></div>
+                    <div class="q-item"><div class="q-num">08</div><div class="q-text">What elective track would you pick in Year 4-5 and why?</div></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- BUSINESS -->
+        <section id="business" class="section-card" style="animation-delay: 0.25s">
+            <div class="section-header">
+                <h2>4. Business Orientation</h2>
+                <span class="section-count">8 Questions</span>
+            </div>
+            <div class="section-body">
+                <div class="q-grid">
+                    <div class="q-item"><div class="q-num">01</div><div class="q-text">Difference between revenue and profit? Give an example.</div></div>
+                    <div class="q-item"><div class="q-num">02</div><div class="q-text">Explain supply and demand with a recent product.</div></div>
+                    <div class="q-item"><div class="q-num">03</div><div class="q-text">What makes D2C brands successful in India today?</div></div>
+                    <div class="q-item"><div class="q-num">04</div><div class="q-text">Define TAM, SAM, SOM with an example.</div></div>
+                    <div class="q-item"><div class="q-num">05</div><div class="q-text">How do Zomato/Swiggy make money beyond delivery fees?</div></div>
+                    <div class="q-item"><div class="q-num">06</div><div class="q-text">What 3 metrics would you track for a campus cafe app?</div></div>
+                    <div class="q-item"><div class="q-num">07</div><div class="q-text">Explain the business model of your favorite app.</div></div>
+                    <div class="q-item"><div class="q-num">08</div><div class="q-text">If we give you ₹1 lakh to start something in Mandi, what?</div></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- MATHS -->
+        <section id="maths" class="section-card" style="animation-delay: 0.3s">
+            <div class="section-header">
+                <h2>5. Mathematics</h2>
+                <span class="section-count">Core Concepts</span>
+            </div>
+            <div class="section-body">
+                <div class="math-grid">
+                    <div class="math-card">
+                        <div class="math-head">
+                            <div class="math-icon">∫</div>
+                            <h3>Calculus</h3>
+                        </div>
+                        <ul class="math-list">
+                            <li>Explain derivative as rate of change with a real-life example.</li>
+                            <li>What does a definite integral represent geometrically?</li>
+                            <li>Find maxima/minima of f(x)=x³-3x² — explain steps.</li>
+                            <li>Why is lim (sin x)/x = 1 as x→0 important?</li>
+                            <li>Differentiate eˣ ln x — which rules apply?</li>
+                        </ul>
+                    </div>
+                    <div class="math-card">
+                        <div class="math-head">
+                            <div class="math-icon">Σ</div>
+                            <h3>Algebra</h3>
+                        </div>
+                        <ul class="math-list">
+                            <li>Solve: 2x+3y=7, x-y=1 — explain your method.</li>
+                            <li>What are eigenvalues intuitively? Where used in data?</li>
+                            <li>Differentiate linear vs quadratic growth with examples.</li>
+                            <li>What is rank of a matrix and why does it matter?</li>
+                            <li>If log₂8 = x, solve mentally and explain logs simply.</li>
+                        </ul>
+                    </div>
+                    <div class="math-card">
+                        <div class="math-head">
+                            <div class="math-icon">%</div>
+                            <h3>Probability</h3>
+                        </div>
+                        <ul class="math-list">
+                            <li>Probability vs odds — explain with a coin toss.</li>
+                            <li>State Bayes' Theorem in plain English.</li>
+                            <li>Bag: 3 red, 2 blue — P(2 reds without replacement)?</li>
+                            <li>Define expectation and variance intuitively.</li>
+                            <li>What is Central Limit Theorem and why do businesses care?</li>
+                        </ul>
+                    </div>
+                    <div class="math-card">
+                        <div class="math-head">
+                            <div class="math-icon">∞</div>
+                            <h3>Sequences</h3>
+                        </div>
+                        <ul class="math-list">
+                            <li>Find nth term of AP: 5, 9, 13, 17...</li>
+                            <li>AP vs GP — give one business example each.</li>
+                            <li>Sum of infinite GP: 1 + 1/2 + 1/4 + ... — explain.</li>
+                            <li>Fibonacci sequence — one real-world application.</li>
+                            <li>How do sequences relate to compound interest?</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- CHEMISTRY -->
+        <section id="chemistry" class="section-card" style="animation-delay: 0.35s">
+            <div class="section-header">
+                <h2>6. Chemistry</h2>
+                <span class="section-count">19 Questions</span>
+            </div>
+            <div class="section-body">
+                <div class="chem-grid">
+                    <div class="chem-card"><span class="chem-num">01</span><div class="chem-text">Differentiate physical and chemical change with examples.</div></div>
+                    <div class="chem-card"><span class="chem-num">02</span><div class="chem-text">What is mole concept — explain Avogadro's number simply.</div></div>
+                    <div class="chem-card"><span class="chem-num">03</span><div class="chem-text">Balance: H₂ + O₂ → H₂O — explain stoichiometry.</div></div>
+                    <div class="chem-card"><span class="chem-num">04</span><div class="chem-text">Define pH — why is pH 7 neutral?</div></div>
+                    <div class="chem-card"><span class="chem-num">05</span><div class="chem-text">Acids, bases, salts — give daily-life examples.</div></div>
+                    <div class="chem-card"><span class="chem-num">06</span><div class="chem-text">Exothermic vs endothermic with one example each.</div></div>
+                    <div class="chem-card"><span class="chem-num">07</span><div class="chem-text">What is catalysis? Give an industrial example.</div></div>
+                    <div class="chem-card"><span class="chem-num">08</span><div class="chem-text">Define oxidation and reduction with electron concept.</div></div>
+                    <div class="chem-card"><span class="chem-num">09</span><div class="chem-text">Periodic trends for atomic radius and electronegativity.</div></div>
+                    <div class="chem-card"><span class="chem-num">10</span><div class="chem-text">Distinguish ionic vs covalent bond.</div></div>
+                    <div class="chem-card"><span class="chem-num">11</span><div class="chem-text">What are polymers? Name one biodegradable polymer.</div></div>
+                    <div class="chem-card"><span class="chem-num">12</span><div class="chem-text">Explain greenhouse gases and their chemistry.</div></div>
+                    <div class="chem-card"><span class="chem-num">13</span><div class="chem-text">What is electrolysis of water?</div></div>
+                    <div class="chem-card"><span class="chem-num">14</span><div class="chem-text">Define isomerism — give simple example.</div></div>
+                    <div class="chem-card"><span class="chem-num">15</span><div class="chem-text">Saturated vs unsaturated hydrocarbons.</div></div>
+                    <div class="chem-card"><span class="chem-num">16</span><div class="chem-text">Explain buffer solution in simple terms.</div></div>
+                    <div class="chem-card"><span class="chem-num">17</span><div class="chem-text">What is corrosion and how to prevent it?</div></div>
+                    <div class="chem-card"><span class="chem-num">18</span><div class="chem-text">Define molarity vs molality.</div></div>
+                    <div class="chem-card"><span class="chem-num">19</span><div class="chem-text">Why does chemistry matter in sustainable business/green tech?</div></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ETIQUETTE -->
+        <section id="etiquette" class="section-card" style="animation-delay: 0.4s">
+            <div class="section-header">
+                <h2>7. Interview Etiquette</h2>
+                <span class="section-count">9 Points</span>
+            </div>
+            <div class="section-body">
+                <div class="etiquette-grid">
+                    <div class="et-item"><strong>01 • Be Early</strong> Join 5 mins early, camera at eye level, plain background, good lighting.</div>
+                    <div class="et-item"><strong>02 • Dress Sharp</strong> Formal even online — solid light colors work best on camera.</div>
+                    <div class="et-item"><strong>03 • Greet Well</strong> "Good morning panelists" — wait to be asked to sit.</div>
+                    <div class="et-item"><strong>04 • Listen First</strong> Let them finish. Pause 1 sec before answering.</div>
+                    <div class="et-item"><strong>05 • Structure</strong> Use PEL: Point → Example → Learning. Keep to 60-90s.</div>
+                    <div class="et-item"><strong>06 • Honesty</strong> "I'm not certain, but I'd approach it as..." beats bluffing.</div>
+                    <div class="et-item"><strong>07 • Energy</strong> Smile, sit forward, eye contact with all panelists.</div>
+                    <div class="et-item"><strong>08 • Notes</strong> Keep a neat notepad; jot keywords, not scripts.</div>
+                    <div class="et-item"><strong>09 • Close Smart</strong> Ask about iMBA pedagogy or labs — not placements.</div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <div class="footer-note">Designed for 2026 Admissions • IIT Mandi School of Management</div>
+    </footer>
+
+    <button class="print-btn" onclick="window.print()">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9V2h12v7M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2M6 14h12v8H6z"/></svg>
+        Print to PDF
+    </button>
+
+    <script>
+        // Active nav highlighting
+        const links = document.querySelectorAll('.nav-links a');
+        const sections = document.querySelectorAll('.section-card');
+        
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if(entry.isIntersecting) {
+                    links.forEach(link => {
+                        link.classList.toggle('active', link.getAttribute('href') === '#' + entry.target.id);
+                    });
+                }
+            });
+        }, { rootMargin: '-40% 0px -55% 0px', threshold: 0 });
+        
+        sections.forEach(s => observer.observe(s));
+    </script>
+</body>
+</html>

@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Basic Economics Terms Every IMBA Student Must Know</title>
+<style>
+    :root {
+        --primary: #692240;
+        --primary-light: #FCF9FA;
+        --bg: #FFFFFF;
+        --card: #ffffff;
+        --text: #1A0B12;
+        --muted: #6B5A62;
+        --border: #EADFE3;
+    }
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+    body {
+        font-family: system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        line-height: 1.6;
+        -webkit-font-smoothing: antialiased;
+    }
+    .container {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 20px;
+    }
+    .hero {
+        background: linear-gradient(135deg, #692240 0%, #AA3B5C 100%);
+        color: white;
+        padding: 56px 30px 40px;
+        border-radius: 18px;
+        position: relative;
+        margin-bottom: 28px;
+        overflow: hidden;
+        box-shadow: 0 12px 40px rgba(105,34,64,0.18);
+    }
+    .hero::after {
+        content: '';
+        position: absolute;
+        top: -50px;
+        right: -50px;
+        width: 200px;
+        height: 200px;
+        background: rgba(255,255,255,0.08);
+        border-radius: 50%;
+    }
+    .print-btn {
+        position: absolute;
+        top: 18px;
+        right: 18px;
+        background: rgba(255,255,255,0.15);
+        border: 1px solid rgba(255,255,255,0.3);
+        color: white;
+        padding: 9px 16px;
+        border-radius: 10px;
+        cursor: pointer;
+        font-size: 14px;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        transition: all 0.2s;
+        backdrop-filter: blur(6px);
+        z-index: 2;
+    }
+    .print-btn:hover {
+        background: rgba(255,255,255,0.25);
+        transform: translateY(-1px);
+    }
+    h1 {
+        font-size: clamp(26px, 4vw, 36px);
+        font-weight: 800;
+        margin-bottom: 10px;
+        letter-spacing: -0.5px;
+        line-height: 1.2;
+        max-width: 85%;
+    }
+    .hero p {
+        font-size: 17px;
+        opacity: 0.95;
+        font-weight: 400;
+    }
+    .card {
+        background: var(--card);
+        border-radius: 14px;
+        padding: 26px 28px;
+        margin-bottom: 20px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+        border-left: 5px solid var(--primary);
+    }
+    .intro {
+        border-left-color: #d68aa4;
+        font-size: 16px;
+        color: #334155;
+    }
+    .intro strong {
+        color: var(--primary);
+    }
+    h2 {
+        color: var(--primary);
+        font-size: 22px;
+        font-weight: 700;
+        margin-bottom: 20px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+    .section-num {
+        background: linear-gradient(135deg, #692240 0%, #AA3B5C 100%);
+        color: white;
+        width: 30px;
+        height: 30px;
+        border-radius: 8px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 15px;
+        flex-shrink: 0;
+    }
+    .term-grid {
+        display: grid;
+        gap: 14px;
+    }
+    @media (min-width: 720px) {
+        .term-grid {
+            grid-template-columns: 1fr 1fr;
+        }
+    }
+    .term {
+        padding: 15px 16px;
+        background: var(--primary-light);
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        transition: transform 0.15s;
+    }
+    .term:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(171,59,95,0.08);
+    }
+    .term-name {
+        font-weight: 700;
+        color: var(--text);
+        font-size: 15.5px;
+        margin-bottom: 4px;
+    }
+    .term-name b {
+        color: var(--primary);
+    }
+    .definition {
+        font-size: 14px;
+        color: #374151;
+    }
+    .example {
+        font-size: 13px;
+        color: var(--muted);
+        margin-top: 5px;
+        padding-left: 12px;
+        border-left: 2px solid #e8c4d1;
+        font-style: italic;
+    }
+    .formula {
+        display: inline-block;
+        background: white;
+        border: 1px dashed #e8c4d1;
+        padding: 2px 8px;
+        border-radius: 6px;
+        font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+        font-size: 12.5px;
+        color: var(--primary);
+        margin-top: 4px;
+    }
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 14px;
+        overflow: hidden;
+        border-radius: 10px;
+        border: 1px solid var(--border);
+    }
+    thead {
+        background: linear-gradient(135deg, #692240 0%, #AA3B5C 100%);
+        color: white;
+    }
+    th, td {
+        padding: 12px 14px;
+        text-align: left;
+        border-bottom: 1px solid var(--border);
+    }
+    tbody tr:nth-child(even) {
+        background: #fffbfd;
+    }
+    tbody tr:last-child td {
+        border-bottom: none;
+    }
+    .tips-list {
+        list-style: none;
+        padding: 0;
+    }
+    .tips-list li {
+        padding: 12px 0 12px 34px;
+        position: relative;
+        border-bottom: 1px solid #f3e8ec;
+        font-size: 15px;
+    }
+    .tips-list li:last-child {
+        border-bottom: none;
+    }
+    .tips-list li::before {
+        content: '✓';
+        position: absolute;
+        left: 0;
+        top: 11px;
+        width: 22px;
+        height: 22px;
+        background: linear-gradient(135deg, #692240 0%, #AA3B5C 100%);
+        color: white;
+        border-radius: 6px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 13px;
+        font-weight: bold;
+    }
+    .footer {
+        text-align: center;
+        padding: 30px 20px;
+        color: var(--muted);
+        font-size: 13px;
+    }
+    @media print {
+        body { background: white; }
+        .container { padding: 0; }
+        .print-btn, .hero::after { display: none !important; }
+        .hero { box-shadow: none; border-radius: 0; }
+        .card { box-shadow: none; border: 1px solid #ddd; break-inside: avoid; page-break-inside: avoid; }
+        .term { break-inside: avoid; }
+    }
+    @media (max-width: 600px) {
+        .container { padding: 14px; }
+        .hero { padding: 48px 20px 32px; }
+        h1 { max-width: 100%; }
+        .card { padding: 20px; }
+        th, td { padding: 10px 8px; font-size: 13px; }
+    }
+</style>
+</head>
+<body>
+<div class="container">
+    <header class="hero">
+        <button class="print-btn" onclick="window.print()">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg>
+            Print
+        </button>
+        <h1>Basic Economics Terms Every IMBA Student Must Know</h1>
+        <p>Micro, Macro, and Indian Economy Essentials - IMBA Ready</p>
+    </header>
+
+    <main>
+        <section class="card intro">
+            <p>These 42 terms cover 90% of your Class 12 Economics theory. <strong>Learn them with examples, not just definitions</strong> — boards ask for application, and these concepts stay useful for life, from understanding budget news to making personal money decisions.</p>
+        </section>
+
+        <section class="card">
+            <h2><span class="section-num">1</span> Microeconomics Basics</h2>
+            <div class="term-grid">
+                <div class="term"><div class="term-name"><b>Demand</b></div><div class="definition">Quantity consumers are willing to buy at a given price.</div><div class="example">Eg: At ₹20 you buy 5 colas, at ₹30 only 2.</div></div>
+                <div class="term"><div class="term-name"><b>Supply</b></div><div class="definition">Quantity producers are willing to sell at a given price.</div><div class="example">Eg: Farmers supply more wheat when market price rises.</div></div>
+                <div class="term"><div class="term-name"><b>Elasticity</b></div><div class="definition">How much demand/supply responds to price change.</div><div class="example">Eg: Petrol is inelastic, pizza is elastic.</div></div>
+                <div class="term"><div class="term-name"><b>Opportunity Cost</b></div><div class="definition">Value of the next-best alternative forgone.</div><div class="example">Eg: Choosing CA coaching means losing time for a part-time job.</div></div>
+                <div class="term"><div class="term-name"><b>PPC</b></div><div class="definition">Production Possibility Curve shows max combos of two goods an economy can produce.</div><div class="example">Eg: Guns vs Butter trade-off.</div></div>
+                <div class="term"><div class="term-name"><b>Utility</b></div><div class="definition">Satisfaction derived from consuming a good.</div><div class="example">Eg: First ice cream gives high utility.</div></div>
+                <div class="term"><div class="term-name"><b>Law of Diminishing Marginal Utility</b></div><div class="definition">Each extra unit gives less additional satisfaction.</div><div class="example">Eg: 3rd slice of pizza less enjoyable than 1st.</div></div>
+                <div class="term"><div class="term-name"><b>Market Equilibrium</b></div><div class="definition">Point where demand equals supply.</div><div class="example">Eg: At ₹500, buyers want 1000 phones = sellers sell 1000.</div></div>
+                <div class="term"><div class="term-name"><b>Price Ceiling / Floor</b></div><div class="definition">Ceiling = max legal price (below equilibrium). Floor = min price (above).</div><div class="example">Eg: Rent control = ceiling; MSP for crops = floor.</div></div>
+                <div class="term"><div class="term-name"><b>Consumer Surplus</b></div><div class="definition">Difference between what you're willing to pay and what you actually pay.</div><div class="example">Eg: Willing ₹120, pay ₹80, surplus = ₹40.</div></div>
+            </div>
+        </section>
+
+        <section class="card">
+            <h2><span class="section-num">2</span> Macroeconomics Basics</h2>
+            <div class="term-grid">
+                <div class="term"><div class="term-name"><b>GDP</b></div><div class="definition">Total value of final goods/services produced within country in a year.</div><div class="formula">GDP = C + I + G + (X - M)</div><div class="example">Eg: India's GDP ~ $3.7 trillion.</div></div>
+                <div class="term"><div class="term-name"><b>GNP</b></div><div class="definition">GDP + Net Factor Income from Abroad.</div><div class="formula">GNP = GDP + NFIA</div><div class="example">Eg: Includes income of Indians working in Dubai.</div></div>
+                <div class="term"><div class="term-name"><b>NNP</b></div><div class="definition">GNP minus Depreciation. Also called National Income at market price.</div><div class="formula">NNP = GNP - Depreciation</div><div class="example">Eg: After deducting wear-tear of machines.</div></div>
+                <div class="term"><div class="term-name"><b>Inflation</b></div><div class="definition">Sustained rise in general price level.</div><div class="example">Eg: CPI inflation 6% means basket costlier by 6%.</div></div>
+                <div class="term"><div class="term-name"><b>Deflation</b></div><div class="definition">Sustained fall in general price level.</div><div class="example">Eg: Common during deep recession.</div></div>
+                <div class="term"><div class="term-name"><b>Fiscal Deficit</b></div><div class="definition">Govt. expenditure exceeds receipts (excluding borrowings).</div><div class="formula">FD = Total Exp - (Revenue Receipts + Non-debt Capital)</div></div>
+                <div class="term"><div class="term-name"><b>Monetary Policy</b></div><div class="definition">RBI's actions to control money supply and interest rates.</div><div class="example">Eg: Hike rates to control inflation.</div></div>
+                <div class="term"><div class="term-name"><b>Repo Rate</b></div><div class="definition">Rate at which RBI lends short-term money to banks.</div><div class="example">Eg: Repo 6.5% = banks borrow at 6.5%.</div></div>
+                <div class="term"><div class="term-name"><b>CRR</b></div><div class="definition">Cash Reserve Ratio: % of deposits banks keep with RBI as cash.</div><div class="example">Eg: CRR 4.5% means ₹4.5 of ₹100 locked.</div></div>
+                <div class="term"><div class="term-name"><b>SLR</b></div><div class="definition">Statutory Liquidity Ratio: % kept in liquid assets like gold, govt bonds.</div><div class="example">Eg: SLR 18% ensures bank safety.</div></div>
+            </div>
+        </section>
+
+        <section class="card">
+            <h2><span class="section-num">3</span> Money & Banking</h2>
+            <div class="term-grid">
+                <div class="term"><div class="term-name"><b>Commercial Bank</b></div><div class="definition">Profit-making bank that accepts deposits and gives loans.</div><div class="example">Eg: SBI, HDFC, ICICI.</div></div>
+                <div class="term"><div class="term-name"><b>Central Bank (RBI)</b></div><div class="definition">Apex authority; issues currency, controls credit, banker to govt.</div><div class="example">Eg: RBI decides repo rate.</div></div>
+                <div class="term"><div class="term-name"><b>Money Supply M1-M4</b></div><div class="definition">Measures of money. M1=C+DD (narrow), M3=M1+Time Deposits (broad money, most used).</div></div>
+                <div class="term"><div class="term-name"><b>Credit Creation</b></div><div class="definition">Banks create deposits many times initial deposit via loans.</div><div class="formula">Multiplier = 1/CRR</div></div>
+                <div class="term"><div class="term-name"><b>Bank Rate</b></div><div class="definition">Long-term rate RBI charges banks for loans (vs repo = short-term).</div></div>
+                <div class="term"><div class="term-name"><b>Open Market Operations</b></div><div class="definition">RBI buying/selling govt securities to control liquidity.</div><div class="example">Eg: Sells bonds to reduce money supply.</div></div>
+                <div class="term"><div class="term-name"><b>Demonetization</b></div><div class="definition">Withdrawing legal tender status of currency notes.</div><div class="example">Eg: India, Nov 2016 – ₹500/₹1000 banned.</div></div>
+                <div class="term"><div class="term-name"><b>Digital Payment</b></div><div class="definition">Cashless transfer via UPI, NEFT, RTGS, cards.</div><div class="example">Eg: PhonePe, GPay, IMPS.</div></div>
+            </div>
+        </section>
+
+        <section class="card">
+            <h2><span class="section-num">4</span> Indian Economy & Policy</h2>
+            <div class="term-grid">
+                <div class="term"><div class="term-name"><b>Five Year Plans</b></div><div class="definition">Centralised planning by Planning Commission (1951-2017).</div><div class="example">Eg: 1st Plan focused on agriculture.</div></div>
+                <div class="term"><div class="term-name"><b>NITI Aayog</b></div><div class="definition">Replaced Planning Commission in 2015; policy think-tank.</div><div class="example">Eg: Prepares SDG India Index.</div></div>
+                <div class="term"><div class="term-name"><b>GST</b></div><div class="definition">Goods and Services Tax – one nation one indirect tax since 2017.</div><div class="example">Eg: Slabs 5%, 12%, 18%, 28%.</div></div>
+                <div class="term"><div class="term-name"><b>Disinvestment</b></div><div class="definition">Govt selling its stake in public sector enterprises.</div><div class="example">Eg: Sale of Air India.</div></div>
+                <div class="term"><div class="term-name"><b>Privatization</b></div><div class="definition">Transfer of ownership/management from public to private sector.</div></div>
+                <div class="term"><div class="term-name"><b>Liberalization</b></div><div class="definition">Reducing govt controls; part of 1991 LPG reforms.</div><div class="example">Eg: Removal of industrial licensing.</div></div>
+                <div class="term"><div class="term-name"><b>FDI</b></div><div class="definition">Foreign Direct Investment – foreign firm invests >10% in Indian company.</div><div class="example">Eg: Tesla plant investment.</div></div>
+                <div class="term"><div class="term-name"><b>Budget</b></div><div class="definition">Annual Financial Statement of govt revenue and expenditure.</div><div class="example">Eg: Presented on Feb 1.</div></div>
+            </div>
+        </section>
+
+        <section class="card">
+            <h2><span class="section-num">5</span> International Economics</h2>
+            <div class="term-grid">
+                <div class="term"><div class="term-name"><b>Balance of Payments</b></div><div class="definition">Systematic record of all economic transactions with rest of world.</div><div class="example">Eg: Always balanced in accounting terms.</div></div>
+                <div class="term"><div class="term-name"><b>Current Account</b></div><div class="definition">Records export/import of goods, services, transfers.</div><div class="example">Eg: Deficit if imports > exports.</div></div>
+                <div class="term"><div class="term-name"><b>Capital Account</b></div><div class="definition">Records capital flows – FDI, FII, loans, investments.</div></div>
+                <div class="term"><div class="term-name"><b>Exchange Rate</b></div><div class="definition">Price of one currency in terms of another.</div><div class="example">Eg: $1 = ₹83.</div></div>
+                <div class="term"><div class="term-name"><b>Devaluation</b></div><div class="definition">Official reduction in value of domestic currency by govt.</div><div class="example">Eg: India devalued rupee in 1991.</div></div>
+                <div class="term"><div class="term-name"><b>WTO</b></div><div class="definition">World Trade Organization – global body for trade rules (1995).</div><div class="example">Eg: Dispute settlement body.</div></div>
+            </div>
+        </section>
+
+        <section class="card">
+            <h2>Quick Revision Table</h2>
+            <div style="overflow-x:auto;">
+            <table>
+                <thead>
+                    <tr><th>Term</th><th>Formula / Indicator</th><th>Example</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td><strong>GDP</strong></td><td>C + I + G + (X-M)</td><td>Domestic production value</td></tr>
+                    <tr><td><strong>GNP</strong></td><td>GDP + NFIA</td><td>Includes NRI income</td></tr>
+                    <tr><td><strong>NNP</strong></td><td>GNP - Depreciation</td><td>National Income</td></tr>
+                    <tr><td><strong>Fiscal Deficit</strong></td><td>Exp - Receipts (ex-borrow)</td><td>Borrowing need</td></tr>
+                    <tr><td><strong>Repo Rate</strong></td><td>RBI short-term lending rate</td><td>6.5%</td></tr>
+                    <tr><td><strong>CRR / SLR</strong></td><td>% of deposits with RBI / in assets</td><td>4.5% / 18%</td></tr>
+                    <tr><td><strong>Inflation</strong></td><td>(CPI2-CPI1)/CPI1 ×100</td><td>5.5%</td></tr>
+                    <tr><td><strong>Elasticity</strong></td><td>%ΔQ / %ΔP</td><td>-1.5 (elastic)</td></tr>
+                    <tr><td><strong>Credit Multiplier</strong></td><td>1 / CRR</td><td>1/0.2 = 5 times</td></tr>
+                    <tr><td><strong>Exchange Rate</strong></td><td>Domestic/Foreign currency</td><td>₹83/$</td></tr>
+                    <tr><td><strong>BoP</strong></td><td>Current + Capital + Errors = 0</td><td>Always balanced</td></tr>
+                </tbody>
+            </table>
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer">
+        Made for CBSE Class 12 Commerce • Micro + Macro + Indian Economy • Print for last-minute revision
+    </footer>
+</div>
+</body>
+</html>
