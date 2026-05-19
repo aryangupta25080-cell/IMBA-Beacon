@@ -445,24 +445,46 @@ button,input{border:none}
 .free-session-strip{
   position:relative;
   z-index:54;
-  background:linear-gradient(180deg,#fffaf2,#f7efe4);
+  padding:1.05rem 0 1.2rem;
+  background:
+    radial-gradient(circle at 12% 20%,rgba(228,164,83,.20),transparent 18rem),
+    radial-gradient(circle at 88% 30%,rgba(100,25,47,.16),transparent 20rem),
+    linear-gradient(180deg,#fff8ec,#f7efe4);
   border-bottom:1px solid rgba(74,16,34,.10);
+  box-shadow:0 16px 42px rgba(74,16,34,.06);
 }
 .free-session-inner{
   width:var(--container);
   margin:0 auto;
-  padding:1rem 0;
+  padding:1.05rem;
   display:grid;
-  grid-template-columns:auto 1fr auto;
-  gap:1rem;
+  grid-template-columns:1.05fr 1.45fr;
+  gap:1.05rem;
   align-items:center;
+  border:1px solid rgba(100,25,47,.13);
+  border-radius:26px;
+  background:rgba(255,253,249,.86);
+  box-shadow:0 22px 54px rgba(74,16,34,.10);
+  backdrop-filter:blur(16px);
+  position:relative;
+  overflow:hidden;
+}
+.free-session-inner::after{
+  content:"";
+  position:absolute;
+  inset:auto -5rem -7rem auto;
+  width:16rem;
+  height:16rem;
+  border-radius:999px;
+  background:rgba(228,164,83,.18);
+  pointer-events:none;
 }
 .free-session-badge{
   display:inline-flex;
   align-items:center;
   justify-content:center;
-  min-width:110px;
-  padding:.62rem .82rem;
+  width:max-content;
+  padding:.58rem .82rem;
   border-radius:999px;
   color:var(--gold-soft);
   background:linear-gradient(135deg,var(--maroon),var(--navy));
@@ -471,39 +493,102 @@ button,input{border:none}
   letter-spacing:.12em;
   text-transform:uppercase;
 }
+.free-session-copy{
+  position:relative;
+  z-index:1;
+}
 .free-session-copy strong{
   display:block;
   color:var(--maroon);
-  font-size:1rem;
+  margin-top:.78rem;
+  font-family:"Fraunces",Georgia,serif;
+  font-size:clamp(1.22rem,2.2vw,1.75rem);
+  line-height:1.15;
 }
 .free-session-copy span{
   display:block;
-  margin-top:.12rem;
+  max-width:38rem;
+  margin-top:.48rem;
   color:var(--muted);
-  font-size:.9rem;
+  font-size:.96rem;
+  line-height:1.62;
+}
+.free-session-note{
+  display:flex;
+  gap:.48rem;
+  align-items:center;
+  margin-top:.82rem;
+  color:rgba(74,16,34,.72);
+  font-weight:800;
+  font-size:.86rem;
+}
+.free-session-note::before{
+  content:"";
+  width:.55rem;
+  height:.55rem;
+  border-radius:999px;
+  background:var(--gold);
+  box-shadow:0 0 0 5px rgba(228,164,83,.18);
 }
 .free-session-actions{
-  display:flex;
-  gap:.65rem;
-  flex-wrap:wrap;
-  justify-content:flex-end;
+  position:relative;
+  z-index:1;
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:.78rem;
 }
 .free-session-actions a{
-  display:inline-flex;
+  display:grid;
+  grid-template-columns:auto 1fr;
+  gap:.78rem;
   align-items:center;
-  justify-content:center;
-  padding:.72rem .95rem;
-  border-radius:14px;
+  padding:1rem;
+  min-height:112px;
+  border-radius:20px;
   border:1px solid rgba(74,16,34,.14);
   background:#fff;
   color:var(--maroon);
   font-weight:900;
-  box-shadow:0 10px 24px rgba(74,16,34,.06);
+  box-shadow:0 14px 30px rgba(74,16,34,.08);
+  transition:transform .22s ease,box-shadow .22s ease,border-color .22s ease;
 }
 .free-session-actions a.primary{
-  border:none;
+  border-color:rgba(228,164,83,.42);
   background:linear-gradient(135deg,var(--gold-soft),var(--gold));
   color:var(--navy);
+}
+.free-session-actions a:hover{
+  transform:translateY(-2px);
+  box-shadow:0 20px 38px rgba(74,16,34,.13);
+  border-color:rgba(100,25,47,.25);
+}
+.free-session-icon{
+  display:grid;
+  place-items:center;
+  width:46px;
+  height:46px;
+  border-radius:16px;
+  color:#fff;
+  background:linear-gradient(135deg,var(--maroon),var(--navy));
+  font-size:1.35rem;
+}
+.free-session-actions a.primary .free-session-icon{
+  color:var(--maroon);
+  background:rgba(255,255,255,.62);
+}
+.free-session-action-text{
+  display:grid;
+  gap:.18rem;
+}
+.free-session-action-text strong{
+  font-size:1rem;
+  line-height:1.15;
+}
+.free-session-action-text span{
+  color:rgba(74,16,34,.66);
+  font-size:.82rem;
+  font-weight:700;
+  line-height:1.35;
 }
 
 .mobile-menu{
@@ -1974,15 +2059,27 @@ footer{
   .free-session-inner{
     grid-template-columns:1fr;
     align-items:start;
-    padding:.95rem 0;
+    padding:.95rem;
   }
   .free-session-actions{
-    justify-content:flex-start;
+    grid-template-columns:1fr 1fr;
   }
 }
 @media (max-width:720px){
   .free-session-actions a{
     width:100%;
+  }
+  .free-session-strip{
+    padding:.72rem 0;
+  }
+  .free-session-inner{
+    border-radius:22px;
+  }
+  .free-session-actions{
+    grid-template-columns:1fr;
+  }
+  .free-session-actions a{
+    min-height:96px;
   }
   .news-intro-card,
   .news-teaser-card{border-radius:22px}
@@ -2365,14 +2462,27 @@ footer{
 
   <section class="free-session-strip" aria-label="Free session registrations">
     <div class="free-session-inner">
-      <span class="free-session-badge">Free Sessions</span>
       <div class="free-session-copy">
-        <strong>Two free registrations are open: interview session and batch interaction session.</strong>
-        <span>Log in first, then register from the dashboard or continue directly to the session form.</span>
+        <span class="free-session-badge">Free Sessions</span>
+        <strong>Reserve your free IMBA preparation sessions.</strong>
+        <span>Interview prep and batch interaction are open for every aspirant. Log in first, then complete registration from the same Beacon flow.</span>
+        <div class="free-session-note">Session links appear one hour before the session and are also sent by email.</div>
       </div>
       <div class="free-session-actions">
-        <a class="primary" href="./login.html?next=./free-session-register.html%3Ftype%3Dinterview">Register Interview</a>
-        <a href="./login.html?next=./free-session-register.html%3Ftype%3Dbatch">Register Batch Interaction</a>
+        <a class="primary" href="./login.html?next=./free-session-register.html%3Ftype%3Dinterview">
+          <span class="free-session-icon">🎙</span>
+          <span class="free-session-action-text">
+            <strong>Interview Session</strong>
+            <span>Intro prep, structure, and confidence building</span>
+          </span>
+        </a>
+        <a href="./login.html?next=./free-session-register.html%3Ftype%3Dbatch">
+          <span class="free-session-icon">✦</span>
+          <span class="free-session-action-text">
+            <strong>Batch Interaction</strong>
+            <span>Meet the preparation culture before purchase</span>
+          </span>
+        </a>
       </div>
     </div>
   </section>
