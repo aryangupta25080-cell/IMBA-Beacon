@@ -685,11 +685,38 @@ button{
 .sheet-subsection-title{
   display:flex;
   align-items:center;
+  justify-content:space-between;
   gap:.5rem;
   padding:.78rem .9rem;
   color:var(--maroon);
   font-weight:800;
   border-bottom:1px solid var(--border);
+}
+.sheet-subsection-label{
+  display:flex;
+  align-items:center;
+  gap:.5rem;
+}
+.sheet-subsection-toggle{
+  display:inline-flex;
+  align-items:center;
+  gap:.35rem;
+  color:var(--ink-soft);
+  font-size:.82rem;
+  font-weight:800;
+}
+.sheet-subsection-toggle i{
+  transition:transform .2s ease;
+}
+.sheet-dropdown summary{
+  cursor:pointer;
+  list-style:none;
+}
+.sheet-dropdown summary::-webkit-details-marker{
+  display:none;
+}
+.sheet-dropdown[open] .sheet-subsection-toggle i{
+  transform:rotate(180deg);
 }
 .sheet-subsection-body{
   padding:.78rem .9rem;
@@ -1073,7 +1100,7 @@ button{
             "Content-Type": "application/json"
           },
           body: JSON.stringify({
-            planId: "basic",
+            planId: "pro",
             code: couponCode
           })
         });
@@ -1086,7 +1113,7 @@ button{
         }
 
         syncCouponButtonState(true);
-        setCouponFeedback("Coupon applied. The discount will reflect when you choose a plan.", "success");
+        setCouponFeedback("Coupon applied. Choose Pro to use the 10% discount.", "success");
       } catch (error) {
         syncCouponButtonState(false);
         setCouponFeedback("Unable to validate the coupon right now.", "error");
@@ -1603,24 +1630,30 @@ button{
                       ${locked ? '<span class="sheet-btn pro-only" style="pointer-events:none;">Locked</span>' : ""}
                     </div>
                     <div class="sheet-subsections">
-                      <div class="sheet-subsection">
-                        <div class="sheet-subsection-title">
-                          <i class="ti ti-notebook"></i>
-                          <span>Lecture Notes</span>
-                        </div>
+                      <details class="sheet-subsection sheet-dropdown">
+                        <summary class="sheet-subsection-title">
+                          <span class="sheet-subsection-label">
+                            <i class="ti ti-notebook"></i>
+                            <span>Lecture Notes</span>
+                          </span>
+                          <span class="sheet-subsection-toggle">View <i class="ti ti-chevron-down"></i></span>
+                        </summary>
                         <div class="sheet-subsection-body">
                           <p class="sheet-empty">${escapeHtml(subject.notes)}</p>
                         </div>
-                      </div>
-                      <div class="sheet-subsection">
-                        <div class="sheet-subsection-title">
-                          <i class="ti ti-file-text"></i>
-                          <span>Practice Sheets</span>
-                        </div>
+                      </details>
+                      <details class="sheet-subsection sheet-dropdown">
+                        <summary class="sheet-subsection-title">
+                          <span class="sheet-subsection-label">
+                            <i class="ti ti-file-text"></i>
+                            <span>Practice Sheets</span>
+                          </span>
+                          <span class="sheet-subsection-toggle">View all <i class="ti ti-chevron-down"></i></span>
+                        </summary>
                         <div class="sheet-subsection-body">
                           ${renderPracticeSheets(subject)}
                         </div>
-                      </div>
+                      </details>
                     </div>
                   </div>
                 `;
@@ -1648,7 +1681,7 @@ button{
           <p class="section-label">Upgrade</p>
           <div class="coupon-box">
             <strong>Have a coupon code?</strong>
-            <p>Enter IMDS10 before payment to get 10% off in Razorpay checkout.</p>
+            <p>Enter IMDS10 for 10% off the Pro plan. Limited to the first 10 students.</p>
             <div class="coupon-row">
               <input type="text" id="dashboard-coupon-code" placeholder="Enter coupon code" autocomplete="off"/>
               <button class="coupon-action" type="button" data-action="apply-coupon">Apply</button>
@@ -1812,9 +1845,15 @@ button{
 
     async function startCheckout(planId, triggerButton) {
       const couponCode = getDashboardCouponCode();
+      const checkoutCouponCode = planId === "pro" ? couponCode : "";
+
+      if (couponCode && !checkoutCouponCode) {
+        syncCouponButtonState(false);
+        setCouponFeedback("Coupons apply to Pro only. Basic checkout will continue at regular price.");
+      }
 
       if (!currentUser) {
-        const couponParam = couponCode ? `&coupon=${encodeURIComponent(couponCode)}` : "";
+        const couponParam = checkoutCouponCode ? `&coupon=${encodeURIComponent(checkoutCouponCode)}` : "";
         window.location.href = `./login.html?access=purchase&plan=${encodeURIComponent(planId)}&next=${encodeURIComponent("./student.html")}${couponParam}`;
         return;
       }
@@ -1847,7 +1886,7 @@ button{
           },
           body: JSON.stringify({
             planId: planId,
-            couponCode: couponCode
+            couponCode: checkoutCouponCode
           })
         });
 

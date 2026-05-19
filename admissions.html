@@ -44,10 +44,10 @@
 
       <div class="coupon-box">
         <strong>Have a coupon code?</strong>
-        <p>Enter it here before checkout. A valid code applies the discount directly inside Razorpay.</p>
+        <p>Enter IMDS10 before Pro checkout. The 10% discount is limited to the first 10 students.</p>
         <div class="coupon-row">
           <input type="text" id="admissions-coupon-code" placeholder="Enter coupon code" autocomplete="off"/>
-          <span class="coupon-hint">Valid coupon applies 10% off at checkout.</span>
+          <span class="coupon-hint">Pro plan only.</span>
         </div>
       </div>
 
@@ -155,7 +155,12 @@
     }
 
     async function startCheckout(planId, triggerButton) {
-      const couponCode = getCouponCode();
+      const requestedCouponCode = getCouponCode();
+      const couponCode = planId === "pro" ? requestedCouponCode : "";
+
+      if (requestedCouponCode && !couponCode) {
+        setStatus("Coupons apply to the Pro plan only. Basic checkout will continue at regular price.", "info");
+      }
 
       if (!currentUser) {
         window.location.href = buildPurchaseLoginUrl(planId, couponCode);

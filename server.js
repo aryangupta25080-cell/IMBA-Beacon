@@ -141,7 +141,14 @@ async function resolveCoupon(plan, rawCouponCode) {
     };
   }
 
-  // Check usage in DB
+  if (plan.id !== "pro") {
+    return {
+      applied: false,
+      code: couponCode,
+      message: "This coupon is available only for the Pro plan."
+    };
+  }
+
   const db = await getDatabase();
   await db.run(`
     INSERT INTO coupons (code, used_count, max_uses)
@@ -1927,8 +1934,8 @@ async function requestHandler(request, response) {
     if (!user) return;
     try {
       const body = await parseRequestBody(request);
-      const planId = String(body.planId || "basic").toLowerCase();
-      const plan = PLAN_CATALOG[planId] || PLAN_CATALOG.basic;
+      const planId = String(body.planId || "pro").toLowerCase();
+      const plan = PLAN_CATALOG[planId] || PLAN_CATALOG.pro;
       const coupon = await resolveCoupon(plan, body.code);
       if (!coupon.applied) {
         sendJson(response, 400, { valid: false, message: coupon.message || "Invalid coupon code." }, corsHeaders);

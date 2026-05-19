@@ -165,10 +165,10 @@
       <div class="purchase-coupon-row" id="purchase-coupon-row" hidden>
         <div class="coupon-box">
           <strong>Coupon code</strong>
-          <p>If you have a valid coupon, enter it here before opening Razorpay checkout.</p>
+          <p>Enter IMDS10 before Pro checkout to use the first-10-students discount.</p>
           <div class="coupon-row">
             <input type="text" id="purchase-coupon-code" placeholder="Enter coupon code" autocomplete="off"/>
-            <span class="coupon-hint">Valid coupon applies 10% off.</span>
+            <span class="coupon-hint">Pro plan only.</span>
           </div>
         </div>
       </div>
@@ -280,7 +280,7 @@
         googleContainer.style.display = "";
       }
 
-      purchaseCouponRow.hidden = !hasPurchaseIntent();
+      purchaseCouponRow.hidden = !(hasPurchaseIntent() && purchasePlan === "pro");
       purchaseContinueRow.hidden = !(user && hasPurchaseIntent());
     }
 
@@ -337,7 +337,8 @@
 
     async function startPurchaseCheckout() {
       if (!hasPurchaseIntent() || !user || purchaseCheckoutStarted) return;
-      const couponCode = normalizeCouponCode(purchaseCouponInput ? purchaseCouponInput.value : "");
+      const requestedCouponCode = normalizeCouponCode(purchaseCouponInput ? purchaseCouponInput.value : "");
+      const couponCode = purchasePlan === "pro" ? requestedCouponCode : "";
 
       if (!config?.paymentsEnabled) {
         setStatus("Online payments are temporarily disabled right now.", "error");
