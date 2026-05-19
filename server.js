@@ -403,12 +403,14 @@ async function loadSessionStore() {
 
 async function saveSessionStore() {
   const db = await getDatabase();
-  await db.exec("DELETE FROM sessions");
   const createdAt = new Date().toISOString();
   for (const [sessionId, sessionUser] of sessionStore.entries()) {
     await db.run(`
       INSERT INTO sessions (session_id, user_email, user_json, created_at)
       VALUES (?, ?, ?, ?)
+      ON CONFLICT (session_id) DO UPDATE SET
+        user_email = EXCLUDED.user_email,
+        user_json = EXCLUDED.user_json
     `, [
       sessionId,
       normalizeEmail(sessionUser.email),
@@ -416,6 +418,27 @@ async function saveSessionStore() {
       createdAt
     ]);
   }
+}
+
+async function saveSession(sessionId, sessionUser) {
+  const db = await getDatabase();
+  await db.run(`
+    INSERT INTO sessions (session_id, user_email, user_json, created_at)
+    VALUES (?, ?, ?, ?)
+    ON CONFLICT (session_id) DO UPDATE SET
+      user_email = EXCLUDED.user_email,
+      user_json = EXCLUDED.user_json
+  `, [
+    sessionId,
+    normalizeEmail(sessionUser.email),
+    JSON.stringify(sessionUser),
+    new Date().toISOString()
+  ]);
+}
+
+async function deleteSession(sessionId) {
+  const db = await getDatabase();
+  await db.run("DELETE FROM sessions WHERE session_id = ?", sessionId);
 }
 
 function sendJson(response, statusCode, payload, extraHeaders = {}) {
@@ -521,7 +544,7 @@ function getSessionUser(request) {
 async function createSession(userProfile) {
   const sessionId = crypto.randomUUID();
   sessionStore.set(sessionId, userProfile);
-  await saveSessionStore();
+  await saveSession(sessionId, userProfile);
   return sessionId;
 }
 
@@ -530,7 +553,7 @@ async function destroySession(request) {
   const sessionId = cookies[SESSION_COOKIE];
   if (sessionId) {
     sessionStore.delete(sessionId);
-    await saveSessionStore();
+    await deleteSession(sessionId);
   }
 }
 
