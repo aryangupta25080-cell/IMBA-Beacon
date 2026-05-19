@@ -627,6 +627,78 @@ button{
   color:var(--none-text);
   background:var(--surface-muted);
 }
+.subject-sheet-grid{
+  display:grid;
+  gap:1rem;
+}
+.subject-sheet-card{
+  padding:1rem;
+  border:1px solid var(--border);
+  border-radius:18px;
+  background:#fff;
+}
+.subject-sheet-head{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:1rem;
+  margin-bottom:.9rem;
+}
+.subject-sheet-title{
+  display:flex;
+  align-items:center;
+  gap:.72rem;
+}
+.subject-sheet-head strong{
+  display:block;
+  color:var(--maroon);
+  font-size:1.12rem;
+}
+.subject-sheet-head span{
+  display:block;
+  margin-top:.15rem;
+  color:var(--ink-soft);
+  font-size:.9rem;
+}
+.subject-sheet-icon{
+  width:42px;
+  height:42px;
+  border-radius:14px;
+  display:grid;
+  place-items:center;
+  background:linear-gradient(135deg,var(--amber-tint),var(--amber-soft));
+  color:var(--maroon);
+  font-size:1.15rem;
+  flex-shrink:0;
+}
+.sheet-subsections{
+  display:grid;
+  grid-template-columns:280px minmax(0,1fr);
+  gap:.85rem;
+}
+.sheet-subsection{
+  border:1px solid var(--border);
+  border-radius:16px;
+  background:var(--surface-soft);
+  overflow:hidden;
+}
+.sheet-subsection-title{
+  display:flex;
+  align-items:center;
+  gap:.5rem;
+  padding:.78rem .9rem;
+  color:var(--maroon);
+  font-weight:800;
+  border-bottom:1px solid var(--border);
+}
+.sheet-subsection-body{
+  padding:.78rem .9rem;
+}
+.sheet-empty{
+  color:var(--ink-soft);
+  font-size:.9rem;
+  line-height:1.5;
+}
 .plans-grid{
   display:grid;
   grid-template-columns:repeat(2,minmax(0,1fr));
@@ -822,6 +894,7 @@ button{
   .track-grid,
   .plans-grid,
   .profile-grid,
+  .sheet-subsections,
   .batch-grid.pro{
     grid-template-columns:1fr;
   }
@@ -1456,55 +1529,102 @@ button{
       ];
 
       const locked = plan === "none";
+      const subjects = [
+        {
+          title: "Mathematics",
+          icon: "calculator",
+          meta: "Lecture notes and practice sheets",
+          notes: "Mathematics lecture notes will be added here.",
+          practiceSheets: lectures
+        },
+        {
+          title: "Verbal Communication",
+          icon: "message-circle-2",
+          meta: "Lecture notes and practice sheets",
+          notes: "Verbal communication lecture notes will be added here.",
+          practiceSheets: []
+        }
+      ];
+
+      function renderPracticeSheets(subject) {
+        if (!subject.practiceSheets.length) {
+          return '<p class="sheet-empty">Practice sheets will be added here.</p>';
+        }
+
+        return `
+          <div class="sheet-list">
+            ${subject.practiceSheets.map(function (sheet) {
+              return `
+                <div class="sheet-row" style="padding:.72rem 0;">
+                  <div class="sheet-info">
+                    <div class="sheet-icon" style="width:32px;height:32px;font-size:.85rem;border-radius:10px;">
+                      <i class="ti ti-file-type-pdf"></i>
+                    </div>
+                    <div>
+                      <strong style="font-size:.95rem;">${escapeHtml(sheet.title)}</strong>
+                      <span>Practice Sheet · PDF</span>
+                    </div>
+                  </div>
+                  ${locked ? '<button class="sheet-btn pro-only" disabled>Locked</button>' : `
+                    <div style="display:flex;gap:.5rem;flex-wrap:wrap;">
+                      <a class="sheet-btn" href="https://drive.google.com/file/d/${sheet.id}/view" target="_blank" rel="noopener noreferrer" style="font-size:.82rem;padding:.6rem .8rem;">
+                        <i class="ti ti-eye" style="font-size:.9rem;"></i> Open
+                      </a>
+                      <a class="sheet-btn" href="https://drive.google.com/uc?export=download&id=${sheet.id}" target="_blank" rel="noopener noreferrer" style="font-size:.82rem;padding:.6rem .8rem;background:linear-gradient(135deg,var(--amber-soft),var(--amber));color:var(--maroon-deep);border:none;">
+                        <i class="ti ti-download" style="font-size:.9rem;"></i> Download
+                      </a>
+                    </div>
+                  `}
+                </div>
+              `;
+            }).join("")}
+          </div>
+        `;
+      }
 
       return `
         <section class="dashboard-section" id="section-sheets">
-          <p class="section-label">Master Sheets</p>
+          <p class="section-label">Course Materials</p>
           <article class="dashboard-card ${locked ? "locked-card" : ""}">
-            <div class="sheet-row" style="cursor:pointer;" onclick="(function(){var el=document.getElementById('master-sheet-expand');var icon=document.getElementById('master-chevron');var open=el.style.display==='block';el.style.display=open?'none':'block';icon.style.transform=open?'rotate(0deg)':'rotate(180deg)';})()">
-              <div class="sheet-info">
-                <div class="sheet-icon" style="background:linear-gradient(135deg,var(--amber-tint),var(--amber-soft));color:var(--maroon);">
-                  <i class="ti ti-book-2"></i>
-                </div>
-                <div>
-                  <strong>Master Sheets</strong>
-                  <span>8 Practice PDFs · Lectures 1–8</span>
-                </div>
-              </div>
-              <div style="display:flex;align-items:center;gap:.6rem;">
-                ${locked ? '<span class="sheet-btn pro-only" style="pointer-events:none;">Locked</span>' : '<span style="font-size:.85rem;color:var(--ink-soft);font-weight:600;">View all</span>'}
-                <i class="ti ti-chevron-down" id="master-chevron" style="font-size:1.1rem;color:var(--ink-soft);transition:transform .25s ease;"></i>
-              </div>
-            </div>
-
-            <div id="master-sheet-expand" style="display:none;margin-top:.5rem;border-top:1px solid var(--border);padding-top:.75rem;">
-              <div class="sheet-list">
-                ${lectures.map(function (lec) {
-                  return `
-                    <div class="sheet-row" style="padding:.7rem .95rem;">
-                      <div class="sheet-info">
-                        <div class="sheet-icon" style="width:32px;height:32px;font-size:.85rem;border-radius:10px;">
-                          <i class="ti ti-file-type-pdf"></i>
+            <div class="subject-sheet-grid">
+              ${subjects.map(function (subject) {
+                return `
+                  <div class="subject-sheet-card">
+                    <div class="subject-sheet-head">
+                      <div class="subject-sheet-title">
+                        <div class="subject-sheet-icon">
+                          <i class="ti ti-${subject.icon}"></i>
                         </div>
                         <div>
-                          <strong style="font-size:.95rem;">${escapeHtml(lec.title)}</strong>
-                          <span>Practice Sheet · PDF</span>
+                          <strong>${escapeHtml(subject.title)}</strong>
+                          <span>${escapeHtml(subject.meta)}</span>
                         </div>
                       </div>
-                      ${locked ? '<button class="sheet-btn pro-only" disabled>Locked</button>' : `
-                        <div style="display:flex;gap:.5rem;">
-                          <a class="sheet-btn" href="https://drive.google.com/file/d/${lec.id}/view" target="_blank" rel="noopener noreferrer" style="font-size:.82rem;padding:.6rem .8rem;">
-                            <i class="ti ti-eye" style="font-size:.9rem;"></i> Open
-                          </a>
-                          <a class="sheet-btn" href="https://drive.google.com/uc?export=download&id=${lec.id}" target="_blank" rel="noopener noreferrer" style="font-size:.82rem;padding:.6rem .8rem;background:linear-gradient(135deg,var(--amber-soft),var(--amber));color:var(--maroon-deep);border:none;">
-                            <i class="ti ti-download" style="font-size:.9rem;"></i> Download
-                          </a>
-                        </div>
-                      `}
+                      ${locked ? '<span class="sheet-btn pro-only" style="pointer-events:none;">Locked</span>' : ""}
                     </div>
-                  `;
-                }).join("")}
-              </div>
+                    <div class="sheet-subsections">
+                      <div class="sheet-subsection">
+                        <div class="sheet-subsection-title">
+                          <i class="ti ti-notebook"></i>
+                          <span>Lecture Notes</span>
+                        </div>
+                        <div class="sheet-subsection-body">
+                          <p class="sheet-empty">${escapeHtml(subject.notes)}</p>
+                        </div>
+                      </div>
+                      <div class="sheet-subsection">
+                        <div class="sheet-subsection-title">
+                          <i class="ti ti-file-text"></i>
+                          <span>Practice Sheets</span>
+                        </div>
+                        <div class="sheet-subsection-body">
+                          ${renderPracticeSheets(subject)}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                `;
+              }).join("")}
             </div>
 
             ${locked ? `
