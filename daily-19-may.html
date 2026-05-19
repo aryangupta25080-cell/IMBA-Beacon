@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>iMBA important news - 19 May 2026</title>
+    <style>
+        :root {
+            --primary: #692240;
+            --accent: #AA3B5C;
+            --bg: #ffffff;
+            --text: #1a1a1a;
+            --muted: #5a5a5a;
+            --border: #f0e6ea;
+            --card-shadow: 0 1px 3px rgba(0,0,0,0.04), 0 8px 24px rgba(105,34,64,0.06);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', Arial, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.7;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .page {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            min-height: 100vh;
+        }
+
+        header {
+            background: linear-gradient(135deg, #692240 0%, #AA3B5C 100%);
+            color: white;
+            padding: 56px 32px 40px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(255,255,255,0.08) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .header-content {
+            position: relative;
+            z-index: 2;
+        }
+
+        h1 {
+            font-size: clamp(2rem, 5vw, 2.75rem);
+            font-weight: 750;
+            letter-spacing: -0.02em;
+            margin-bottom: 8px;
+            line-height: 1.1;
+        }
+
+        .date {
+            font-size: 1.05rem;
+            opacity: 0.92;
+            font-weight: 400;
+            letter-spacing: 0.01em;
+        }
+
+        .print-btn {
+            position: absolute;
+            top: 24px;
+            right: 24px;
+            background: rgba(255,255,255,0.14);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            border: 1px solid rgba(255,255,255,0.25);
+            color: white;
+            padding: 9px 18px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 0.875rem;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            z-index: 3;
+        }
+
+        .print-btn:hover {
+            background: rgba(255,255,255,0.22);
+            transform: translateY(-1px);
+        }
+
+        .print-btn:active {
+            transform: translateY(0);
+        }
+
+        main {
+            padding: 36px 28px 60px;
+        }
+
+        .section {
+            margin-bottom: 44px;
+        }
+
+        .section-heading {
+            font-size: 0.82rem;
+            font-weight: 700;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+            color: var(--accent);
+            margin: 0 0 18px 4px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .card {
+            background: white;
+            border: 1px solid #f2f2f2;
+            border-left: 4px solid var(--primary);
+            border-radius: 12px;
+            padding: 24px 28px;
+            margin-bottom: 18px;
+            box-shadow: var(--card-shadow);
+            transition: all 0.25s ease;
+            position: relative;
+        }
+
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 2px 6px rgba(0,0,0,0.05), 0 12px 32px rgba(105,34,64,0.09);
+            border-left-color: var(--accent);
+        }
+
+        .card h3 {
+            color: var(--primary);
+            font-size: 1.22rem;
+            font-weight: 680;
+            line-height: 1.35;
+            margin-bottom: 12px;
+            letter-spacing: -0.01em;
+        }
+
+        .card p {
+            color: #2e2e2e;
+            font-size: 1rem;
+            line-height: 1.75;
+            margin-bottom: 0.85em;
+        }
+
+        .card p:last-child {
+            margin-bottom: 0;
+        }
+
+        .card .meta {
+            display: inline-block;
+            font-size: 0.78rem;
+            font-weight: 600;
+            color: var(--accent);
+            background: #fdf4f7;
+            padding: 3px 10px;
+            border-radius: 6px;
+            margin-bottom: 10px;
+            letter-spacing: 0.02em;
+        }
+
+        .bullets {
+            margin: 10px 0 0 0;
+            padding-left: 0;
+            list-style: none;
+        }
+
+        .bullets li {
+            position: relative;
+            padding-left: 18px;
+            margin-bottom: 8px;
+            color: #333;
+        }
+
+        .bullets li::before {
+            content: '•';
+            position: absolute;
+            left: 0;
+            color: var(--accent);
+            font-weight: bold;
+        }
+
+        footer {
+            text-align: center;
+            padding: 32px 20px 48px;
+            color: #8a8a8a;
+            font-size: 0.85rem;
+            border-top: 1px solid #f5f5f5;
+            margin-top: 20px;
+        }
+
+        @media (max-width: 640px) {
+            header {
+                padding: 48px 22px 36px;
+            }
+
+            .print-btn {
+                top: 16px;
+                right: 16px;
+                padding: 8px 14px;
+                font-size: 0.82rem;
+            }
+
+            main {
+                padding: 28px 18px 50px;
+            }
+
+            .card {
+                padding: 20px 20px 20px 22px;
+                border-radius: 10px;
+            }
+
+            .card h3 {
+                font-size: 1.12rem;
+            }
+
+            .card p {
+                font-size: 0.97rem;
+                line-height: 1.7;
+            }
+        }
+
+        @media print {
+            body { background: white; }
+            .print-btn { display: none !important; }
+            header {
+                background: #692240 !important;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+                padding: 30px;
+                border-radius: 0;
+            }
+            .card {
+                box-shadow: none;
+                border: 1px solid #ddd;
+                page-break-inside: avoid;
+            }
+            .page { max-width: 100%; }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .card {
+            animation: fadeIn 0.5s ease forwards;
+            opacity: 0;
+        }
+    </style>
+    <link rel="stylesheet" href="./assets/article-theme.css">
+</head>
+<body>
+    <nav class="imba-article-nav">
+        <a class="imba-article-brand" href="./articles.html">
+            <span>IB</span>
+            <strong>IMBA Beacon<small>Daily Article Brief</small></strong>
+        </a>
+        <a class="imba-article-back" href="./articles.html">← Back to Articles</a>
+    </nav>
+    <div class="page">
+        <header>
+            <button class="print-btn" onclick="window.print()" aria-label="Print digest">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9V2h12v7M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2M6 14h12v8H6z"/></svg>
+                Print
+            </button>
+            <div class="header-content">
+                <h1>iMBA important news</h1>
+                <div class="date">19 May 2026</div>
+            </div>
+        </header>
+
+        <main>
+            <section class="section">
+                <h2 class="section-heading">Markets</h2>
+
+                <article class="card" style="animation-delay: 0ms">
+                    <span class="meta">CURRENCY & RATES</span>
+                    <h3>Rupee hits record low, bond yields spike</h3>
+                    <p>The Indian rupee touched a fresh all-time low on Monday, sliding to an intraday 96.40 against the US dollar before closing at 96.36, breaching its previous record of 95.97. The Reserve Bank of India intervened through state-run banks in late trade, but sustained dollar demand from oil importers and foreign portfolio outflows kept pressure intense.</p>
+                    <p>The 10-year benchmark government bond yield jumped 7 basis points to 7.13%, tracking a surge in US Treasury yields and Brent crude holding above $106.6 per barrel. Traders now expect the rupee to remain below 96 in the near term, with rising import costs threatening to widen the current account deficit and complicate the RBI's inflation management.</p>
+                </article>
+
+                <article class="card" style="animation-delay: 50ms">
+                    <span class="meta">VALUATIONS</span>
+                    <h3>Bank valuations at decade-wide discount to market</h3>
+                    <p>Banking stocks are trading at their steepest discount to the broader market in a decade, with the Bank Nifty now at a 43.5% discount to the Nifty 50 on price-to-book — near levels last seen in 2015. The sector trades at just 1.83 times book versus 3.25 times for the Nifty.</p>
+                    <p>The disconnect persists despite stronger earnings growth: Bank Nifty EPS rose 4% year-on-year to ₹3,960 from ₹3,810, and is up 172% over five years compared with 117% for the Nifty. Analysts attribute the gap to investor concerns over peaking net interest margins, slowing retail credit growth, and rising stress in unsecured loans, suggesting the market is pricing in a cyclical earnings downturn.</p>
+                </article>
+
+                <article class="card" style="animation-delay: 100ms">
+                    <span class="meta">MARKET CAP</span>
+                    <h3>Airtel briefly overtakes HDFC Bank as No.2</h3>
+                    <p>Bharti Airtel briefly overtook HDFC Bank on Monday to become India's second-most valuable listed company by market capitalisation intraday, before closing just behind the lender. The flip underscores divergent investor sentiment year-to-date: Airtel is down about 8%, while HDFC Bank has slumped nearly 25% amid concerns over deposit growth and merger integration.</p>
+                    <p>Telecom's relative resilience stems from tariff stability, steady ARPU growth, and early 5G monetisation, contrasting with banking sector pressure from margin compression. The rotation highlights how defensive, cash-flow sectors are being favoured over financials in the current risk-off environment.</p>
+                </article>
+            </section>
+
+            <section class="section">
+                <h2 class="section-heading">Corporate</h2>
+
+                <article class="card" style="animation-delay: 150ms">
+                    <span class="meta">TELECOM</span>
+                    <h3>Vodafone Idea pushes for ₹35,000 cr debt closure</h3>
+                    <p>Vodafone Idea CEO Abhijit Kishore said the telco is confident of closing its ₹35,000 crore debt raise from an SBI-led consortium "very fast," a critical milestone for its survival plan. The statement follows fresh promoter commitments to restore lender confidence.</p>
+                    <p>Aditya Birla Group will infuse ₹4,730 crore via warrants into its Singapore investment vehicle, lifting its stake from 9.6% to over 13%. Vodafone PLC will separately provide ₹5,836 crore under a revised CLAM agreement, including ₹2,307 crore in cash within 12 months. Post-transaction, the government's holding will dilute to about 47.1% while total promoter ownership rises to 28.5%. The funds are earmarked for Vi's ₹45,000 crore three-year capex program to roll out 5G and stem subscriber losses.</p>
+                </article>
+
+                <article class="card" style="animation-delay: 200ms">
+                    <span class="meta">REGULATORY</span>
+                    <h3>Adani Enterprises settles US sanctions case for $275 mn</h3>
+                    <p>Adani Enterprises has agreed to pay $275 million to settle with the US Treasury's OFAC over alleged violations of Iran sanctions linked to LPG imports at Mundra Port between November 2023 and June 2025. US investigators alleged a Dubai-based trader routed Iranian-origin LPG and mislabeled it as Omani or Iraqi, with shipments handled by Adani's terminal.</p>
+                    <p>The company said it proactively disclosed the findings, fully cooperated, and did not admit wrongdoing, with the settlement resolving all civil liability. The deal marks the second US regulatory matter closed by the group in recent days, reducing overhang for its planned dollar bond issuances and overseas expansion.</p>
+                </article>
+
+                <article class="card" style="animation-delay: 250ms">
+                    <span class="meta">IT SERVICES</span>
+                    <h3>TCS restores April hikes at 6–8%</h3>
+                    <p>Tata Consultancy Services has restored its annual salary hike cycle to April, awarding average increases of 6-8% in India for FY26, with top 'A+' performers receiving over 10%. The move ends last year's unusual delay to September, which was prompted by global macro uncertainty and cautious client spending.</p>
+                    <p>The restoration signals management confidence in deal flow stabilisation, despite a still-muted IT services environment in the US and Europe. For employees, it provides relief after a year of stagnant wages, and for the sector, TCS's decision often sets the benchmark for Infosys, HCLTech and Wipro.</p>
+                </article>
+
+                <article class="card" style="animation-delay: 300ms">
+                    <span class="meta">STEEL</span>
+                    <h3>Tata Steel Q4 profit doubles; signals ₹6,000/tonne hike</h3>
+                    <p>Tata Steel reported consolidated net profit more than doubled year-on-year for Q4FY26, aided by higher volumes in India and improved realisations in Europe. MD & CEO T V Narendran guided for a sharp ~₹6,000 per tonne sequential price hike in India for Q1FY27, with Europe also seeing increases of £80 per tonne in the UK and €80 in the Netherlands.</p>
+                    <p>He cautioned, however, that coking coal and other input costs are rising in tandem, limiting margin expansion. Narendran stressed that growth must be sustainable and profitability-led, not pursued for scale alone, as the company balances its UK decarbonisation transition.</p>
+                </article>
+
+                <article class="card" style="animation-delay: 350ms">
+                    <span class="meta">DEALS & EXPANSION</span>
+                    <h3>Corporate moves roundup</h3>
+                    <p>TVS Motor's promoter group will acquire up to 9.9% in Jana Small Finance Bank through a mix of warrants and secondary purchases, deepening its financial services footprint.</p>
+                    <p>JSW Energy raised ₹3,150 crore by selling 25 million shares of group company JSW Steel in a bulk deal, trimming its holding to 45 million shares.</p>
+                    <p>Royal Enfield announced a ~₹2,500 crore greenfield plant at Tada in Andhra Pradesh, following its ₹958 crore Cheyyar expansion, as capacity utilisation nears 95% at 1.46 million units annually.</p>
+                    <p>Separately, JLL reported India's hotel investments jumped 67% to $567 million in 2025, with private equity and institutional investors accounting for 35% of deals, reflecting robust post-pandemic travel demand.</p>
+                </article>
+            </section>
+
+            <section class="section">
+                <h2 class="section-heading">Economy & Policy</h2>
+
+                <article class="card" style="animation-delay: 400ms">
+                    <span class="meta">POLICY</span>
+                    <h3>Fertiliser bill, austerity push, RBI watch</h3>
+                    <p>India's fertiliser subsidy bill for FY27 could surge by ₹70,000 crore to ₹2.41 trillion due to elevated global urea prices and a weaker rupee inflating import costs, putting fresh pressure on the fiscal deficit.</p>
+                    <p>In parallel, the Finance Ministry has directed public sector banks to enforce austerity, including curbs on foreign travel, conferences, and a push to replace fuel vehicles with EVs. Meanwhile, RBI Governor Sanjay Malhotra said the central bank is "keeping a close watch to see if supply shocks warrant policy action," signalling concern that crude above $106 and currency weakness could re-ignite imported inflation.</p>
+                </article>
+
+                <article class="card" style="animation-delay: 450ms">
+                    <span class="meta">ANTITRUST</span>
+                    <h3>Delhi HC orders Apple to cooperate with CCI probe</h3>
+                    <p>The Delhi High Court has directed Apple Inc to "fully cooperate" with the Competition Commission of India's investigation into alleged App Store dominance, while rejecting the company's plea for a stay. The court, however, restrained the CCI from passing a final order until July 15, giving Apple time to file submissions.</p>
+                    <p>The probe centres on mandatory use of Apple's billing system and 30% commission, mirroring global antitrust scrutiny. The interim order keeps regulatory pressure alive on Big Tech platforms operating in India, without immediate business disruption.</p>
+                </article>
+            </section>
+        </main>
+
+        <footer>
+            Compiled 19 May 2026 • iMBA important news
+        </footer>
+    </div>
+
+    <script>
+        // Smooth reveal for cards
+        document.addEventListener('DOMContentLoaded', () => {
+            const cards = document.querySelectorAll('.card');
+            cards.forEach(card => {
+                card.style.opacity = '1';
+            });
+        });
+    </script>
+</body>
+</html>

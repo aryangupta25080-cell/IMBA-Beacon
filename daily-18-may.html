@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>iMBA important topics – 18 May 2026</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --primary:#692240;
+  --accent:#AA3B5C;
+  --bg:#ffffff;
+  --text:#1a1a1a;
+  --muted:#5a5a5a;
+  --border:#f0e6ea;
+  --card-shadow:0 1px 3px rgba(0,0,0,0.04),0 8px 24px rgba(105,34,64,0.06);
+}
+* { box-sizing: border-box; margin:0; padding:0; }
+body {
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+}
+header {
+  background: linear-gradient(135deg, #692240 0%, #AA3B5C 100%);
+  color: white;
+  padding: 2.5rem 1.5rem 3.5rem;
+  position: relative;
+  overflow: hidden;
+}
+header::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  right: -10%;
+  width: 600px;
+  height: 600px;
+  background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+  border-radius: 50%;
+}
+.header-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 2rem;
+  position: relative;
+  z-index: 2;
+}
+h1 {
+  font-size: clamp(1.8rem, 4vw, 2.6rem);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  margin-bottom: 0.4rem;
+}
+.subtitle {
+  font-size: 1.05rem;
+  opacity: 0.92;
+  font-weight: 500;
+}
+.btn-print {
+  background: rgba(255,255,255,0.14);
+  border: 1px solid rgba(255,255,255,0.35);
+  color: white;
+  padding: 0.7rem 1.3rem;
+  border-radius: 12px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.9rem;
+  backdrop-filter: blur(8px);
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  white-space: nowrap;
+}
+.btn-print:hover {
+  background: rgba(255,255,255,0.22);
+  transform: translateY(-1px);
+}
+main {
+  max-width: 1200px;
+  margin: -2rem auto 0;
+  padding: 0 1.5rem 4rem;
+  position: relative;
+  z-index: 3;
+}
+.section {
+  margin-top: 3rem;
+}
+.section-title {
+  font-size: 1.35rem;
+  color: var(--primary);
+  font-weight: 800;
+  margin-bottom: 1.4rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding-bottom: 0.6rem;
+  border-bottom: 2px solid var(--border);
+}
+.section-title span {
+  background: linear-gradient(135deg, var(--primary), var(--accent));
+  color: white;
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+  gap: 1.4rem;
+}
+.card {
+  background: white;
+  border-radius: 16px;
+  border: 1px solid var(--border);
+  border-left: 4px solid var(--primary);
+  box-shadow: var(--card-shadow);
+  padding: 1.5rem;
+  transition: all 0.3s ease;
+  display: flex;
+  flex-direction: column;
+}
+.card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.06), 0 16px 32px rgba(105,34,64,0.12);
+}
+.card h3 {
+  font-size: 1.12rem;
+  line-height: 1.35;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 0.75rem;
+}
+.meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+.badge {
+  background: #fdf4f7;
+  color: var(--accent);
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 0.32rem 0.7rem;
+  border-radius: 999px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  border: 1px solid #f9e5ec;
+}
+.card p {
+  font-size: 0.94rem;
+  color: var(--text);
+  margin-bottom: 0.85rem;
+}
+.card p:last-child { margin-bottom: 0; }
+.card strong {
+  color: var(--primary);
+  font-weight: 700;
+}
+.highlight {
+  background: #fdf4f7;
+  padding: 0.15rem 0.4rem;
+  border-radius: 4px;
+  font-weight: 600;
+  color: var(--primary);
+}
+footer {
+  max-width: 1200px;
+  margin: 3rem auto 0;
+  padding: 2rem 1.5rem;
+  text-align: center;
+  color: var(--muted);
+  font-size: 0.88rem;
+  border-top: 1px solid var(--border);
+}
+@media (max-width: 768px) {
+  .header-inner { flex-direction: column; align-items: flex-start; }
+  .grid { grid-template-columns: 1fr; }
+  header { padding: 2rem 1.25rem 3rem; }
+  .card { padding: 1.25rem; }
+}
+@media print {
+  header { background: #692240 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .btn-print { display: none; }
+  .card { break-inside: avoid; box-shadow: none; border: 1px solid #ddd; }
+  body { background: white; }
+  main { margin-top: 1rem; }
+}
+</style>
+<link rel="stylesheet" href="./assets/article-theme.css">
+</head>
+<body>
+<nav class="imba-article-nav">
+  <a class="imba-article-brand" href="./articles.html">
+    <span>IB</span>
+    <strong>IMBA Beacon<small>Daily Article Brief</small></strong>
+  </a>
+  <a class="imba-article-back" href="./articles.html">← Back to Articles</a>
+</nav>
+<header>
+  <div class="header-inner">
+    <div>
+      <h1>iMBA important topics</h1>
+      <div class="subtitle">18 May 2026 • Business Standard Delhi Edition</div>
+    </div>
+    <button class="btn-print" onclick="window.print()">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg>
+      Print
+    </button>
+  </div>
+</header>
+
+<main>
+  <!-- SECTION 1 -->
+  <section class="section">
+    <h2 class="section-title"><span>1</span> FINANCIAL SYSTEM & MARKETS</h2>
+    <div class="grid">
+      <article class="card">
+        <h3>Real-time risk scores on cards for digi payments</h3>
+        <div class="meta">
+          <span class="badge">RBI</span>
+          <span class="badge">IDPIC</span>
+          <span class="badge">Fraud Prevention</span>
+        </div>
+        <p>The RBI Innovation Hub has moved to phase two of its fraud stack via the Indian Digital Payments Infrastructure Collective (IDPIC), assigning a dynamic risk score to <em>every</em> incoming digital credit within 200 milliseconds. The system flags mule accounts—often opened by unsuspecting individuals and rented to cybercrime syndicates—before funds are layered or withdrawn. Six banks including SBI, HDFC Bank and ICICI are live, with scores fed directly to transaction monitoring dashboards.</p>
+        <p>The urgency stems from scale: <span class="highlight">583,291 digital payment frauds</span> were reported between FY22-FY26 worth ₹3,588 crore, with just ₹239 crore recovered. Most losses occurred because funds vanished in under 9 minutes across multiple mule accounts, making post-facto freezing futile.</p>
+        <p><strong>Why it matters:</strong> India shifts from investigation to prevention at the rails—critical as UPI crosses 14 billion transactions/month. Expect higher friction for new, dormant or high-velocity accounts, and immediate scrutiny of gaming, crypto and overseas remittance flows.</p>
+      </article>
+
+      <article class="card">
+        <h3>Rupee at 96-97, 100/$ unlikely</h3>
+        <div class="meta">
+          <span class="badge">Forex</span>
+          <span class="badge">RBI</span>
+        </div>
+        <p>Market consensus places the rupee in a 96-97 band through June, with a breach of 100 seen as a tail risk. IFA Global forecasts 96.8, CR Forex sees 94.5, and Barclays pegs 95 by end-June. A move to 100 would require Brent crude above $125 sustained, plus FPI debt outflows exceeding $3 billion per month—neither is the base case.</p>
+        <p>Drivers are macro, not panic: crude at $96, a widened April trade deficit of $26.8 bn, and seasonal dollar demand from oil importers. RBI has leaned on both spot sales and short-dated forwards to supply dollars without draining rupee liquidity, keeping volatility contained.</p>
+        <p><strong>Why it matters:</strong> The 100 level is psychological but powerful—it lifts import inflation for electronics, chemicals and edible oils, and forces CFOs to raise hedge ratios from 50% to 70%. For RBI, managing a gradual depreciation is preferable to defending a specific level.</p>
+      </article>
+
+      <article class="card">
+        <h3>Silver ETFs to trade at premium</h3>
+        <div class="meta">
+          <span class="badge">Commodities</span>
+          <span class="badge">ETFs</span>
+        </div>
+        <p>After the government curbed free silver bullion imports and mandated actual-user licences, physical supply in Mumbai and Ahmedabad has tightened sharply. Dealers quoted premiums of ₹2,000-3,000/kg over LBMA, and the first trading session post-curb is expected to see silver ETFs like Nippon and HDFC trade 2-4% above NAV as investors chase paper exposure.</p>
+        <p>India imported a record 7,200 tonnes in FY26—driven by solar panel manufacturing and investment demand. The curb aims to check under-invoicing from Dubai and Hong Kong but has inadvertently squeezed legitimate industrial buyers.</p>
+        <p><strong>Why it matters:</strong> A sustained ETF premium signals a policy-induced squeeze, not a demand boom. Jewellers face margin compression, while solar and EV component makers may need to front-load inventory. For retail investors, tracking error will spike, eroding returns.</p>
+      </article>
+
+      <article class="card">
+        <h3>CNG prices up ₹1/kg, second hike in 48 hours</h3>
+        <div class="meta">
+          <span class="badge">Energy</span>
+          <span class="badge">Inflation</span>
+        </div>
+        <p>IGL raised CNG prices by ₹1 per kg for the second time in two days, taking Delhi to ₹80.90, Noida to ₹88.70 and Gurugram to ₹85.12. The hike follows a 12% rise in APM gas allocation costs and higher spot LNG purchases after ONGC's Bombay High maintenance cut domestic output by 8%.</p>
+        <p>This reverses six months of price stability and comes ahead of peak summer power demand, when gas is diverted to gas-based plants. Auto-gas retailers in Maharashtra and Gujarat are expected to follow within a week.</p>
+        <p><strong>Why it matters:</strong> Over 8 lakh CNG vehicles in NCR will see monthly fuel bills rise ~₹800-1,000, feeding into auto-rickshaw fare hikes and last-mile delivery costs. It also narrows CNG's running-cost advantage over petrol to under 35%, slowing conversions.</p>
+      </article>
+    </div>
+  </section>
+
+  <!-- SECTION 2 -->
+  <section class="section">
+    <h2 class="section-title"><span>2</span> CORPORATE DEALS</h2>
+    <div class="grid">
+      <article class="card">
+        <h3>Prudential buys 75% of Bharti Life for ₹3,500 cr</h3>
+        <div class="meta">
+          <span class="badge">Insurance</span>
+          <span class="badge">M&A</span>
+        </div>
+        <p>UK-based Prudential plc will acquire 75% of Bharti Life Insurance from Sunil Mittal's Bharti Enterprises for ₹3,500 crore plus a ₹700 crore earnout linked to FY27-28 VNB growth. Bharti will retain 25%, and the venture will be rebranded as Prudential India Life.</p>
+        <p>To comply with IRDAI's single-promoter norm, Prudential will cut its 22.1% stake in ICICI Prudential Life to below 10% within 18 months via block trades. IRDAI approved the structure viewing it as a clean portfolio shift.</p>
+        <p><strong>Why it matters:</strong> This is the second global insurer exiting a successful JV to go solo in a year, after Allianz left Bajaj Allianz. It signals consolidation in life insurance—foreign players now want control over distribution, products and bancassurance, not just dividends from a JV.</p>
+      </article>
+
+      <article class="card">
+        <h3>JSW Steel eyes top-two global rank</h3>
+        <div class="meta">
+          <span class="badge">Steel</span>
+          <span class="badge">Capex</span>
+        </div>
+        <p>JSW Steel unveiled a ₹1.26 trillion roadmap to lift capacity from 36.4 mt to 62 mt by FY32, integrating BPSL and Bhushan Power fully, expanding Dolvi to 15 mt with hydrogen-ready DRI, and building a 5 mt greenfield plant in Odisha. The target would place it behind only Baowu globally (ex-China consolidation).</p>
+        <p>Management cited India's ₹11 trillion annual infra spend and China's capacity plateau as structural drivers. Funding will be 70% internal accruals, with net debt/EBITDA capped at 2.5x.</p>
+        <p><strong>Why it matters:</strong> This positions India for self-reliance in auto-grade and electrical steel, reducing $6 bn annual imports. It also locks in a decade-long capex cycle for mining, logistics and engineering firms, supporting the manufacturing GDP multiplier.</p>
+      </article>
+
+      <article class="card">
+        <h3>Hero MotoCorp ₹1,500 cr capex</h3>
+        <div class="meta">
+          <span class="badge">Auto</span>
+          <span class="badge">2W</span>
+        </div>
+        <p>Hero's board approved ₹1,500 crore for FY27 to double scooter capacity from 60,000 to 100,000 units/month at Chittoor and build a South India integrated parts hub in Hosur. The spend also upgrades 125cc premium motorcycle lines.</p>
+        <p>Scooter demand has rebounded 18% YoY post-GST rationalisation, led by Destini 125 and Xoom. Meanwhile, EV brand Vida remains sub-scale at ~5,000 units/month despite price cuts.</p>
+        <p><strong>Why it matters:</strong> Hero is betting India's EV transition in two-wheelers will be slower than projected, with ICE scooters still dominating for the next 3-4 years due to cost and charging gaps. The Hosur hub deepens localisation for the Tamil Nadu auto cluster.</p>
+      </article>
+
+      <article class="card">
+        <h3>Nestlé KitKat India becomes No.1 market</h3>
+        <div class="meta">
+          <span class="badge">FMCG</span>
+          <span class="badge">Consumer</span>
+        </div>
+        <p>India has overtaken Japan and the UK to become Nestlé's largest KitKat market by volume. FY26 sales crossed ₹3,100 crore, making KitKat Nestlé India's second-largest brand after Maggi, growing 14% YoY.</p>
+        <p>Growth was powered by ₹10-20 packs now available in 3.2 million outlets (vs 1.8 mn in 2022) and deep rural penetration. Local sourcing of 70% cocoa butter insulated pricing despite global cocoa hitting $9,000/tonne.</p>
+        <p><strong>Why it matters:</strong> It proves 'premiumisation at mass price points'—Indians want global brands, but at ₹10, not ₹100. For Nestlé, India is now a lead market for flavour innovation (Masala Chai, Thandai), forcing Mondelez and Mars to rethink small-pack strategy.</p>
+      </article>
+    </div>
+  </section>
+
+  <!-- SECTION 3 -->
+  <section class="section">
+    <h2 class="section-title"><span>3</span> ECONOMY & POLICY</h2>
+    <div class="grid">
+      <article class="card">
+        <h3>States' capex utilisation at 77%</h3>
+        <div class="meta">
+          <span class="badge">Fiscal</span>
+          <span class="badge">States</span>
+        </div>
+        <p>Twenty large states spent just ₹7.92 trillion of their ₹10.26 trillion capex budget in FY26—77.2% utilisation. Telangana overspent at 147.6% using off-budget borrowings pre-election, and Karnataka hit 102.5%. Laggards included West Bengal at 48.1% and Rajasthan at 51.8% due to extended model code periods.</p>
+        <p>The Centre's 50-year interest-free capex loans saw slower drawdowns in Q4 as states prioritised revenue outlays on farm loan waivers and cash transfers.</p>
+        <p><strong>Why it matters:</strong> Uneven capex weakens the fiscal multiplier—roads and schools get built in some states while others lag, widening regional inequality. The Centre may need to front-load FY27 transfers or tighten loan conditions to productive assets.</p>
+      </article>
+
+      <article class="card">
+        <h3>Centre woos Big Tech for Bengal data centres</h3>
+        <div class="meta">
+          <span class="badge">Digital</span>
+          <span class="badge">West Bengal</span>
+        </div>
+        <p>MeitY is in talks with Google, AWS, Microsoft, Reliance Jio and AdaniConneX to set up hyperscale data centres and AI R&D hubs in New Town, Kolkata, offering land at concessional rates and power at ₹5.2/unit. The pitch aims to revive Bengal's industrial base after the TMC's third term win.</p>
+        <p>Bengal contributes just 2.1% of India's STPI software exports despite having the Kolkata submarine cable landing station. Officials promise single-window clearances and a Siliguri edge-data hub.</p>
+        <p><strong>Why it matters:</strong> Success could bring 80,000 high-skill jobs and make east India a latency hub for Southeast Asia. But investors flag land acquisition risks and erratic industrial power—two historic hurdles that derailed major projects in the past.</p>
+      </article>
+
+      <article class="card">
+        <h3>PM's WFH push lifts flex offices</h3>
+        <div class="meta">
+          <span class="badge">Real Estate</span>
+          <span class="badge">Offices</span>
+        </div>
+        <p>A central advisory encouraging two-day WFH for PSUs to decongest Delhi triggered a surge in flex leasing. Q1 2026 saw 4 million sq ft of flex take-up, up 77% YoY, accounting for 25% of total office absorption, per CBRE.</p>
+        <p>Corporates are choosing 6-12 month flex seats in Gurugram, Pune and Hyderabad near residential hubs instead of 5-year CBD leases. Operators WeWork India, Awfis and Smartworks report 85%+ occupancy.</p>
+        <p><strong>Why it matters:</strong> This is a tactical policy-driven bump, not a structural hybrid shift. Landlords face shorter leases and higher churn, while flex operators gain pricing power. The trend could reverse if the advisory lapses post-monsoon.</p>
+      </article>
+    </div>
+  </section>
+
+  <!-- SECTION 4 -->
+  <section class="section">
+    <h2 class="section-title"><span>4</span> SECTOR DEEP DIVES</h2>
+    <div class="grid">
+      <article class="card">
+        <h3>Top carmakers bullish FY27</h3>
+        <div class="meta">
+          <span class="badge">Auto</span>
+          <span class="badge">PV</span>
+        </div>
+        <p>Passenger vehicle dispatches hit a record 4.66 million in FY26, up 7.9%, defying global slowdown fears. Maruti is expanding to 2.9 million capacity with Kharkhoda Phase-2, Hyundai is investing ₹6,800 crore to revive Talegaon for exports, and Mahindra will lift SUV output to 68,000/month by December.</p>
+        <p>SIAM projects 5-7% growth in FY27, pushing volumes toward 4.95-5.0 million units. EV enquiries jumped 25-30% in Q4 after West Asia tensions pushed petrol past ₹110 in metros, though conversions remain under 8%.</p>
+        <p><strong>Why it matters:</strong> Sustained capex shows confidence in India's replacement demand and SUV premiumisation. It secures order books for ancillaries like Sona Comstar and Motherson, and keeps auto loans—25% of retail credit—growing steadily.</p>
+      </article>
+
+      <article class="card">
+        <h3>Oncology moving beyond metros</h3>
+        <div class="meta">
+          <span class="badge">Healthcare</span>
+          <span class="badge">Tier-2/3</span>
+        </div>
+        <p>Apollo, Tata Cancer Care, HCG and 4baseCare are building comprehensive cancer centres in Srinagar, Guwahati, Jabalpur and Coimbatore, offering chemo, radiation and genomics locally. Rentals are 40% lower than metros, cutting capex by 20-25%.</p>
+        <p>The bottleneck is talent—linear accelerator technicians and oncopathologists demand metro salaries, and equipment maintenance costs are identical. Players are using hub-and-spoke tele-tumour boards to bridge gaps.</p>
+        <p><strong>Why it matters:</strong> Over 65% of patients travel 300+ km for cancer care, often abandoning treatment. Decentralisation cuts out-of-pocket costs and opens a ₹40,000 crore market as cancer incidence rises 12% per decade with ageing and lifestyle shifts.</p>
+      </article>
+
+      <article class="card">
+        <h3>Biosimilars to surpass generics in US by early 2030s – Dr Reddy's</h3>
+        <div class="meta">
+          <span class="badge">Pharma</span>
+          <span class="badge">Biosimilars</span>
+        </div>
+        <p>Dr Reddy's CEO Erez Israeli said biosimilars will overtake traditional generics in US market value by early 2030s, prompting a pivot to complex peptides. The company sees a multibillion-dollar opportunity in semaglutide over the next 2-3 years.</p>
+        <p>Dr Reddy's is building capacity for 12 million GLP-1 pens annually and has filed across 80+ markets. It is expanding peptide manufacturing as US generics face 8-10% annual price erosion.</p>
+        <p><strong>Why it matters:</strong> Biosimilars offer 40-60% gross margins versus low-teens for generics, with longer exclusivity. Success requires FDA-grade sterile injectable capacity—a high barrier that could consolidate Indian pharma around 3-4 winners and reduce US dependence.</p>
+      </article>
+    </div>
+  </section>
+
+  <!-- SECTION 5 -->
+  <section class="section">
+    <h2 class="section-title"><span>5</span> STARTUPS & JOBS</h2>
+    <div class="grid">
+      <article class="card">
+        <h3>Fintechs reset as reality bites, Paramotor files confidential IPO</h3>
+        <div class="meta">
+          <span class="badge">Startups</span>
+          <span class="badge">IPO</span>
+        </div>
+        <p>After two years of down rounds, fintechs are cutting burn and chasing profitability. Lending-infra startup Paramotor Technologies filed a confidential DRHP with SEBI last week, allowing it to withhold issue size and financials until closer to launch.</p>
+        <p>The confidential route, introduced in 2022, has been used by six startups this quarter to test investor appetite without public scrutiny—a marked shift from 2021's spray-and-pray filings.</p>
+        <p><strong>Why it matters:</strong> It signals a mature, cautious capital market where discipline trumps hype. For investors, it means delayed price discovery and greater reliance on private data rooms, raising due diligence costs.</p>
+      </article>
+
+      <article class="card">
+        <h3>More women, freshers in blue-grey jobs</h3>
+        <div class="meta">
+          <span class="badge">Jobs</span>
+          <span class="badge">Migration</span>
+        </div>
+        <p>WorkIndia data shows a 31.4% YoY rise in inter-city migration for blue- and grey-collar jobs between Jan-Apr 2026, with 8.6 million applications from non-metro seekers. Women now comprise 28% of applicants (up from 19% in 2023) and freshers 41%.</p>
+        <p>Demand is led by quick-commerce, logistics and healthcare roles in Bengaluru, Hyderabad and Coimbatore, with source states UP, Bihar and Odisha. Average salaries rose 11% to ₹21,400/month amid staffing shortages.</p>
+        <p><strong>Why it matters:</strong> This indicates formalisation and greater labour mobility post-pandemic, with women entering warehousing and delivery roles previously male-dominated. For policymakers, it stresses the need for urban hostels, skilling and safe transport.</p>
+      </article>
+    </div>
+  </section>
+</main>
+
+<footer>
+  Compiled from Business Standard, 18 May 2026 • For internal iMBA discussion only
+</footer>
+</body>
+</html>
