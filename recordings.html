@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Recordings | IMBA Beacon</title>
+<script src="./site-config.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Merriweather:wght@700&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css"/>
+<style>
+:root{
+  --bg:#FAFAF6;
+  --surface:#fffdf9;
+  --surface-soft:#f7f1e8;
+  --ink:#40252f;
+  --ink-soft:#866f76;
+  --maroon:#6a1f36;
+  --maroon-deep:#4f1629;
+  --gold:#E8923A;
+  --gold-soft:#f6d8ad;
+  --border:#eadfd2;
+  --shadow:0 18px 46px rgba(55,28,37,.10);
+}
+*{box-sizing:border-box}
+body{
+  margin:0;
+  min-height:100vh;
+  font-family:"Manrope",system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  color:var(--ink);
+  background:
+    radial-gradient(circle at 9% 10%,rgba(232,146,58,.18),transparent 28rem),
+    radial-gradient(circle at 86% 4%,rgba(106,31,54,.14),transparent 30rem),
+    linear-gradient(180deg,#fffdf8 0%,#f5eee5 100%);
+}
+a{color:inherit;text-decoration:none}
+.page-shell{
+  width:min(1120px,calc(100% - 32px));
+  margin:0 auto;
+  padding:2rem 0 4rem;
+}
+.topbar{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:1rem;
+  margin-bottom:1.2rem;
+}
+.brand{
+  display:flex;
+  align-items:center;
+  gap:.75rem;
+  font-weight:900;
+}
+.brand-mark{
+  width:44px;
+  height:44px;
+  display:grid;
+  place-items:center;
+  border-radius:15px;
+  color:var(--maroon);
+  background:linear-gradient(135deg,var(--gold-soft),var(--gold));
+  box-shadow:0 12px 24px rgba(232,146,58,.22);
+}
+.back-link{
+  display:inline-flex;
+  align-items:center;
+  gap:.45rem;
+  padding:.82rem 1.05rem;
+  border:1px solid var(--border);
+  border-radius:15px;
+  background:rgba(255,255,255,.82);
+  font-weight:900;
+  box-shadow:0 10px 26px rgba(55,28,37,.06);
+}
+.hero-card{
+  overflow:hidden;
+  border:1px solid rgba(106,31,54,.16);
+  border-radius:30px;
+  background:var(--surface);
+  box-shadow:var(--shadow);
+}
+.hero-band{
+  padding:2.4rem;
+  color:#fff;
+  background:
+    radial-gradient(circle at 16% 20%,rgba(246,216,173,.30),transparent 21rem),
+    linear-gradient(135deg,var(--maroon-deep),var(--maroon) 62%,#7a3a2a);
+}
+.eyebrow{
+  display:inline-flex;
+  align-items:center;
+  gap:.4rem;
+  padding:.42rem .72rem;
+  border-radius:999px;
+  border:1px solid rgba(255,255,255,.18);
+  background:rgba(246,216,173,.18);
+  color:var(--gold-soft);
+  font-size:.76rem;
+  font-weight:900;
+  letter-spacing:.12em;
+  text-transform:uppercase;
+}
+h1{
+  margin:1rem 0 .65rem;
+  font-family:"Merriweather",Georgia,serif;
+  font-size:clamp(2.1rem,4vw,3.55rem);
+  line-height:1.05;
+}
+.hero-band p{
+  max-width:46rem;
+  margin:0;
+  color:rgba(255,255,255,.84);
+  line-height:1.7;
+}
+.recording-content{
+  display:grid;
+  gap:1rem;
+  padding:1.25rem;
+}
+.recording-section{
+  border:1px solid var(--border);
+  border-radius:24px;
+  background:rgba(255,253,249,.92);
+  box-shadow:0 12px 34px rgba(55,28,37,.07);
+  overflow:hidden;
+}
+.recording-section-head{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:1rem;
+  padding:1.15rem 1.25rem;
+  border-bottom:1px solid var(--border);
+  background:var(--surface-soft);
+}
+.recording-section-head h2{
+  margin:0;
+  color:var(--maroon);
+  font-size:1.12rem;
+}
+.recording-section-head span{
+  display:inline-flex;
+  align-items:center;
+  gap:.35rem;
+  color:var(--ink-soft);
+  font-size:.86rem;
+  font-weight:800;
+}
+.empty-state{
+  display:grid;
+  justify-items:center;
+  text-align:center;
+  gap:.8rem;
+  padding:2.4rem 1.25rem;
+}
+.empty-icon{
+  width:64px;
+  height:64px;
+  display:grid;
+  place-items:center;
+  border-radius:22px;
+  color:var(--maroon);
+  background:linear-gradient(135deg,#fff3df,var(--gold-soft));
+  font-size:1.8rem;
+  box-shadow:0 14px 30px rgba(232,146,58,.20);
+}
+.empty-state strong{
+  color:var(--maroon);
+  font-size:1.25rem;
+}
+.empty-state p{
+  max-width:34rem;
+  margin:0;
+  color:var(--ink-soft);
+  line-height:1.65;
+}
+.status-line{
+  min-height:1.4rem;
+  margin:.95rem 0 0;
+  color:#2d7b52;
+  font-weight:800;
+}
+.status-line.error{color:#bb4357}
+@media (max-width: 760px){
+  .page-shell{width:min(100% - 22px,1120px);padding-top:1rem}
+  .topbar{align-items:flex-start;flex-direction:column}
+  .back-link{width:100%;justify-content:center}
+  .hero-band{padding:1.55rem}
+  .recording-content{padding:.85rem}
+  .recording-section-head{align-items:flex-start;flex-direction:column}
+}
+</style>
+</head>
+<body>
+<main class="page-shell">
+  <nav class="topbar">
+    <a class="brand" href="./student.html">
+      <span class="brand-mark">IB</span>
+      <span>IMBA Beacon<br/><small>Student recordings</small></span>
+    </a>
+    <a class="back-link" href="./student.html#section-recordings"><i class="ti ti-arrow-left"></i> Back to Dashboard</a>
+  </nav>
+
+  <p class="status-line" id="status-line" aria-live="polite"></p>
+
+  <section class="hero-card">
+    <div class="hero-band">
+      <span class="eyebrow" id="recording-eyebrow"><i class="ti ti-video"></i> Recordings</span>
+      <h1 id="recording-title">Session Recordings</h1>
+      <p id="recording-copy">Recording links will be added here after sessions are completed.</p>
+    </div>
+    <div class="recording-content" id="recording-content"></div>
+  </section>
+</main>
+
+<script>
+(function () {
+  const apiBase = (window.IMBA_SITE_CONFIG && window.IMBA_SITE_CONFIG.apiBaseUrl) || "";
+  const params = new URLSearchParams(window.location.search);
+  const type = params.get("type") === "interview" ? "interview" : "maths";
+
+  const pageConfig = {
+    maths: {
+      eyebrow: "Maths Recordings",
+      title: "Maths Session Recordings",
+      copy: "All maths session recordings will appear here once they are uploaded.",
+      sections: [
+        {
+          title: "Maths Sessions",
+          meta: "8 live maths sessions",
+          icon: "ti-calculator",
+          emptyTitle: "No maths recordings yet",
+          emptyCopy: "Maths recording links have not been uploaded yet. Once available, they will appear here with open and download options."
+        }
+      ]
+    },
+    interview: {
+      eyebrow: "Interview Recordings",
+      title: "Interview and Etiquette Recordings",
+      copy: "Interview practice recordings and etiquette session recordings will be organised here.",
+      sections: [
+        {
+          title: "Mock Interview Recordings",
+          meta: "Interview practice",
+          icon: "ti-microphone",
+          emptyTitle: "No interview recordings yet",
+          emptyCopy: "Interview recording links have not been uploaded yet. They will appear here after mentor sessions are completed."
+        },
+        {
+          title: "Interview Etiquette Recordings",
+          meta: "Etiquette coaching",
+          icon: "ti-message-circle-2",
+          emptyTitle: "No etiquette recordings yet",
+          emptyCopy: "Interview etiquette recording links have not been uploaded yet. They will appear here once available."
+        }
+      ]
+    }
+  };
+
+  const statusNode = document.getElementById("status-line");
+  const eyebrowNode = document.getElementById("recording-eyebrow");
+  const titleNode = document.getElementById("recording-title");
+  const copyNode = document.getElementById("recording-copy");
+  const contentNode = document.getElementById("recording-content");
+
+  function escapeHtml(value) {
+    return String(value || "")
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#039;");
+  }
+
+  function renderPage() {
+    const config = pageConfig[type];
+    document.title = `${config.title} | IMBA Beacon`;
+    eyebrowNode.innerHTML = `<i class="ti ti-video"></i> ${escapeHtml(config.eyebrow)}`;
+    titleNode.textContent = config.title;
+    copyNode.textContent = config.copy;
+    contentNode.innerHTML = config.sections.map(function (section) {
+      return `
+        <article class="recording-section">
+          <div class="recording-section-head">
+            <h2>${escapeHtml(section.title)}</h2>
+            <span><i class="ti ti-clock"></i> ${escapeHtml(section.meta)}</span>
+          </div>
+          <div class="empty-state">
+            <span class="empty-icon"><i class="ti ${escapeHtml(section.icon)}"></i></span>
+            <strong>${escapeHtml(section.emptyTitle)}</strong>
+            <p>${escapeHtml(section.emptyCopy)}</p>
+          </div>
+        </article>
+      `;
+    }).join("");
+  }
+
+  async function requireSession() {
+    try {
+      const response = await fetch(`${apiBase}/api/auth/session`, { credentials: "include" });
+      if (!response.ok) {
+        throw new Error("Session unavailable.");
+      }
+      const payload = await response.json();
+      if (!payload || !payload.user) {
+        window.location.href = `./login.html?next=${encodeURIComponent(`./recordings.html?type=${type}`)}`;
+        return;
+      }
+      statusNode.textContent = "Recordings page loaded successfully.";
+    } catch (error) {
+      statusNode.textContent = "Please log in again to view recordings.";
+      statusNode.classList.add("error");
+      window.location.href = `./login.html?next=${encodeURIComponent(`./recordings.html?type=${type}`)}`;
+    }
+  }
+
+  renderPage();
+  requireSession();
+})();
+</script>
+</body>
+</html>
