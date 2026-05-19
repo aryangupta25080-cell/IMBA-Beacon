@@ -602,7 +602,7 @@ button{
 }
 .sheet-list{
   display:grid;
-  gap:.72rem;
+  gap:.68rem;
 }
 .sheet-row{
   padding:.88rem .95rem;
@@ -613,8 +613,12 @@ button{
 }
 .sheet-info{
   display:flex;
-  align-items:flex-start;
+  align-items:center;
   gap:.72rem;
+  min-width:0;
+}
+.sheet-info > div:last-child{
+  min-width:0;
 }
 .sheet-icon{
   width:38px;
@@ -629,6 +633,7 @@ button{
 }
 .sheet-info strong{
   display:block;
+  line-height:1.25;
 }
 .sheet-info span{
   display:block;
@@ -686,14 +691,17 @@ button{
 }
 .sheet-subsections{
   display:grid;
-  grid-template-columns:280px minmax(0,1fr);
-  gap:.85rem;
+  grid-template-columns:1fr;
+  gap:.72rem;
 }
 .sheet-subsection{
   border:1px solid var(--border);
   border-radius:16px;
   background:var(--surface-soft);
   overflow:hidden;
+}
+.sheet-subsection[open]{
+  box-shadow:inset 0 0 0 1px rgba(106,31,54,.02);
 }
 .sheet-subsection-title{
   display:flex;
@@ -733,6 +741,16 @@ button{
 }
 .sheet-subsection-body{
   padding:.78rem .9rem;
+}
+.sheet-actions{
+  display:flex;
+  justify-content:flex-end;
+  gap:.5rem;
+  flex:0 0 auto;
+  flex-wrap:wrap;
+}
+.sheet-actions .sheet-btn{
+  min-width:88px;
 }
 .sheet-empty{
   color:var(--ink-soft);
@@ -1577,7 +1595,7 @@ button{
                     </div>
                   </div>
                   ${locked ? '<button class="sheet-btn pro-only" disabled>Locked</button>' : `
-                    <div style="display:flex;gap:.5rem;flex-wrap:wrap;">
+                    <div class="sheet-actions">
                       <a class="sheet-btn" href="${sheet.href ? escapeHtml(sheet.href) : `https://drive.google.com/file/d/${sheet.id}/view`}" target="_blank" rel="noopener noreferrer" style="font-size:.82rem;padding:.6rem .8rem;">
                         <i class="ti ti-eye" style="font-size:.9rem;"></i> Open
                       </a>
