@@ -1283,6 +1283,14 @@ button{
 
       sidebarNavNode.innerHTML = navMarkup;
       mobileNavNode.innerHTML = NAV_ITEMS.concat([{ id: "logout", label: "Logout", icon: "logout", target: "logout" }]).map(function (item, index) {
+        if (item.href) {
+          return `
+            <a href="${item.href}" class="mobile-nav-link" data-nav-target="${item.target}">
+              <i class="ti ti-${item.icon}"></i>
+              <span>${escapeHtml(item.label)}</span>
+            </a>
+          `;
+        }
         return `
           <button class="mobile-nav-link${index === 0 ? " is-active" : ""}" type="button" data-nav-target="${item.target}">
             <i class="ti ti-${item.icon}"></i>
