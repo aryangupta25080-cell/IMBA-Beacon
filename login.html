@@ -227,6 +227,18 @@
       return requestedNext;
     }
 
+    function redirectToNext(delay = 300) {
+      const targetUrl = new URL(getSafeNextUrl(), window.location.href).href;
+      window.setTimeout(() => {
+        window.location.assign(targetUrl);
+        window.setTimeout(() => {
+          if (window.location.href !== targetUrl) {
+            window.location.replace(targetUrl);
+          }
+        }, 600);
+      }, delay);
+    }
+
     function hasPurchaseIntent() {
       return accessIntent === "purchase" && Boolean(purchasePlan);
     }
@@ -329,9 +341,7 @@
       }
 
       setStatus(payload.message || `${getPurchasePlanLabel()} plan activated successfully. Redirecting you now...`, "success");
-      window.setTimeout(() => {
-        window.location.href = getSafeNextUrl();
-      }, 800);
+      redirectToNext(800);
       return true;
     }
 
@@ -427,9 +437,7 @@
       }
 
       setStatus(message || "Signed in successfully. Redirecting you now...", "success");
-      window.setTimeout(() => {
-        window.location.href = getSafeNextUrl();
-      }, 700);
+      redirectToNext();
     }
 
     async function handleGoogleLogin(credential) {
@@ -468,7 +476,7 @@
             setStatus(`Welcome back. Opening ${getPurchasePlanLabel()} checkout now...`, "success");
             await startPurchaseCheckout();
           } else {
-            window.location.href = getSafeNextUrl();
+            redirectToNext(0);
           }
           return;
         }

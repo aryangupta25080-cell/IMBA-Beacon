@@ -512,8 +512,21 @@ function isProductionRequest(request) {
   return forwardedProto === "https";
 }
 
+function isCrossOriginRequest(request) {
+  const requestOrigin = request.headers.origin || "";
+  if (!requestOrigin) return false;
+
+  try {
+    const originHost = new URL(requestOrigin).host;
+    const appHost = new URL(APP_BASE_URL).host;
+    return originHost !== appHost;
+  } catch (error) {
+    return Boolean(FRONTEND_ORIGIN && requestOrigin === FRONTEND_ORIGIN);
+  }
+}
+
 function createSessionCookie(request, sessionId) {
-  const crossOrigin = Boolean(FRONTEND_ORIGIN && FRONTEND_ORIGIN !== APP_BASE_URL);
+  const crossOrigin = isCrossOriginRequest(request);
   return buildCookie(SESSION_COOKIE, sessionId, {
     httpOnly: true,
     sameSite: crossOrigin ? "None" : "Lax",
@@ -524,7 +537,7 @@ function createSessionCookie(request, sessionId) {
 }
 
 function clearSessionCookie(request) {
-  const crossOrigin = Boolean(FRONTEND_ORIGIN && FRONTEND_ORIGIN !== APP_BASE_URL);
+  const crossOrigin = isCrossOriginRequest(request);
   return buildCookie(SESSION_COOKIE, "", {
     httpOnly: true,
     sameSite: crossOrigin ? "None" : "Lax",
