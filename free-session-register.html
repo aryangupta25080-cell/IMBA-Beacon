@@ -277,6 +277,7 @@ input[readonly]{
 <script>
 (function () {
   const apiBase = (window.IMBA_SITE_CONFIG && window.IMBA_SITE_CONFIG.apiBaseUrl) || "";
+  const SESSION_TOKEN_KEY = "imbaSessionToken";
   const params = new URLSearchParams(window.location.search);
   const sessionType = params.get("type") === "batch" ? "batch" : "interview";
   const sessionConfig = {
@@ -310,8 +311,18 @@ input[readonly]{
     return `./login.html?next=${encodeURIComponent(`./free-session-register.html?type=${sessionType}`)}`;
   }
 
+  function getAuthHeaders(extraHeaders = {}) {
+    const sessionToken = localStorage.getItem(SESSION_TOKEN_KEY);
+    return sessionToken
+      ? { ...extraHeaders, Authorization: `Bearer ${sessionToken}` }
+      : extraHeaders;
+  }
+
   async function loadSession() {
-    const response = await fetch(`${apiBase}/api/auth/session`, { credentials: "include" });
+    const response = await fetch(`${apiBase}/api/auth/session`, {
+      credentials: "include",
+      headers: getAuthHeaders()
+    });
     if (!response.ok) throw new Error("Unable to check login status.");
     const payload = await response.json();
     return payload.user || null;
@@ -351,7 +362,7 @@ input[readonly]{
       const response = await fetch(`${apiBase}/api/free-session/register`, {
         method: "POST",
         credentials: "include",
-        headers: { "Content-Type": "application/json" },
+        headers: getAuthHeaders({ "Content-Type": "application/json" }),
         body: JSON.stringify({
           sessionType,
           name: nameInput.value,

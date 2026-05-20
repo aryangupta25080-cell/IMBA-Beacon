@@ -480,7 +480,7 @@ function getCorsHeaders(request) {
   return {
     "Access-Control-Allow-Origin": allowedOrigin,
     "Access-Control-Allow-Credentials": "true",
-    "Access-Control-Allow-Headers": "Content-Type",
+    "Access-Control-Allow-Headers": "Content-Type, Authorization",
     "Access-Control-Allow-Methods": "GET,POST,OPTIONS"
   };
 }
@@ -549,7 +549,9 @@ function clearSessionCookie(request) {
 
 function getSessionUser(request) {
   const cookies = parseCookies(request);
-  const sessionId = cookies[SESSION_COOKIE];
+  const authHeader = request.headers.authorization || "";
+  const bearerSessionId = authHeader.startsWith("Bearer ") ? authHeader.slice("Bearer ".length).trim() : "";
+  const sessionId = bearerSessionId || cookies[SESSION_COOKIE];
   if (!sessionId) return null;
   return sessionStore.get(sessionId) || null;
 }
@@ -563,7 +565,9 @@ async function createSession(userProfile) {
 
 async function destroySession(request) {
   const cookies = parseCookies(request);
-  const sessionId = cookies[SESSION_COOKIE];
+  const authHeader = request.headers.authorization || "";
+  const bearerSessionId = authHeader.startsWith("Bearer ") ? authHeader.slice("Bearer ".length).trim() : "";
+  const sessionId = bearerSessionId || cookies[SESSION_COOKIE];
   if (sessionId) {
     sessionStore.delete(sessionId);
     await deleteSession(sessionId);
@@ -1371,7 +1375,8 @@ async function handleGoogleLogin(request, response) {
       200,
       {
         message: "Google sign-in successful.",
-        user: getPublicUser(sessionStore.get(sessionId))
+        user: getPublicUser(sessionStore.get(sessionId)),
+        sessionToken: sessionId
       },
       {
         "Set-Cookie": createSessionCookie(request, sessionId)
@@ -1498,7 +1503,8 @@ async function handlePasswordLogin(request, response) {
     const sessionId = await createSession(persistedUser);
     sendJson(response, 200, {
       message: "Logged in successfully.",
-      user: getPublicUser(persistedUser)
+      user: getPublicUser(persistedUser),
+      sessionToken: sessionId
     }, {
       "Set-Cookie": createSessionCookie(request, sessionId)
     });
@@ -1571,7 +1577,8 @@ async function handleVerifyOtp(request, response) {
       message: otpResult.purpose === "verify-email"
         ? "Email verified successfully. Your Beacon account is now active."
         : "OTP verified successfully. You are now signed in.",
-      user: getPublicUser(persistedUser)
+      user: getPublicUser(persistedUser),
+      sessionToken: sessionId
     }, {
       "Set-Cookie": createSessionCookie(request, sessionId)
     });

@@ -513,6 +513,7 @@ button{
     const USER_PLAN_KEY = "userPlan";
     const USER_NAME_KEY = "userName";
     const USER_EMAIL_KEY = "userEmail";
+    const SESSION_TOKEN_KEY = "imbaSessionToken";
     const ARTICLE_VIEW_KEY = "dashboardArticleView";
     const ARTICLE_DATA_PATH = "./assets/articles.json";
     const NAV_ITEMS = [
@@ -772,12 +773,22 @@ button{
     }
 
     async function fetchSession() {
-      const response = await fetch(`${apiBase}/api/auth/session`, { credentials: "include" });
+      const response = await fetch(`${apiBase}/api/auth/session`, {
+        credentials: "include",
+        headers: getAuthHeaders()
+      });
       if (!response.ok) {
         throw new Error("Unable to read session.");
       }
       const data = await response.json();
       return data.user || null;
+    }
+
+    function getAuthHeaders(extraHeaders = {}) {
+      const sessionToken = localStorage.getItem(SESSION_TOKEN_KEY);
+      return sessionToken
+        ? { ...extraHeaders, Authorization: `Bearer ${sessionToken}` }
+        : extraHeaders;
     }
 
     async function fetchArticles() {
@@ -801,7 +812,8 @@ button{
       try {
         const response = await fetch(`${apiBase}/api/auth/logout`, {
           method: "POST",
-          credentials: "include"
+          credentials: "include",
+          headers: getAuthHeaders()
         });
         if (!response.ok) {
           throw new Error("Logout failed.");
@@ -810,6 +822,7 @@ button{
         localStorage.removeItem(USER_PLAN_KEY);
         localStorage.removeItem(USER_NAME_KEY);
         localStorage.removeItem(USER_EMAIL_KEY);
+        localStorage.removeItem(SESSION_TOKEN_KEY);
         window.location.href = "./index.html";
       } catch (error) {
         setStatus(error.message || "Unable to logout right now.", "error");

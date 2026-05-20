@@ -224,6 +224,7 @@ h1{
 <script>
 (function () {
   const apiBase = (window.IMBA_SITE_CONFIG && window.IMBA_SITE_CONFIG.apiBaseUrl) || "";
+  const SESSION_TOKEN_KEY = "imbaSessionToken";
   const quizzes = [
     { title: "Sets, Relations & Functions", href: "./quiz-1.html" },
     { title: "Trigonometry & Inverse Trigonometry", href: "./quiz-2.html" },
@@ -265,9 +266,19 @@ h1{
     }).join("");
   }
 
+  function getAuthHeaders(extraHeaders = {}) {
+    const sessionToken = localStorage.getItem(SESSION_TOKEN_KEY);
+    return sessionToken
+      ? { ...extraHeaders, Authorization: `Bearer ${sessionToken}` }
+      : extraHeaders;
+  }
+
   async function requireSession() {
     try {
-      const response = await fetch(`${apiBase}/api/auth/session`, { credentials: "include" });
+      const response = await fetch(`${apiBase}/api/auth/session`, {
+        credentials: "include",
+        headers: getAuthHeaders()
+      });
       if (!response.ok) {
         throw new Error("Session unavailable.");
       }

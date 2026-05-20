@@ -219,6 +219,7 @@
     const purchasePlan = searchParams.get("plan");
     const purchaseCoupon = searchParams.get("coupon");
     const requestedNext = searchParams.get("next");
+    const SESSION_TOKEN_KEY = "imbaSessionToken";
     let purchaseCheckoutStarted = false;
 
     function getSafeNextUrl() {
@@ -306,16 +307,32 @@
     }
 
     async function loadSession() {
-      const response = await fetch(`${apiBase}/api/auth/session`, { credentials: "include" });
+      const response = await fetch(`${apiBase}/api/auth/session`, {
+        credentials: "include",
+        headers: getAuthHeaders()
+      });
       const payload = await response.json();
       user = payload.user || null;
+    }
+
+    function getAuthHeaders(extraHeaders = {}) {
+      const sessionToken = localStorage.getItem(SESSION_TOKEN_KEY);
+      return sessionToken
+        ? { ...extraHeaders, Authorization: `Bearer ${sessionToken}` }
+        : extraHeaders;
+    }
+
+    function rememberSession(payload) {
+      if (payload && payload.sessionToken) {
+        localStorage.setItem(SESSION_TOKEN_KEY, payload.sessionToken);
+      }
     }
 
     async function sendJsonRequest(path, body) {
       const response = await fetch(`${apiBase}${path}`, {
         method: "POST",
         credentials: "include",
-        headers: { "Content-Type": "application/json" },
+        headers: getAuthHeaders({ "Content-Type": "application/json" }),
         body: JSON.stringify(body)
       });
       const payload = await response.json();
@@ -446,6 +463,7 @@
         setStatus(payload.message || "Google sign-in failed.", "error");
         return;
       }
+      rememberSession(payload);
       user = payload.user;
       await continueAfterAuth(`Signed in as ${user.name}.`);
     }
@@ -499,6 +517,7 @@
         setStatus(payload.message || "Unable to login.", "error");
         return;
       }
+      rememberSession(payload);
       user = payload.user;
       await continueAfterAuth(payload.message || "Logged in successfully.");
     });
@@ -525,6 +544,7 @@
         setStatus(payload.message || "Unable to verify OTP.", "error");
         return;
       }
+      rememberSession(payload);
       user = payload.user;
       await continueAfterAuth(payload.message || "OTP verified successfully.");
     });
@@ -540,7 +560,8 @@
     });
 
     logoutButton.addEventListener("click", async () => {
-      await fetch(`${apiBase}/api/auth/logout`, { method: "POST", credentials: "include" });
+      await fetch(`${apiBase}/api/auth/logout`, { method: "POST", credentials: "include", headers: getAuthHeaders() });
+      localStorage.removeItem(SESSION_TOKEN_KEY);
       user = null;
       purchaseCheckoutStarted = false;
       purchaseContinueButton.disabled = false;

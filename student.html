@@ -1029,6 +1029,7 @@ button{
     const USER_EMAIL_KEY = "userEmail";
     const FREE_CLASS_LINK_KEY = "freeClassLink";
     const LIVE_CLASS_LINK_KEY = "liveClassLink";
+    const SESSION_TOKEN_KEY = "imbaSessionToken";
     const NAV_ITEMS = [
       { id: "dashboard", label: "Dashboard", icon: "layout-dashboard", target: "section-dashboard" },
       { id: "recordings", label: "Recordings", icon: "video", target: "section-recordings" },
@@ -1130,9 +1131,9 @@ button{
         const response = await fetch(`${apiBase}/api/apply-coupon`, {
           method: "POST",
           credentials: "include",
-          headers: {
+          headers: getAuthHeaders({
             "Content-Type": "application/json"
-          },
+          }),
           body: JSON.stringify({
             planId: "pro",
             code: couponCode
@@ -1825,7 +1826,10 @@ button{
     }
 
     async function fetchSession() {
-      const response = await fetch(`${apiBase}/api/auth/session`, { credentials: "include" });
+      const response = await fetch(`${apiBase}/api/auth/session`, {
+        credentials: "include",
+        headers: getAuthHeaders()
+      });
       if (!response.ok) {
         throw new Error("Unable to read session.");
       }
@@ -1841,11 +1845,19 @@ button{
       return response.json();
     }
 
+    function getAuthHeaders(extraHeaders = {}) {
+      const sessionToken = localStorage.getItem(SESSION_TOKEN_KEY);
+      return sessionToken
+        ? { ...extraHeaders, Authorization: `Bearer ${sessionToken}` }
+        : extraHeaders;
+    }
+
     async function logout() {
       try {
         const response = await fetch(`${apiBase}/api/auth/logout`, {
           method: "POST",
-          credentials: "include"
+          credentials: "include",
+          headers: getAuthHeaders()
         });
         if (!response.ok) {
           throw new Error("Logout failed.");
@@ -1856,6 +1868,7 @@ button{
         localStorage.removeItem(USER_EMAIL_KEY);
         localStorage.removeItem(FREE_CLASS_LINK_KEY);
         localStorage.removeItem(LIVE_CLASS_LINK_KEY);
+        localStorage.removeItem(SESSION_TOKEN_KEY);
         window.location.href = "./index.html";
       } catch (error) {
         setStatus(error.message || "Unable to logout right now.", "error");
@@ -1867,9 +1880,9 @@ button{
         const response = await fetch(`${apiBase}/api/verify-payment`, {
           method: "POST",
           credentials: "include",
-          headers: {
+          headers: getAuthHeaders({
             "Content-Type": "application/json"
-          },
+          }),
           body: JSON.stringify({
             planId: planId,
             razorpay_order_id: paymentDetails.razorpay_order_id,
@@ -1934,9 +1947,9 @@ button{
         const response = await fetch(`${apiBase}/api/create-order`, {
           method: "POST",
           credentials: "include",
-          headers: {
+          headers: getAuthHeaders({
             "Content-Type": "application/json"
-          },
+          }),
           body: JSON.stringify({
             planId: planId,
             couponCode: checkoutCouponCode
