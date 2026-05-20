@@ -1625,7 +1625,9 @@ button{
           notes: "Verbal communication lecture notes will be added here.",
           practiceSheets: [
             { title: "Master Question Bank", href: "./master-question-bank-final.html", label: "Master Sheet · HTML" },
-            { title: "Economic Terms", href: "./economic-terms-final.html", label: "Master Sheet · HTML" }
+            { title: "Economic Terms", href: "./economic-terms-final.html", label: "Master Sheet · HTML" },
+            { title: "Previous Year Questions", href: "./previous-year-questions.xlsx", downloadHref: "./previous-year-questions.xlsx", label: "Practice Sheet · XLSX", icon: "file-spreadsheet" },
+            { title: "Model Answers", href: "./model-answers.html", label: "Practice Sheet · HTML" }
           ]
         }
       ];
@@ -1642,7 +1644,7 @@ button{
                 <div class="sheet-row" style="padding:.72rem 0;">
                   <div class="sheet-info">
                     <div class="sheet-icon" style="width:32px;height:32px;font-size:.85rem;border-radius:10px;">
-                      <i class="ti ti-${sheet.href ? "file-text" : "file-type-pdf"}"></i>
+                      <i class="ti ti-${sheet.icon || (sheet.href ? "file-text" : "file-type-pdf")}"></i>
                     </div>
                     <div>
                       <strong style="font-size:.95rem;">${escapeHtml(sheet.title)}</strong>
@@ -1652,10 +1654,10 @@ button{
                   ${locked ? '<button class="sheet-btn pro-only" disabled>Locked</button>' : `
                     <div class="sheet-actions">
                       <a class="sheet-btn" href="${sheet.href ? escapeHtml(sheet.href) : `https://drive.google.com/file/d/${sheet.id}/view`}" target="_blank" rel="noopener noreferrer" style="font-size:.82rem;padding:.6rem .8rem;">
-                        <i class="ti ti-eye" style="font-size:.9rem;"></i> Open
+                        <i class="ti ti-eye" style="font-size:.9rem;"></i> View
                       </a>
-                      ${sheet.href ? "" : `
-                      <a class="sheet-btn" href="https://drive.google.com/uc?export=download&id=${sheet.id}" target="_blank" rel="noopener noreferrer" style="font-size:.82rem;padding:.6rem .8rem;background:linear-gradient(135deg,var(--amber-soft),var(--amber));color:var(--maroon-deep);border:none;">
+                      ${sheet.downloadHref || !sheet.href ? `
+                      <a class="sheet-btn" href="${sheet.downloadHref ? escapeHtml(sheet.downloadHref) : `https://drive.google.com/uc?export=download&id=${sheet.id}`}" ${sheet.downloadHref ? "download" : 'target="_blank" rel="noopener noreferrer"'} style="font-size:.82rem;padding:.6rem .8rem;background:linear-gradient(135deg,var(--amber-soft),var(--amber));color:var(--maroon-deep);border:none;">
                         <i class="ti ti-download" style="font-size:.9rem;"></i> Download
                       </a>
                       `}
