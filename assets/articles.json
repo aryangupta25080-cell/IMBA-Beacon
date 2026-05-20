@@ -18,6 +18,15 @@
       "url": "./daily-19-may.html",
       "cta": "Read article",
       "icon": "calendar-event"
+    },
+    {
+      "category": "Daily Brief",
+      "date": "20 May 2026",
+      "title": "Today's Key Reads: 20 May 2026",
+      "summary": "A daily key-reads digest for IMBA interview prep, covering major policy, economy, business and strategic partnership developments.",
+      "url": "./daily-20-may.html",
+      "cta": "Read article",
+      "icon": "calendar-event"
     }
   ],
   "weekly": [
