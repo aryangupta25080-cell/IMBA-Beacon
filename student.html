@@ -1660,7 +1660,7 @@ button{
                       <a class="sheet-btn" href="${sheet.downloadHref ? escapeHtml(sheet.downloadHref) : `https://drive.google.com/uc?export=download&id=${sheet.id}`}" ${sheet.downloadHref ? "download" : 'target="_blank" rel="noopener noreferrer"'} style="font-size:.82rem;padding:.6rem .8rem;background:linear-gradient(135deg,var(--amber-soft),var(--amber));color:var(--maroon-deep);border:none;">
                         <i class="ti ti-download" style="font-size:.9rem;"></i> Download
                       </a>
-                      `}
+                      ` : ""}
                     </div>
                   `}
                 </div>
