@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Permutation Combination & Binomial Practice</title>
+    <script src="./site-config.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -696,6 +697,42 @@
     </div>
 
     <script>
+        const apiBase = (window.IMBA_SITE_CONFIG && window.IMBA_SITE_CONFIG.apiBaseUrl) || "";
+        const SESSION_TOKEN_KEY = "imbaSessionToken";
+        const quizId = (window.location.pathname.split("/").pop() || "quiz-6.html").replace(/\.html$/i, "");
+        const quizTitle = document.title.replace(/\s+Practice$/i, "");
+
+        function getAuthHeaders(extraHeaders = {}) {
+            const sessionToken = localStorage.getItem(SESSION_TOKEN_KEY);
+            return sessionToken ? { ...extraHeaders, Authorization: `Bearer ${sessionToken}` } : extraHeaders;
+        }
+
+        async function saveQuizAttempt(set, score, total, percent) {
+            try {
+                const response = await fetch(`${apiBase}/api/quiz-attempts`, {
+                    method: "POST",
+                    credentials: "include",
+                    headers: getAuthHeaders({ "Content-Type": "application/json" }),
+                    body: JSON.stringify({
+                        quizId,
+                        quizTitle,
+                        setId: set,
+                        score,
+                        total,
+                        percent,
+                        answers: state[set].answers
+                    })
+                });
+                if (!response.ok) throw new Error("Save failed");
+                const scoreDescription = document.getElementById(`score-desc-${set}`);
+                if (scoreDescription) {
+                    scoreDescription.textContent += " Progress saved to your account.";
+                }
+            } catch (error) {
+                console.warn("Quiz attempt could not be saved.", error);
+            }
+        }
+
         const quizData = {
             A: [
             {
@@ -1068,11 +1105,13 @@
             });
             
             // show score
-            const percent = Math.round((correct / 10) * 100);
-            document.getElementById(`score-value-${set}`).textContent = `${correct}/10`;
+            const total = quizData[set].length;
+            const percent = Math.round((correct / total) * 100);
+            saveQuizAttempt(set, correct, total, percent);
+            document.getElementById(`score-value-${set}`).textContent = `${correct}/${total}`;
             document.getElementById(`circle-${set}`).style.setProperty('--percent', `${percent}%`);
             document.getElementById(`score-title-${set}`).textContent = auto ? `Time's up! Set ${set} Submitted` : `Set ${set} Complete`;
-            document.getElementById(`score-desc-${set}`).textContent = `You scored ${correct} out of 10 (${percent}%). ${percent >= 70 ? 'Excellent!' : percent >= 50 ? 'Good effort!' : 'Keep practicing!'}`;
+            document.getElementById(`score-desc-${set}`).textContent = `You scored ${correct} out of ${total} (${percent}%). ${percent >= 70 ? 'Excellent!' : percent >= 50 ? 'Good effort!' : 'Keep practicing!'}`;
             document.getElementById(`score-${set}`).classList.add('show');
             
             // toggle buttons

@@ -383,6 +383,20 @@ async function getDatabase() {
       registered_at TIMESTAMPTZ NOT NULL,
       UNIQUE (session_type, email)
     );
+
+    CREATE TABLE IF NOT EXISTS quiz_attempts (
+      id BIGSERIAL PRIMARY KEY,
+      email TEXT NOT NULL,
+      quiz_id TEXT NOT NULL,
+      quiz_title TEXT NOT NULL,
+      set_id TEXT NOT NULL,
+      score INTEGER NOT NULL,
+      total INTEGER NOT NULL,
+      percent INTEGER NOT NULL,
+      answers_json JSONB NOT NULL DEFAULT '{}'::jsonb,
+      submitted_at TIMESTAMPTZ NOT NULL,
+      UNIQUE (email, quiz_id, set_id)
+    );
   `);
 
   await migrateLegacyData(database);
@@ -1324,6 +1338,34 @@ async function handleAdminUserAccessUpdate(request, response, url, corsHeaders) 
   }
 }
 
+async function handleAdminQuizAttempts(request, response, url, corsHeaders) {
+  if (!requireAdminAccess(request, response, url, corsHeaders)) return;
+
+  try {
+    const rows = await database.all(
+      `SELECT email, quiz_id, quiz_title, set_id, score, total, percent, submitted_at
+       FROM quiz_attempts
+       ORDER BY submitted_at DESC`
+    );
+
+    sendJson(response, 200, {
+      attempts: rows.map((row) => ({
+        email: row.email,
+        quizId: row.quiz_id,
+        quizTitle: row.quiz_title,
+        setId: row.set_id,
+        score: Number(row.score || 0),
+        total: Number(row.total || 0),
+        percent: Number(row.percent || 0),
+        submittedAt: row.submitted_at
+      }))
+    }, corsHeaders);
+  } catch (error) {
+    console.error("Admin quiz attempts failed:", error);
+    sendJson(response, 500, { message: "Unable to read quiz attempts." }, corsHeaders);
+  }
+}
+
 function handleConfig(response) {
   sendJson(response, 200, buildClientConfig());
 }
@@ -1606,10 +1648,10 @@ async function handleLogout(request, response) {
   );
 }
 
-function requireAuthenticatedUser(request, response) {
+function requireAuthenticatedUser(request, response, corsHeaders = {}) {
   const user = getSessionUser(request);
   if (!user) {
-    sendJson(response, 401, { message: "Please sign in to your Beacon account first." });
+    sendJson(response, 401, { message: "Please sign in to your Beacon account first." }, corsHeaders);
     return null;
   }
   return user;
@@ -1758,6 +1800,114 @@ async function handleFreeSessionRegistration(request, response) {
     });
   } catch (error) {
     sendJson(response, 400, { message: error.message || "Unable to complete registration." });
+  }
+}
+
+async function handleQuizAttemptSave(request, response, corsHeaders = {}) {
+  const sessionUser = requireAuthenticatedUser(request, response, corsHeaders);
+  if (!sessionUser) return;
+
+  try {
+    const body = await parseRequestBody(request);
+    const quizId = String(body.quizId || "").trim();
+    const quizTitle = String(body.quizTitle || "").trim();
+    const setId = String(body.setId || "").trim().toUpperCase();
+    const score = Number(body.score);
+    const total = Number(body.total);
+    const percent = Number(body.percent);
+    const answers = body.answers && typeof body.answers === "object" ? body.answers : {};
+
+    if (!quizId || !quizTitle || !setId) {
+      sendJson(response, 400, { message: "Missing quiz attempt details." }, corsHeaders);
+      return;
+    }
+
+    if (!Number.isInteger(score) || !Number.isInteger(total) || total <= 0 || score < 0 || score > total) {
+      sendJson(response, 400, { message: "Invalid quiz score." }, corsHeaders);
+      return;
+    }
+
+    const boundedPercent = Number.isFinite(percent)
+      ? Math.max(0, Math.min(100, Math.round(percent)))
+      : Math.round((score / total) * 100);
+    const submittedAt = new Date().toISOString();
+
+    await database.run(
+      `INSERT INTO quiz_attempts (
+        email,
+        quiz_id,
+        quiz_title,
+        set_id,
+        score,
+        total,
+        percent,
+        answers_json,
+        submitted_at
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?::jsonb, ?)
+      ON CONFLICT (email, quiz_id, set_id)
+      DO UPDATE SET
+        quiz_title = EXCLUDED.quiz_title,
+        score = EXCLUDED.score,
+        total = EXCLUDED.total,
+        percent = EXCLUDED.percent,
+        answers_json = EXCLUDED.answers_json,
+        submitted_at = EXCLUDED.submitted_at`,
+      normalizeEmail(sessionUser.email),
+      quizId,
+      quizTitle,
+      setId,
+      score,
+      total,
+      boundedPercent,
+      JSON.stringify(answers),
+      submittedAt
+    );
+
+    sendJson(response, 200, {
+      message: "Quiz attempt saved.",
+      attempt: {
+        quizId,
+        quizTitle,
+        setId,
+        score,
+        total,
+        percent: boundedPercent,
+        submittedAt
+      }
+    }, corsHeaders);
+  } catch (error) {
+    console.error("Quiz attempt save failed:", error);
+    sendJson(response, 500, { message: "Unable to save quiz attempt." }, corsHeaders);
+  }
+}
+
+async function handleQuizAttemptsList(request, response, corsHeaders = {}) {
+  const sessionUser = requireAuthenticatedUser(request, response, corsHeaders);
+  if (!sessionUser) return;
+
+  try {
+    const rows = await database.all(
+      `SELECT quiz_id, quiz_title, set_id, score, total, percent, submitted_at
+       FROM quiz_attempts
+       WHERE email = ?
+       ORDER BY submitted_at DESC`,
+      normalizeEmail(sessionUser.email)
+    );
+
+    sendJson(response, 200, {
+      attempts: rows.map((row) => ({
+        quizId: row.quiz_id,
+        quizTitle: row.quiz_title,
+        setId: row.set_id,
+        score: Number(row.score || 0),
+        total: Number(row.total || 0),
+        percent: Number(row.percent || 0),
+        submittedAt: row.submitted_at
+      }))
+    }, corsHeaders);
+  } catch (error) {
+    console.error("Quiz attempts list failed:", error);
+    sendJson(response, 500, { message: "Unable to load quiz progress." }, corsHeaders);
   }
 }
 
@@ -2117,6 +2267,16 @@ async function requestHandler(request, response) {
     return;
   }
 
+  if (request.method === "GET" && pathname === "/api/quiz-attempts") {
+    await handleQuizAttemptsList(request, response, corsHeaders);
+    return;
+  }
+
+  if (request.method === "POST" && pathname === "/api/quiz-attempts") {
+    await handleQuizAttemptSave(request, response, corsHeaders);
+    return;
+  }
+
   if (request.method === "POST" && (pathname === "/api/create-order" || pathname === "/api/payments/order")) {
     await handleCreateOrder(request, {
       writeHead: (...args) => response.writeHead(args[0], { ...args[1], ...corsHeaders }),
@@ -2166,6 +2326,11 @@ async function requestHandler(request, response) {
 
   if (request.method === "POST" && pathname === "/api/admin/users/access") {
     await handleAdminUserAccessUpdate(request, response, url, corsHeaders);
+    return;
+  }
+
+  if (request.method === "GET" && pathname === "/api/admin/quiz-attempts") {
+    await handleAdminQuizAttempts(request, response, url, corsHeaders);
     return;
   }
 

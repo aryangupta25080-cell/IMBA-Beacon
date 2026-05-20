@@ -169,6 +169,18 @@ h1{
   color:var(--ink-soft);
   font-size:.9rem;
 }
+.quiz-progress{
+  display:inline-flex;
+  align-items:center;
+  gap:.34rem;
+  margin-top:.5rem;
+  padding:.3rem .56rem;
+  border-radius:999px;
+  background:rgba(45,123,82,.1);
+  color:#2d7b52;
+  font-size:.78rem;
+  font-weight:900;
+}
 .quiz-action{
   display:inline-flex;
   align-items:center;
@@ -226,18 +238,19 @@ h1{
   const apiBase = (window.IMBA_SITE_CONFIG && window.IMBA_SITE_CONFIG.apiBaseUrl) || "";
   const SESSION_TOKEN_KEY = "imbaSessionToken";
   const quizzes = [
-    { title: "Sets, Relations & Functions", href: "./quiz-1.html" },
-    { title: "Trigonometry & Inverse Trigonometry", href: "./quiz-2.html" },
-    { title: "Quadratic & Complex Numbers", href: "./quiz-3.html" },
-    { title: "Limits, Continuity & Differentiability", href: "./quiz-4.html" },
-    { title: "Integration & Area", href: "./quiz-5.html" },
-    { title: "Permutation Combination & Binomial", href: "./quiz-6.html" },
-    { title: "Matrices & Determinants", href: "./quiz-7.html" },
-    { title: "Probability", href: "./quiz-8.html" }
+    { id: "quiz-1", title: "Sets, Relations & Functions", href: "./quiz-1.html" },
+    { id: "quiz-2", title: "Trigonometry & Inverse Trigonometry", href: "./quiz-2.html" },
+    { id: "quiz-3", title: "Quadratic & Complex Numbers", href: "./quiz-3.html" },
+    { id: "quiz-4", title: "Limits, Continuity & Differentiability", href: "./quiz-4.html" },
+    { id: "quiz-5", title: "Integration & Area", href: "./quiz-5.html" },
+    { id: "quiz-6", title: "Permutation Combination & Binomial", href: "./quiz-6.html" },
+    { id: "quiz-7", title: "Matrices & Determinants", href: "./quiz-7.html" },
+    { id: "quiz-8", title: "Probability", href: "./quiz-8.html" }
   ];
 
   const statusNode = document.getElementById("quiz-status");
   const gridNode = document.getElementById("quiz-grid");
+  let savedAttempts = [];
 
   function escapeHtml(value) {
     return String(value || "")
@@ -251,12 +264,19 @@ h1{
   function renderQuizzes() {
     gridNode.innerHTML = quizzes.map(function (quiz, index) {
       const number = String(index + 1).padStart(2, "0");
+      const attempts = savedAttempts.filter(function (attempt) {
+        return attempt.quizId === quiz.id;
+      });
+      const progressText = attempts.length
+        ? `${attempts.length}/2 sets completed · Best ${Math.max(...attempts.map((attempt) => attempt.percent || 0))}%`
+        : "No saved attempt yet";
       return `
         <article class="quiz-card">
           <div class="quiz-number">${number}</div>
           <div class="quiz-copy">
             <strong>${escapeHtml(quiz.title)}</strong>
             <span>Quiz ${index + 1} · Mathematics practice</span>
+            <em class="quiz-progress"><i class="ti ti-chart-bar"></i> ${escapeHtml(progressText)}</em>
           </div>
           <a class="quiz-action" href="${escapeHtml(quiz.href)}" target="_blank" rel="noopener noreferrer">
             Start <i class="ti ti-arrow-up-right"></i>
@@ -287,12 +307,26 @@ h1{
         window.location.href = `./login.html?next=${encodeURIComponent("./quizzes.html")}`;
         return;
       }
+      await loadQuizProgress();
       statusNode.textContent = "Quizzes loaded successfully.";
     } catch (error) {
       statusNode.textContent = "Please log in again to view quizzes.";
       statusNode.classList.add("error");
       window.location.href = `./login.html?next=${encodeURIComponent("./quizzes.html")}`;
     }
+  }
+
+  async function loadQuizProgress() {
+    const response = await fetch(`${apiBase}/api/quiz-attempts`, {
+      credentials: "include",
+      headers: getAuthHeaders()
+    });
+    if (!response.ok) {
+      throw new Error("Unable to load saved quiz progress.");
+    }
+    const payload = await response.json();
+    savedAttempts = Array.isArray(payload.attempts) ? payload.attempts : [];
+    renderQuizzes();
   }
 
   renderQuizzes();
