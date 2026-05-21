@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>iMBA important topics – 21 May 2026</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root { 
+  --primary:#692240; 
+  --accent:#AA3B5C; 
+  --bg:#ffffff; 
+  --text:#1a1a1a; 
+  --muted:#5a5a5a; 
+  --border:#f0e6ea; 
+  --card-shadow:0 1px 3px rgba(0,0,0,0.04),0 8px 24px rgba(105,34,64,0.06); 
+}
+* { box-sizing: border-box; margin:0; padding:0; }
+body {
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+}
+header {
+  background: linear-gradient(135deg, #692240 0%, #AA3B5C 100%);
+  color: white;
+  padding: 2.5rem 1.5rem 3.5rem;
+  position: relative;
+  overflow: hidden;
+}
+header::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  right: -10%;
+  width: 600px;
+  height: 600px;
+  background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+  border-radius: 50%;
+}
+.header-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 2rem;
+  position: relative;
+  z-index: 2;
+}
+h1 {
+  font-size: clamp(1.8rem, 4vw, 2.6rem);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  margin-bottom: 0.4rem;
+}
+.subtitle {
+  font-size: 1.05rem;
+  opacity: 0.92;
+  font-weight: 500;
+}
+.btn-print {
+  background: rgba(255,255,255,0.14);
+  border: 1px solid rgba(255,255,255,0.35);
+  color: white;
+  padding: 0.7rem 1.3rem;
+  border-radius: 12px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.9rem;
+  backdrop-filter: blur(8px);
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  white-space: nowrap;
+}
+.btn-print:hover {
+  background: rgba(255,255,255,0.22);
+  transform: translateY(-1px);
+}
+main {
+  max-width: 1200px;
+  margin: -2rem auto 0;
+  padding: 0 1.5rem 4rem;
+  position: relative;
+  z-index: 3;
+}
+.section {
+  margin-top: 3rem;
+}
+.section-title {
+  font-size: 1.35rem;
+  color: var(--primary);
+  font-weight: 800;
+  margin-bottom: 1.4rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding-bottom: 0.6rem;
+  border-bottom: 2px solid var(--border);
+}
+.section-title span {
+  background: linear-gradient(135deg, var(--primary), var(--accent));
+  color: white;
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+  gap: 1.4rem;
+}
+.card {
+  background: white;
+  border-radius: 16px;
+  border: 1px solid var(--border);
+  border-left: 4px solid var(--primary);
+  box-shadow: var(--card-shadow);
+  padding: 1.5rem;
+  transition: all 0.3s ease;
+  display: flex;
+  flex-direction: column;
+}
+.card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.06), 0 16px 32px rgba(105,34,64,0.12);
+}
+.card h3 {
+  font-size: 1.12rem;
+  line-height: 1.35;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 0.75rem;
+}
+.meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+.badge {
+  background: #fdf4f7;
+  color: var(--accent);
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 0.32rem 0.7rem;
+  border-radius: 999px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  border: 1px solid #f9e5ec;
+}
+.card p {
+  font-size: 0.94rem;
+  color: var(--text);
+  margin-bottom: 0.85rem;
+}
+.card p:last-child { margin-bottom: 0; }
+.card strong {
+  color: var(--primary);
+  font-weight: 700;
+}
+.highlight {
+  background: #fdf4f7;
+  padding: 0.15rem 0.4rem;
+  border-radius: 4px;
+  font-weight: 600;
+  color: var(--primary);
+}
+footer {
+  max-width: 1200px;
+  margin: 3rem auto 0;
+  padding: 2rem 1.5rem;
+  text-align: center;
+  color: var(--muted);
+  font-size: 0.88rem;
+  border-top: 1px solid var(--border);
+}
+@media (max-width: 768px) {
+  .header-inner { flex-direction: column; align-items: flex-start; }
+  .grid { grid-template-columns: 1fr; }
+  header { padding: 2rem 1.25rem 3rem; }
+  .card { padding: 1.25rem; }
+}
+@media print {
+  header { background: #692240 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .btn-print { display: none; }
+  .card { break-inside: avoid; box-shadow: none; border: 1px solid #ddd; }
+  body { background: white; }
+  main { margin-top: 1rem; }
+}
+</style>
+</head>
+<body>
+<header>
+  <div class="header-inner">
+    <div>
+      <h1>iMBA important topics</h1>
+      <div class="subtitle">"21 May 2026"</div>
+    </div>
+    <button class="btn-print" onclick="window.print()">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg>
+      Print
+    </button>
+  </div>
+</header>
+
+<main>
+  <!-- SECTION 1 -->
+  <section class="section">
+    <h2 class="section-title"><span>1</span> FINANCIAL MARKETS</h2>
+    <div class="grid">
+      <article class="card">
+        <h3>Rupee touches fresh low, nears 97 a dollar</h3>
+        <div class="meta">
+          <span class="badge">RBI</span>
+          <span class="badge">Forex</span>
+          <span class="badge">20 May</span>
+        </div>
+        <p>The rupee fell to a new low on Wednesday, hitting <span class="highlight">96.96</span> intraday before settling at 96.83, down 0.31% from 96.53. Pressure came from elevated crude oil prices, rising US Treasury yields — the 30-year hit its highest since 2007 — and persistent risk aversion since the West Asia conflict began on 28 February.</p>
+        <p>The RBI was seen intervening in the spot market to prevent a breach of 97. After hours, it announced a <strong>$5 billion USD/INR buy-sell swap</strong> for three years, to be auctioned on 26 May — the first such operation since February. The rupee is now down <span class="highlight">7.2% YTD</span> from 89.88, making it Asia's worst performer in 2026.</p>
+        <p>The weakness spilled into debt. The 1-year T-bill yield rose to a one-year high with cut-offs at 5.52% (91-day), 5.75% (182-day) and 5.98% (364-day). The 10-year benchmark eased 3 bps to 7.08% on PSU bank buying.</p>
+        <p><strong>Why it matters:</strong> Dealers see the swap as liquidity injection rather than direct defence, though it may lift the rupee 20-25 paise on auction day. With the rupee also at record lows against the yuan (-9.6% YTD), dirham, and Singapore dollar, importers face higher costs. A private bank treasury head warned the currency could touch 100 in 6-8 months if FPI outflows continue and US/Japan yields stay elevated.</p>
+      </article>
+    </div>
+  </section>
+
+  <!-- SECTION 2 -->
+  <section class="section">
+    <h2 class="section-title"><span>2</span> GEOPOLITICS & ENERGY</h2>
+    <div class="grid">
+      <article class="card">
+        <h3>Iran threatens war 'beyond the region' if US attacks</h3>
+        <div class="meta">
+          <span class="badge">Iran</span>
+          <span class="badge">US</span>
+          <span class="badge">Hormuz</span>
+        </div>
+        <p>Iran warned on Wednesday it would spread conflict beyond the Middle East if the US strikes again, after President Donald Trump said he was "an hour away" from restarting bombing on Tuesday. Six weeks after Trump paused Operation Epic Fury, talks remain stalled.</p>
+        <p>Tehran submitted a new offer repeating previously rejected demands: control over the Strait of Hormuz, compensation for war damage, lifting sanctions, release of frozen assets, and US troop withdrawal. The Revolutionary Guards said any renewed aggression would trigger a regional war that "will extend beyond the region this time."</p>
+        <p>Meanwhile, shipping is slowly resuming. Two Chinese supertankers carrying 4 million barrels exited Hormuz on Wednesday after Iran eased rules for Chinese vessels. South Korea also sent a tanker through in coordination with Tehran. Lloyd's List counted 34 transits last week — double the prior week but far below the pre-war 140 per day.</p>
+        <p><strong>Why it matters:</strong> Hormuz has been largely closed since February, creating the biggest energy supply disruption in history. A partial reopening for "friendly" countries with potential transit fees risks splitting global oil flows. With US gasoline prices soaring ahead of November congressional elections, Trump faces pressure to both deter Iran and avoid another price spike — explaining his oscillation between threats and Vice President JD Vance's talk of "progress."</p>
+      </article>
+
+      <article class="card">
+        <h3>Early war goal was to install Ahmadinejad as Iran's leader</h3>
+        <div class="meta">
+          <span class="badge">NYT Exclusive</span>
+          <span class="badge">Regime Change</span>
+          <span class="badge">Israel</span>
+        </div>
+        <p>Days after Israeli strikes killed Iran's supreme leader, the US and Israel entered the war with a secret plan to install former President <span class="highlight">Mahmoud Ahmadinejad</span> as Iran's new leader, according to US officials briefed on the operation.</p>
+        <p>The audacious plan — developed by Israel and discussed with Ahmadinejad — collapsed on day one. An Israeli strike intended to free him from house arrest in Tehran instead injured him. He survived but became disillusioned and has not been seen publicly since; his whereabouts are unknown.</p>
+        <p>Ahmadinejad, president from 2005-2013, is known for calls to "wipe Israel off the map," fierce support for Iran's nuclear program, and violent crackdowns on dissent. US officials called him an "unusual choice" and some aides found the plan implausible.</p>
+        <p><strong>Why it matters:</strong> The revelation shows Trump and Prime Minister Netanyahu not only misjudged how quickly they could achieve military objectives in Operation Epic Fury, but also gambled on a high-risk leadership replacement. The White House now frames the goals narrowly — destroy missiles, dismantle production, sink the navy — avoiding mention of regime change, underscoring how the political endgame unraveled before the fighting stabilized.</p>
+      </article>
+    </div>
+  </section>
+</main>
+
+<footer>
+  For internal iMBA discussion only
+</footer>
+</body>
+</html>

@@ -3,6 +3,15 @@
   "daily": [
     {
       "category": "Daily Brief",
+      "date": "21 May 2026",
+      "title": "iMBA Important Topics: 21 May 2026",
+      "summary": "Daily interview-prep brief covering financial markets, currency pressure, geopolitics, energy disruption and strategic risk.",
+      "url": "./daily-21-may.html",
+      "cta": "Read article",
+      "icon": "calendar-event"
+    },
+    {
+      "category": "Daily Brief",
       "date": "18 May 2026",
       "title": "iMBA Important Topics: 18 May 2026",
       "summary": "Business Standard Delhi edition highlights across financial markets, corporate deals, economy, sectors and jobs.",
