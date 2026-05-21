@@ -203,6 +203,17 @@ input[readonly]{
   line-height:1.65;
   font-weight:700;
 }
+.success-box a{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  margin-top:.8rem;
+  padding:.72rem 1rem;
+  border-radius:14px;
+  color:#fff;
+  background:linear-gradient(135deg,var(--maroon),var(--maroon-deep));
+  text-decoration:none;
+}
 .success-box.is-visible{
   display:block;
 }
@@ -268,7 +279,7 @@ input[readonly]{
       </form>
       <p class="status" id="status" aria-live="polite"></p>
       <div class="success-box" id="success-box">
-        Registration confirmed. The session link will be uploaded one hour prior to the session on the website and will also be sent through email.
+        <span id="success-message">Registration confirmed. The session link will be uploaded one hour prior to the session on the website and will also be sent through email.</span>
       </div>
     </article>
   </section>
@@ -280,6 +291,7 @@ input[readonly]{
   const SESSION_TOKEN_KEY = "imbaSessionToken";
   const params = new URLSearchParams(window.location.search);
   const sessionType = params.get("type") === "batch" ? "batch" : "interview";
+  const batchInteractionLink = "https://meet.google.com/eqr-dwmh-qro?pli=1";
   const sessionConfig = {
     interview: {
       title: "Free Interview Session",
@@ -294,6 +306,7 @@ input[readonly]{
   const form = document.getElementById("registration-form");
   const statusNode = document.getElementById("status");
   const successBox = document.getElementById("success-box");
+  const successMessage = document.getElementById("success-message");
   const titleNode = document.getElementById("session-title");
   const copyNode = document.getElementById("session-copy");
   const nameInput = document.getElementById("name");
@@ -375,6 +388,11 @@ input[readonly]{
         throw new Error(payload.message || "Unable to complete registration.");
       }
       setStatus(payload.message || "Registration confirmed.", "success");
+      if (sessionType === "batch") {
+        successMessage.innerHTML = `Registration confirmed. You can join the batch interaction session here:<br/><a href="${batchInteractionLink}" target="_blank" rel="noopener noreferrer">Join Batch Interaction Session</a>`;
+      } else {
+        successMessage.textContent = "Registration confirmed. The session link will be uploaded one hour prior to the session on the website and will also be sent through email.";
+      }
       successBox.classList.add("is-visible");
     } catch (error) {
       setStatus(error.message || "Unable to complete registration.", "error");

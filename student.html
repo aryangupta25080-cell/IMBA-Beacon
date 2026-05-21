@@ -346,6 +346,15 @@ button{
 .free-sessions-grid .cta-outline{
   margin-top:auto;
 }
+.free-session-actions{
+  display:flex;
+  flex-wrap:wrap;
+  gap:.65rem;
+  margin-top:auto;
+}
+.free-session-actions .cta-outline{
+  margin-top:0;
+}
 .tag-pill{
   display:inline-flex;
   align-items:center;
@@ -1029,6 +1038,7 @@ button{
     const USER_EMAIL_KEY = "userEmail";
     const FREE_CLASS_LINK_KEY = "freeClassLink";
     const LIVE_CLASS_LINK_KEY = "liveClassLink";
+    const BATCH_INTERACTION_LINK = "https://meet.google.com/eqr-dwmh-qro?pli=1";
     const SESSION_TOKEN_KEY = "imbaSessionToken";
     const NAV_ITEMS = [
       { id: "dashboard", label: "Dashboard", icon: "layout-dashboard", target: "section-dashboard" },
@@ -1345,10 +1355,16 @@ button{
                 <h2>Batch Interaction Session</h2>
                 <p>Complimentary batch interaction — login required, no purchase required</p>
               </div>
-              <a class="cta-outline" href="./free-session-register.html?type=batch">
-                <span>Register Batch Interaction</span>
-                <i class="ti ti-arrow-up-right"></i>
-              </a>
+              <div class="free-session-actions">
+                <a class="cta-outline" href="./free-session-register.html?type=batch">
+                  <span>Register Batch Interaction</span>
+                  <i class="ti ti-arrow-up-right"></i>
+                </a>
+                <a class="cta-outline" href="${BATCH_INTERACTION_LINK}" target="_blank" rel="noopener noreferrer">
+                  <span>Join Batch Interaction</span>
+                  <i class="ti ti-video"></i>
+                </a>
+              </div>
             </article>
           </div>
         </section>
