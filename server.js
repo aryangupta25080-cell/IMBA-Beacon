@@ -1697,10 +1697,12 @@ async function handleProfileUpdate(request, response) {
     });
 
     const cookies = parseCookies(request);
-    const sessionId = cookies[SESSION_COOKIE];
+    const authHeader = request.headers.authorization || "";
+    const bearerSessionId = authHeader.startsWith("Bearer ") ? authHeader.slice("Bearer ".length).trim() : "";
+    const sessionId = bearerSessionId || cookies[SESSION_COOKIE];
     if (sessionId) {
       sessionStore.set(sessionId, persistedUser);
-      await saveSessionStore();
+      await saveSession(sessionId, persistedUser);
     }
 
     sendJson(response, 200, {

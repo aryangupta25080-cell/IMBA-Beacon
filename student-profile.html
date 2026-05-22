@@ -209,8 +209,78 @@ a{text-decoration:none;color:inherit}
 }
 .helper-note h3{font-size:1rem;margin-bottom:.35rem}
 .helper-note p{color:#6d5c62;font-size:.92rem}
+.profile-form{
+  display:grid;
+  gap:.85rem;
+  margin-bottom:1rem;
+}
+.form-grid{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:.8rem;
+}
+.form-field{
+  display:grid;
+  gap:.38rem;
+}
+.form-field label{
+  color:#6d5c62;
+  font-size:.84rem;
+  font-weight:800;
+}
+.form-field input,
+.form-field select{
+  width:100%;
+  border:1px solid rgba(31,55,82,.1);
+  border-radius:15px;
+  background:#f9fbff;
+  color:#203248;
+  font:inherit;
+  font-weight:700;
+  padding:.86rem .95rem;
+  outline:none;
+  transition:border-color .18s ease, box-shadow .18s ease, background .18s ease;
+}
+.form-field input:focus,
+.form-field select:focus{
+  border-color:rgba(106,31,54,.42);
+  background:#fff;
+  box-shadow:0 0 0 4px rgba(106,31,54,.08);
+}
+.form-field input[readonly]{
+  color:#74859b;
+  background:#f3f6fa;
+}
+.form-actions{
+  display:flex;
+  justify-content:flex-end;
+  gap:.7rem;
+  flex-wrap:wrap;
+}
+.save-profile-btn{
+  border:none;
+  border-radius:999px;
+  padding:.88rem 1.2rem;
+  background:linear-gradient(135deg,var(--gold-soft),#eea747);
+  color:var(--maroon);
+  font:inherit;
+  font-weight:900;
+  cursor:pointer;
+  box-shadow:0 14px 24px rgba(201,143,47,.18);
+}
+.save-profile-btn:disabled{
+  opacity:.62;
+  cursor:not-allowed;
+  box-shadow:none;
+}
+.form-divider{
+  height:1px;
+  background:rgba(31,55,82,.08);
+  margin:.1rem 0 .25rem;
+}
 .student-status{min-height:1.5rem;color:#738399;margin-top:.9rem}
 .student-status.error{color:#b33d4b}
+.student-status.success{color:#3c8a5c}
 @media (max-width:1080px){.profile-layout{grid-template-columns:1fr}}
 @media (max-width:980px){
   .student-app{min-height:auto}
@@ -229,6 +299,9 @@ a{text-decoration:none;color:inherit}
   .topbar-title p{font-size:.84rem}
   .card{padding:.95rem;border-radius:18px}
   .detail-row{padding:.78rem .82rem}
+  .form-grid{grid-template-columns:1fr}
+  .form-actions{justify-content:stretch}
+  .save-profile-btn{width:100%}
 }
 </style>
 </head>
@@ -284,6 +357,42 @@ a{text-decoration:none;color:inherit}
           </div>
 
           <div class="card">
+            <form class="profile-form" id="profile-form">
+              <div class="form-grid">
+                <div class="form-field">
+                  <label for="profile-name-input">Full Name</label>
+                  <input id="profile-name-input" name="name" type="text" autocomplete="name" placeholder="Enter full name" required/>
+                </div>
+                <div class="form-field">
+                  <label for="profile-email-input">Email</label>
+                  <input id="profile-email-input" name="email" type="email" autocomplete="email" readonly/>
+                </div>
+                <div class="form-field">
+                  <label for="profile-phone-input">Phone</label>
+                  <input id="profile-phone-input" name="phone" type="tel" inputmode="numeric" autocomplete="tel" placeholder="10-digit phone number" required/>
+                </div>
+                <div class="form-field">
+                  <label for="profile-percentile-input">JEE / School Percentile</label>
+                  <input id="profile-percentile-input" name="schoolPercentile" type="number" min="0" max="100" step="0.01" inputmode="decimal" placeholder="Example: 92.5" required/>
+                </div>
+                <div class="form-field">
+                  <label for="profile-category-input">Category</label>
+                  <select id="profile-category-input" name="category" required>
+                    <option value="">Select category</option>
+                    <option value="General">General</option>
+                    <option value="OBC">OBC</option>
+                    <option value="SC">SC</option>
+                    <option value="ST">ST</option>
+                    <option value="EWS">EWS</option>
+                    <option value="Other">Other</option>
+                  </select>
+                </div>
+              </div>
+              <div class="form-actions">
+                <button class="save-profile-btn" id="save-profile-btn" type="submit">Save profile</button>
+              </div>
+            </form>
+            <div class="form-divider" aria-hidden="true"></div>
             <div class="detail-grid">
               <div class="detail-row"><span>Full Name</span><strong id="profile-name">-</strong></div>
               <div class="detail-row"><span>Email</span><strong id="profile-email">-</strong></div>
@@ -297,7 +406,7 @@ a{text-decoration:none;color:inherit}
             </div>
             <div class="helper-note">
               <h3>Need to update anything?</h3>
-              <p>If any information is incorrect or incomplete, use the support page and the IMBA Beacon team can help you correct your onboarding details.</p>
+              <p>You can edit your basic profile details here. For email or account-access changes, contact IMBA Beacon support.</p>
             </div>
           </div>
         </section>
@@ -311,10 +420,14 @@ a{text-decoration:none;color:inherit}
     const apiBase = (window.IMBA_SITE_CONFIG && window.IMBA_SITE_CONFIG.apiBaseUrl) || "";
     const statusNode = document.getElementById("student-status");
     const logoutButton = document.getElementById("logout-btn");
+    const profileForm = document.getElementById("profile-form");
+    const saveProfileButton = document.getElementById("save-profile-btn");
     const studentApp = document.querySelector(".student-app");
     const menuToggle = document.getElementById("menu-toggle");
     const sidebarScrim = document.getElementById("sidebar-scrim");
     const sidebarLinks = Array.from(document.querySelectorAll(".sidebar-link"));
+    const SESSION_TOKEN_KEY = "imbaSessionToken";
+    let currentUser = null;
 
     function setStatus(message, type) {
       statusNode.textContent = message;
@@ -324,6 +437,12 @@ a{text-decoration:none;color:inherit}
       studentApp.classList.toggle("sidebar-open", open);
       menuToggle.setAttribute("aria-expanded", String(open));
     }
+    function getAuthHeaders(extraHeaders = {}) {
+      const sessionToken = localStorage.getItem(SESSION_TOKEN_KEY);
+      return sessionToken
+        ? { ...extraHeaders, Authorization: `Bearer ${sessionToken}` }
+        : extraHeaders;
+    }
 
     function formatDate(value) {
       if (!value) return "Not available";
@@ -332,9 +451,48 @@ a{text-decoration:none;color:inherit}
       return date.toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" });
     }
 
+    function fillSelect(select, value) {
+      if (!value) {
+        select.value = "";
+        return;
+      }
+      const existingOption = Array.from(select.options).some((option) => option.value === value);
+      if (!existingOption) {
+        const option = document.createElement("option");
+        option.value = value;
+        option.textContent = value;
+        select.appendChild(option);
+      }
+      select.value = value;
+    }
+
+    function renderProfile(user) {
+      currentUser = user;
+      document.getElementById("account-chip").textContent = user.provider === "google" ? "Google Account" : "Beacon Account";
+      document.getElementById("profile-name").textContent = user.name || "Not provided";
+      document.getElementById("profile-email").textContent = user.email || "Not provided";
+      document.getElementById("profile-phone").textContent = user.phone || "Not provided";
+      document.getElementById("profile-percentile").textContent = user.schoolPercentile ?? "Not provided";
+      document.getElementById("profile-category").textContent = user.category || "Not provided";
+      document.getElementById("profile-provider").textContent = user.provider === "google" ? "Google Account" : "Beacon Account";
+      document.getElementById("profile-verified").textContent = user.emailVerified ? "Verified" : "Pending";
+      document.getElementById("profile-created").textContent = formatDate(user.createdAt);
+      document.getElementById("profile-last-login").textContent = formatDate(user.lastLoginAt);
+      document.getElementById("profile-name-input").value = user.name || "";
+      document.getElementById("profile-email-input").value = user.email || "";
+      document.getElementById("profile-phone-input").value = user.phone || "";
+      document.getElementById("profile-percentile-input").value = user.schoolPercentile ?? "";
+      fillSelect(document.getElementById("profile-category-input"), user.category || "");
+      if (user.name) localStorage.setItem("userName", user.name);
+      if (user.email) localStorage.setItem("userEmail", user.email);
+    }
+
     async function init() {
       try {
-        const response = await fetch(`${apiBase}/api/auth/session`, { credentials: "include" });
+        const response = await fetch(`${apiBase}/api/auth/session`, {
+          credentials: "include",
+          headers: getAuthHeaders()
+        });
         const payload = await response.json();
         const user = payload.user || null;
 
@@ -343,23 +501,56 @@ a{text-decoration:none;color:inherit}
           return;
         }
 
-        document.getElementById("account-chip").textContent = user.provider === "google" ? "Google Account" : "Beacon Account";
-        document.getElementById("profile-name").textContent = user.name || "Not provided";
-        document.getElementById("profile-email").textContent = user.email || "Not provided";
-        document.getElementById("profile-phone").textContent = user.phone || "Not provided";
-        document.getElementById("profile-percentile").textContent = user.schoolPercentile ?? "Not provided";
-        document.getElementById("profile-category").textContent = user.category || "Not provided";
-        document.getElementById("profile-provider").textContent = user.provider === "google" ? "Google Account" : "Beacon Account";
-        document.getElementById("profile-verified").textContent = user.emailVerified ? "Verified" : "Pending";
-        document.getElementById("profile-created").textContent = formatDate(user.createdAt);
-        document.getElementById("profile-last-login").textContent = formatDate(user.lastLoginAt);
+        renderProfile(user);
       } catch (error) {
         setStatus("Unable to load your profile right now.", "error");
       }
     }
 
+    profileForm.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      saveProfileButton.disabled = true;
+      setStatus("Saving your profile...", "");
+      const formData = new FormData(profileForm);
+      const payload = {
+        name: String(formData.get("name") || "").trim(),
+        phone: String(formData.get("phone") || "").trim(),
+        schoolPercentile: String(formData.get("schoolPercentile") || "").trim(),
+        category: String(formData.get("category") || "").trim()
+      };
+
+      try {
+        const response = await fetch(`${apiBase}/api/auth/profile`, {
+          method: "POST",
+          credentials: "include",
+          headers: getAuthHeaders({ "Content-Type": "application/json" }),
+          body: JSON.stringify(payload)
+        });
+        const result = await response.json().catch(() => ({}));
+        if (!response.ok) {
+          throw new Error(result.message || "Unable to update profile.");
+        }
+        renderProfile(result.user || { ...currentUser, ...payload });
+        setStatus(result.message || "Profile updated successfully.", "success");
+      } catch (error) {
+        setStatus(error.message || "Unable to update profile.", "error");
+      } finally {
+        saveProfileButton.disabled = false;
+      }
+    });
+
     logoutButton.addEventListener("click", async () => {
-      await fetch(`${apiBase}/api/auth/logout`, { method: "POST", credentials: "include" });
+      await fetch(`${apiBase}/api/auth/logout`, {
+        method: "POST",
+        credentials: "include",
+        headers: getAuthHeaders()
+      });
+      localStorage.removeItem(SESSION_TOKEN_KEY);
+      localStorage.removeItem("userPlan");
+      localStorage.removeItem("userName");
+      localStorage.removeItem("userEmail");
+      localStorage.removeItem("freeClassLink");
+      localStorage.removeItem("liveClassLink");
       window.location.href = "./login.html";
     });
     menuToggle.addEventListener("click", () => {
