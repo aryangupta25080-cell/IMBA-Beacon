@@ -402,6 +402,23 @@ button{
   position:relative;
   overflow:hidden;
 }
+.schedule-map-trigger{
+  display:flex;
+  flex-direction:column;
+  min-height:220px;
+  align-items:flex-start;
+  justify-content:space-between;
+  text-align:left;
+  cursor:pointer;
+  color:inherit;
+  font:inherit;
+  transition:transform .2s ease,box-shadow .2s ease,border-color .2s ease;
+}
+.schedule-map-trigger:hover{
+  transform:translateY(-2px);
+  border-color:rgba(232,146,58,.5);
+  box-shadow:0 18px 36px rgba(106,31,54,.12);
+}
 .schedule-map-card::before{
   content:"";
   position:absolute;
@@ -416,58 +433,184 @@ button{
   position:relative;
   z-index:1;
 }
-.session-map-columns{
-  display:grid;
-  grid-template-columns:1fr 1.1fr;
-  gap:.85rem;
-  margin-top:.95rem;
-}
-.session-map-column{
-  padding:.9rem;
+.schedule-tile-icon{
+  width:58px;
+  height:58px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
   border-radius:18px;
-  background:rgba(255,255,255,.72);
-  border:1px solid rgba(106,31,54,.08);
+  background:linear-gradient(135deg,rgba(255,219,169,.65),rgba(232,146,58,.95));
+  color:var(--maroon-deep);
+  font-size:1.65rem;
+  box-shadow:0 12px 24px rgba(232,146,58,.22);
 }
-.session-map-column h4{
-  margin:0 0 .65rem;
+.schedule-tile-title{
+  display:block;
+  margin:.9rem 0 .35rem;
   color:var(--maroon);
-  font-size:.95rem;
+  font-size:1.35rem;
+  font-weight:900;
 }
-.session-pill-row{
+.schedule-tile-meta{
+  display:block;
+  margin:0;
+  color:var(--ink-soft);
+}
+.schedule-tile-action{
+  display:inline-flex;
+  align-items:center;
+  gap:.45rem;
+  color:var(--maroon);
+  font-weight:900;
+}
+.schedule-view{
+  position:fixed;
+  inset:0;
+  z-index:120;
+  display:none;
+  padding:clamp(.75rem,2vw,1.4rem);
+  background:rgba(39,19,29,.46);
+  backdrop-filter:blur(10px);
+}
+.schedule-view.is-open{
+  display:block;
+}
+body.schedule-open{
+  overflow:hidden;
+}
+.schedule-view-panel{
+  width:min(1180px,100%);
+  max-height:calc(100vh - clamp(1.5rem,4vw,2.8rem));
+  margin:0 auto;
+  overflow:auto;
+  border-radius:30px;
+  background:linear-gradient(180deg,#fffaf5 0%,#f8f3ec 100%);
+  border:1px solid rgba(106,31,54,.12);
+  box-shadow:0 30px 90px rgba(39,19,29,.28);
+}
+.schedule-view-header{
+  position:sticky;
+  top:0;
+  z-index:3;
   display:flex;
   align-items:center;
   justify-content:space-between;
-  gap:.7rem;
-  padding:.58rem .65rem;
-  border-radius:13px;
+  gap:1rem;
+  padding:1.35rem clamp(1rem,3vw,2rem);
+  background:rgba(255,250,245,.92);
+  border-bottom:1px solid rgba(106,31,54,.1);
+  backdrop-filter:blur(14px);
+}
+.schedule-view-title h2{
+  margin:0;
+  color:var(--maroon-deep);
+  font-family:Georgia,serif;
+  font-size:clamp(1.8rem,3vw,2.65rem);
+}
+.schedule-view-title p{
+  margin:.2rem 0 0;
+  color:var(--ink-soft);
+}
+.schedule-close-btn{
+  display:inline-flex;
+  align-items:center;
+  gap:.45rem;
+  border:1px solid rgba(106,31,54,.12);
+  border-radius:16px;
+  padding:.82rem 1rem;
   background:#fff;
-  border:1px solid rgba(106,31,54,.08);
-}
-.session-pill-row + .session-pill-row{
-  margin-top:.48rem;
-}
-.session-pill-row strong{
   color:var(--ink);
-  font-size:.88rem;
+  font:inherit;
+  font-weight:900;
+  cursor:pointer;
 }
-.session-pill-row span{
-  color:var(--amber);
+.schedule-view-body{
+  padding:clamp(1rem,3vw,2rem);
+}
+.schedule-date-group + .schedule-date-group{
+  margin-top:1.4rem;
+}
+.schedule-date-title{
+  display:flex;
+  align-items:center;
+  gap:.6rem;
+  margin:0 0 .75rem;
+  color:var(--maroon);
+  font-size:1.15rem;
+  font-weight:900;
+}
+.schedule-date-title::before{
+  content:"";
+  width:10px;
+  height:10px;
+  border-radius:50%;
+  background:var(--amber);
+  box-shadow:0 0 0 5px rgba(232,146,58,.12);
+}
+.schedule-session-row{
+  display:grid;
+  grid-template-columns:96px minmax(0,1fr) minmax(220px,.7fr);
+  gap:.85rem;
+  align-items:center;
+  padding:1rem;
+  border-radius:20px;
+  background:#fff;
+  border:1px solid rgba(106,31,54,.1);
+  box-shadow:0 14px 32px rgba(106,31,54,.07);
+}
+.schedule-session-row + .schedule-session-row{
+  margin-top:.7rem;
+}
+.plan-badge-pill{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  width:max-content;
+  min-width:78px;
+  padding:.38rem .7rem;
+  border-radius:999px;
   font-size:.78rem;
   font-weight:900;
-  white-space:nowrap;
 }
-.session-topic-list{
+.plan-badge-pill.free{
+  color:#2f7d4a;
+  background:rgba(47,125,74,.13);
+  border:1px solid rgba(47,125,74,.2);
+}
+.plan-badge-pill.basic{
+  color:#315fb5;
+  background:rgba(49,95,181,.13);
+  border:1px solid rgba(49,95,181,.2);
+}
+.plan-badge-pill.pro{
+  color:#6f3fa4;
+  background:rgba(111,63,164,.14);
+  border:1px solid rgba(111,63,164,.22);
+}
+.schedule-session-main strong{
+  display:block;
+  color:var(--ink);
+  font-size:1rem;
+}
+.schedule-session-main span{
+  display:block;
+  margin-top:.18rem;
+  color:var(--ink-soft);
+  font-size:.9rem;
+}
+.schedule-topic-tags{
   display:flex;
   flex-wrap:wrap;
   gap:.4rem;
+  justify-content:flex-end;
 }
-.session-topic-list em{
+.schedule-topic-tags span{
   display:inline-flex;
   padding:.26rem .5rem;
   border-radius:999px;
   background:rgba(232,146,58,.12);
   color:var(--maroon);
-  font-style:normal;
   font-size:.76rem;
   font-weight:800;
 }
@@ -1066,8 +1209,20 @@ button{
   .free-sessions-grid{
     grid-template-columns:1fr;
   }
-  .session-map-columns{
+  .schedule-view-header{
+    align-items:flex-start;
+    flex-direction:column;
+  }
+  .schedule-close-btn{
+    width:100%;
+    justify-content:center;
+  }
+  .schedule-session-row{
     grid-template-columns:1fr;
+    align-items:flex-start;
+  }
+  .schedule-topic-tags{
+    justify-content:flex-start;
   }
   .cta-outline,
   .cta-solid,
@@ -1118,6 +1273,22 @@ button{
             <div id="sections-root"></div>
           </div>
         </div>
+
+        <section class="schedule-view" id="schedule-view" aria-hidden="true">
+          <div class="schedule-view-panel" role="dialog" aria-modal="true" aria-labelledby="schedule-view-heading">
+            <div class="schedule-view-header">
+              <div class="schedule-view-title">
+                <h2 id="schedule-view-heading">Your sessions, mapped</h2>
+                <p>All interview and maths sessions organised by date.</p>
+              </div>
+              <button class="schedule-close-btn" type="button" data-action="close-schedule">
+                <i class="ti ti-arrow-left"></i>
+                Back to dashboard
+              </button>
+            </div>
+            <div class="schedule-view-body" id="schedule-view-body"></div>
+          </div>
+        </section>
       </main>
     </div>
 
@@ -1151,10 +1322,29 @@ button{
     const statsRowNode = document.getElementById("stats-row");
     const sectionsRoot = document.getElementById("sections-root");
     const logoutButton = document.getElementById("logout-btn");
+    const scheduleView = document.getElementById("schedule-view");
+    const scheduleViewBody = document.getElementById("schedule-view-body");
 
     let currentUser = null;
     let currentPlan = "none";
     let currentConfig = null;
+
+    const SESSION_SCHEDULE = [
+      { date: "24 May, Sunday", plan: "free", title: "Cracking the First 90 Seconds", time: "8–9 PM", topics: ["Free interview session", "First impression"] },
+      { date: "25 May, Monday", plan: "basic", title: "The Blueprint: Structuring Bulletproof Answers", time: "6–7 PM", topics: ["Answer structure", "Interview basics"] },
+      { date: "25 May, Monday", plan: "pro", title: "Story-Mapping & The Master Question Blueprint", time: "8–9 PM", topics: ["Story mapping", "Master questions"] },
+      { date: "25 May, Monday", plan: "pro", title: "Maths Lecture 1", time: "5–6:45 PM", topics: ["Set", "Relation Functions"] },
+      { date: "26 May, Tuesday", plan: "pro", title: "Under Pressure: Navigating Stress Panels & Current Trends", time: "8–9 PM", topics: ["Stress panels", "Current trends"] },
+      { date: "26 May, Tuesday", plan: "pro", title: "Maths Lecture 2", time: "5–6:45 PM", topics: ["Trigo", "Inverse trigonometry"] },
+      { date: "27 May, Wednesday", plan: "basic", title: "The Executive Polish: Eliminating Fillers & Commanding Presence + Getting Interview Ready", time: "6–7 PM", topics: ["Presence", "Fillers"] },
+      { date: "27 May, Wednesday", plan: "pro", title: "The Final Simulation: Live Mock Panel & Individual Diagnostic", time: "8–9 PM", topics: ["Mock panel", "Diagnostic"] },
+      { date: "27 May, Wednesday", plan: "pro", title: "Maths Lecture 3", time: "5–6:45 PM", topics: ["Quadratic", "Complex"] },
+      { date: "28 May, Thursday", plan: "pro", title: "Maths Lecture 4", time: "5–6:45 PM", topics: ["Limit", "Continuity", "Differentiability"] },
+      { date: "29 May, Friday", plan: "pro", title: "Maths Lecture 5", time: "5–6:45 PM", topics: ["Integration", "Area under curve"] },
+      { date: "30 May, Saturday", plan: "pro", title: "Maths Lecture 6", time: "5–6:45 PM", topics: ["Permutation & Combination", "Binomial"] },
+      { date: "31 May, Sunday", plan: "pro", title: "Maths Lecture 7", time: "5–6:45 PM", topics: ["Matrix and Determinants"] },
+      { date: "1 June, Monday", plan: "pro", title: "Maths Lecture 8", time: "5–6:45 PM", topics: ["Probability"] }
+    ];
 
     function setStatus(message, type) {
       statusNode.textContent = message || "";
@@ -1168,6 +1358,62 @@ button{
         .replace(/>/g, "&gt;")
         .replace(/"/g, "&quot;")
         .replace(/'/g, "&#39;");
+    }
+
+    function getPlanLabel(plan) {
+      const labels = { free: "Free", basic: "Basic", pro: "Pro" };
+      return labels[plan] || "Free";
+    }
+
+    function renderScheduleView() {
+      const grouped = SESSION_SCHEDULE.reduce(function (groups, session) {
+        if (!groups[session.date]) {
+          groups[session.date] = [];
+        }
+        groups[session.date].push(session);
+        return groups;
+      }, {});
+
+      scheduleViewBody.innerHTML = Object.keys(grouped).map(function (date) {
+        return `
+          <section class="schedule-date-group">
+            <h3 class="schedule-date-title">${escapeHtml(date)}</h3>
+            ${grouped[date].map(function (session) {
+              const topics = (session.topics || []).map(function (topic) {
+                return `<span>${escapeHtml(topic)}</span>`;
+              }).join("");
+
+              return `
+                <article class="schedule-session-row">
+                  <span class="plan-badge-pill ${escapeHtml(session.plan)}">${escapeHtml(getPlanLabel(session.plan))}</span>
+                  <div class="schedule-session-main">
+                    <strong>${escapeHtml(session.title)}</strong>
+                    <span>${escapeHtml(session.time)}</span>
+                  </div>
+                  <div class="schedule-topic-tags">${topics}</div>
+                </article>
+              `;
+            }).join("")}
+          </section>
+        `;
+      }).join("");
+    }
+
+    function openScheduleView() {
+      renderScheduleView();
+      scheduleView.classList.add("is-open");
+      scheduleView.setAttribute("aria-hidden", "false");
+      document.body.classList.add("schedule-open");
+      const closeButton = scheduleView.querySelector("[data-action='close-schedule']");
+      if (closeButton) {
+        closeButton.focus();
+      }
+    }
+
+    function closeScheduleView() {
+      scheduleView.classList.remove("is-open");
+      scheduleView.setAttribute("aria-hidden", "true");
+      document.body.classList.remove("schedule-open");
     }
 
     function normalizeCouponCode(value) {
@@ -1622,62 +1868,17 @@ button{
               </div>
             </article>
 
-            <article class="track-card schedule-map-card">
+            <button class="track-card schedule-map-card schedule-map-trigger" type="button" data-action="open-schedule">
               <small style="color:var(--amber);font-weight:800;letter-spacing:.08em;">MAY 2026</small>
-              <div class="track-head">
-                <i class="ti ti-calendar-event" style="color:var(--amber);"></i>
-                <h3 style="color:var(--maroon);">Your Sessions, Mapped.</h3>
-              </div>
-              <p style="color:var(--ink-soft);">Live interview sessions and maths lectures organised by date for enrolled students.</p>
-              <div class="session-map-columns">
-                <div class="session-map-column">
-                  <h4>Interview Sessions</h4>
-                  <div class="session-pill-row"><strong>Cracking the First 90 Seconds</strong><span>24 May</span></div>
-                  <div class="session-pill-row"><strong>Basic Session 1</strong><span>25 May</span></div>
-                  <div class="session-pill-row"><strong>Basic Session 2</strong><span>27 May</span></div>
-                  ${plan === "pro" ? `
-                    <div class="session-pill-row"><strong>Pro Session 1</strong><span>25 May</span></div>
-                    <div class="session-pill-row"><strong>Pro Session 2</strong><span>26 May</span></div>
-                    <div class="session-pill-row"><strong>Pro Session 3</strong><span>27 May</span></div>
-                  ` : ""}
-                </div>
-                <div class="session-map-column">
-                  <h4>Maths Lectures · 5–6:45 PM</h4>
-                  <div class="session-pill-row">
-                    <strong>Lecture 1</strong><span>25 May</span>
-                  </div>
-                  <div class="session-topic-list"><em>Sets</em><em>Relation Functions</em></div>
-                  <div class="session-pill-row">
-                    <strong>Lecture 2</strong><span>26 May</span>
-                  </div>
-                  <div class="session-topic-list"><em>Trigo</em><em>Inverse Trigo</em></div>
-                  <div class="session-pill-row">
-                    <strong>Lecture 3</strong><span>27 May</span>
-                  </div>
-                  <div class="session-topic-list"><em>Quadratic</em><em>Complex</em></div>
-                  <div class="session-pill-row">
-                    <strong>Lecture 4</strong><span>28 May</span>
-                  </div>
-                  <div class="session-topic-list"><em>Limit</em><em>Continuity</em><em>Differentiability</em></div>
-                  <div class="session-pill-row">
-                    <strong>Lecture 5</strong><span>29 May</span>
-                  </div>
-                  <div class="session-topic-list"><em>Integration</em><em>Area under curve</em></div>
-                  <div class="session-pill-row">
-                    <strong>Lecture 6</strong><span>30 May</span>
-                  </div>
-                  <div class="session-topic-list"><em>Permutation & Combination</em><em>Binomial</em></div>
-                  <div class="session-pill-row">
-                    <strong>Lecture 7</strong><span>31 May</span>
-                  </div>
-                  <div class="session-topic-list"><em>Matrix and Determinants</em></div>
-                  <div class="session-pill-row">
-                    <strong>Lecture 8</strong><span>1 June</span>
-                  </div>
-                  <div class="session-topic-list"><em>Probability</em></div>
-                </div>
-              </div>
-            </article>
+              <span class="schedule-tile-icon" aria-hidden="true">
+                <i class="ti ti-calendar-event"></i>
+              </span>
+              <span class="schedule-tile-copy">
+                <span class="schedule-tile-title">Your sessions, mapped</span>
+                <span class="schedule-tile-meta">Open the full session schedule.</span>
+              </span>
+              <span class="schedule-tile-action">View schedule <i class="ti ti-arrow-right"></i></span>
+            </button>
 
             <article class="track-card">
               <small>Track 04</small>
@@ -2211,6 +2412,25 @@ button{
         return;
       }
 
+      const openScheduleButton = event.target.closest("[data-action='open-schedule']");
+      if (openScheduleButton) {
+        event.preventDefault();
+        openScheduleView();
+        return;
+      }
+
+      const closeScheduleButton = event.target.closest("[data-action='close-schedule']");
+      if (closeScheduleButton) {
+        event.preventDefault();
+        closeScheduleView();
+        return;
+      }
+
+      if (event.target === scheduleView) {
+        closeScheduleView();
+        return;
+      }
+
       const downloadButton = event.target.closest("[data-download-sheet]");
       if (downloadButton) {
         event.preventDefault();
@@ -2231,6 +2451,12 @@ button{
           mentoring: "Maths session room can be connected here next."
         };
         setStatus(messages[feature] || "This module can be connected here next.", "success");
+      }
+    });
+
+    document.addEventListener("keydown", function (event) {
+      if (event.key === "Escape" && scheduleView.classList.contains("is-open")) {
+        closeScheduleView();
       }
     });
 
