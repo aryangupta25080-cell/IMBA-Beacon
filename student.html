@@ -1754,7 +1754,7 @@ button{
     function renderUpgradeSection() {
       const catalog = getPlanCatalog();
       return `
-        <section class="dashboard-section">
+        <section class="dashboard-section" id="section-upgrade">
           <p class="section-label">Upgrade</p>
           <div class="coupon-box">
             <strong>Have a coupon code?</strong>
@@ -2040,6 +2040,18 @@ button{
       });
     }
 
+    function scrollToRequestedSection() {
+      const target = decodeURIComponent(window.location.hash || "").replace(/^#/, "");
+      if (!target) return;
+      window.requestAnimationFrame(function () {
+        const section = document.getElementById(target);
+        if (section) {
+          section.scrollIntoView({ behavior: "smooth", block: "start" });
+          updateActiveNav(target);
+        }
+      });
+    }
+
     function safeOpenLink(link) {
       if (!link) {
         return false;
@@ -2153,6 +2165,7 @@ button{
 
         renderDashboard(getStudentState(currentUser));
         setStatus("Dashboard loaded successfully.", "success");
+        scrollToRequestedSection();
       })
       .catch(function (error) {
         setStatus(error.message || "Unable to load the dashboard.", "error");
