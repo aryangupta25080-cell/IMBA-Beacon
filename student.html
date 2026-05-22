@@ -396,36 +396,80 @@ button{
   color:#ffd9a9;
   font-weight:900;
 }
-.maths-schedule-card{
+.schedule-map-card{
+  background:linear-gradient(135deg,#fdf6ee 0%,#fff9f3 100%);
+  border:1.5px solid rgba(232,146,58,.25);
+  position:relative;
+  overflow:hidden;
+}
+.schedule-map-card::before{
+  content:"";
+  position:absolute;
+  top:-30px;
+  right:-30px;
+  width:120px;
+  height:120px;
+  background:radial-gradient(circle,rgba(232,146,58,.12) 0%,transparent 70%);
+  pointer-events:none;
+}
+.schedule-map-card > *{
+  position:relative;
+  z-index:1;
+}
+.session-map-columns{
+  display:grid;
+  grid-template-columns:1fr 1.1fr;
+  gap:.85rem;
   margin-top:.95rem;
-  overflow:hidden;
 }
-.maths-schedule-head{
-  display:flex;
-  align-items:flex-start;
-  justify-content:space-between;
-  gap:1rem;
-  margin-bottom:.95rem;
-}
-.maths-schedule-head h3{
-  margin:0 0 .25rem;
-  font-size:1.3rem;
-}
-.maths-schedule-head p{
-  margin:0;
-  color:var(--ink-soft);
-}
-.maths-schedule-frame{
-  border:1px solid rgba(106,31,54,.12);
+.session-map-column{
+  padding:.9rem;
   border-radius:18px;
-  overflow:hidden;
-  background:#241f1f;
-  box-shadow:0 16px 34px rgba(60,30,40,.10);
+  background:rgba(255,255,255,.72);
+  border:1px solid rgba(106,31,54,.08);
 }
-.maths-schedule-frame img{
-  display:block;
-  width:100%;
-  height:auto;
+.session-map-column h4{
+  margin:0 0 .65rem;
+  color:var(--maroon);
+  font-size:.95rem;
+}
+.session-pill-row{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:.7rem;
+  padding:.58rem .65rem;
+  border-radius:13px;
+  background:#fff;
+  border:1px solid rgba(106,31,54,.08);
+}
+.session-pill-row + .session-pill-row{
+  margin-top:.48rem;
+}
+.session-pill-row strong{
+  color:var(--ink);
+  font-size:.88rem;
+}
+.session-pill-row span{
+  color:var(--amber);
+  font-size:.78rem;
+  font-weight:900;
+  white-space:nowrap;
+}
+.session-topic-list{
+  display:flex;
+  flex-wrap:wrap;
+  gap:.4rem;
+}
+.session-topic-list em{
+  display:inline-flex;
+  padding:.26rem .5rem;
+  border-radius:999px;
+  background:rgba(232,146,58,.12);
+  color:var(--maroon);
+  font-style:normal;
+  font-size:.76rem;
+  font-weight:800;
 }
 .cta-outline,
 .cta-solid,
@@ -1022,8 +1066,8 @@ button{
   .free-sessions-grid{
     grid-template-columns:1fr;
   }
-  .maths-schedule-head{
-    flex-direction:column;
+  .session-map-columns{
+    grid-template-columns:1fr;
   }
   .cta-outline,
   .cta-solid,
@@ -1578,19 +1622,60 @@ button{
               </div>
             </article>
 
-            <article class="track-card" style="background:linear-gradient(135deg,#fdf6ee 0%,#fff9f3 100%);border:1.5px solid rgba(232,146,58,.25);cursor:pointer;position:relative;overflow:hidden;" onclick="window.location.href='./schedule.html'">
-              <div style="position:absolute;top:-30px;right:-30px;width:120px;height:120px;background:radial-gradient(circle,rgba(232,146,58,.12) 0%,transparent 70%);pointer-events:none;"></div>
+            <article class="track-card schedule-map-card">
               <small style="color:var(--amber);font-weight:800;letter-spacing:.08em;">MAY 2026</small>
               <div class="track-head">
                 <i class="ti ti-calendar-event" style="color:var(--amber);"></i>
                 <h3 style="color:var(--maroon);">Your Sessions, Mapped.</h3>
               </div>
-              <p style="color:var(--ink-soft);">Free · Basic · Pro — every live session, date &amp; time in one place.</p>
-              <div class="track-footer">
-                <span style="font-size:.8rem;color:var(--amber);font-weight:700;">24, 25, 26, 27 May</span>
-                <a class="track-btn" href="./schedule.html" style="background:linear-gradient(135deg,var(--amber-soft),var(--amber));color:var(--maroon-deep);border:none;font-weight:800;" onclick="event.stopPropagation()">
-                  View Schedule →
-                </a>
+              <p style="color:var(--ink-soft);">Live interview sessions and maths lectures organised by date for enrolled students.</p>
+              <div class="session-map-columns">
+                <div class="session-map-column">
+                  <h4>Interview Sessions</h4>
+                  <div class="session-pill-row"><strong>Cracking the First 90 Seconds</strong><span>24 May</span></div>
+                  <div class="session-pill-row"><strong>Basic Session 1</strong><span>25 May</span></div>
+                  <div class="session-pill-row"><strong>Basic Session 2</strong><span>27 May</span></div>
+                  ${plan === "pro" ? `
+                    <div class="session-pill-row"><strong>Pro Session 1</strong><span>25 May</span></div>
+                    <div class="session-pill-row"><strong>Pro Session 2</strong><span>26 May</span></div>
+                    <div class="session-pill-row"><strong>Pro Session 3</strong><span>27 May</span></div>
+                  ` : ""}
+                </div>
+                <div class="session-map-column">
+                  <h4>Maths Lectures · 5–6:45 PM</h4>
+                  <div class="session-pill-row">
+                    <strong>Lecture 1</strong><span>25 May</span>
+                  </div>
+                  <div class="session-topic-list"><em>Sets</em><em>Relation Functions</em></div>
+                  <div class="session-pill-row">
+                    <strong>Lecture 2</strong><span>26 May</span>
+                  </div>
+                  <div class="session-topic-list"><em>Trigo</em><em>Inverse Trigo</em></div>
+                  <div class="session-pill-row">
+                    <strong>Lecture 3</strong><span>27 May</span>
+                  </div>
+                  <div class="session-topic-list"><em>Quadratic</em><em>Complex</em></div>
+                  <div class="session-pill-row">
+                    <strong>Lecture 4</strong><span>28 May</span>
+                  </div>
+                  <div class="session-topic-list"><em>Limit</em><em>Continuity</em><em>Differentiability</em></div>
+                  <div class="session-pill-row">
+                    <strong>Lecture 5</strong><span>29 May</span>
+                  </div>
+                  <div class="session-topic-list"><em>Integration</em><em>Area under curve</em></div>
+                  <div class="session-pill-row">
+                    <strong>Lecture 6</strong><span>30 May</span>
+                  </div>
+                  <div class="session-topic-list"><em>Permutation & Combination</em><em>Binomial</em></div>
+                  <div class="session-pill-row">
+                    <strong>Lecture 7</strong><span>31 May</span>
+                  </div>
+                  <div class="session-topic-list"><em>Matrix and Determinants</em></div>
+                  <div class="session-pill-row">
+                    <strong>Lecture 8</strong><span>1 June</span>
+                  </div>
+                  <div class="session-topic-list"><em>Probability</em></div>
+                </div>
               </div>
             </article>
 
@@ -1607,22 +1692,6 @@ button{
               </div>
             </article>
           </div>
-
-          <article class="dashboard-card maths-schedule-card">
-            <div class="maths-schedule-head">
-              <div>
-                <span class="tag-pill amber"><i class="ti ti-calculator"></i> Enrolled students only</span>
-                <h3>Maths Lecture Schedule</h3>
-                <p>Topics mapped across 2-hour live maths lectures with a short break.</p>
-              </div>
-              <a class="section-btn" href="./assets/maths-schedule-may-2026.jpg" target="_blank" rel="noopener noreferrer">
-                Open schedule
-              </a>
-            </div>
-            <div class="maths-schedule-frame">
-              <img src="./assets/maths-schedule-may-2026.jpg" alt="Maths lecture schedule for enrolled IMBA Beacon students" loading="lazy">
-            </div>
-          </article>
 
           <article class="dashboard-card" style="margin-top:.95rem;">
             <div class="live-header">
