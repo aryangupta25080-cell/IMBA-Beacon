@@ -246,10 +246,6 @@ input[readonly]{
           <strong>Free Interview Session</strong>
           <span>Introductory interview preparation and guided orientation.</span>
         </div>
-        <div class="session-pill">
-          <strong>Free Batch Interaction Session</strong>
-          <span>Open interaction session for aspirants to understand the course and preparation culture.</span>
-        </div>
       </div>
     </article>
 
@@ -289,17 +285,11 @@ input[readonly]{
 (function () {
   const apiBase = (window.IMBA_SITE_CONFIG && window.IMBA_SITE_CONFIG.apiBaseUrl) || "";
   const SESSION_TOKEN_KEY = "imbaSessionToken";
-  const params = new URLSearchParams(window.location.search);
-  const sessionType = params.get("type") === "batch" ? "batch" : "interview";
-  const batchInteractionLink = "https://meet.google.com/eqr-dwmh-qro?pli=1";
+  const sessionType = "interview";
   const sessionConfig = {
     interview: {
-      title: "Free Interview Session",
-      copy: "Register for the complimentary interview-prep session. This is free for every logged-in student and does not require purchase."
-    },
-    batch: {
-      title: "Free Batch Interaction Session",
-      copy: "Register for the complimentary batch interaction session. This is free for every logged-in student and does not require purchase."
+      title: "Cracking the First 90 Seconds",
+      copy: "Register for the complimentary interview-prep session on 24 May. This is free for every logged-in student and does not require purchase."
     }
   };
 
@@ -388,11 +378,7 @@ input[readonly]{
         throw new Error(payload.message || "Unable to complete registration.");
       }
       setStatus(payload.message || "Registration confirmed.", "success");
-      if (sessionType === "batch") {
-        successMessage.innerHTML = `Registration confirmed. You can join the batch interaction session here:<br/><a href="${batchInteractionLink}" target="_blank" rel="noopener noreferrer">Join Batch Interaction Session</a>`;
-      } else {
-        successMessage.textContent = "Registration confirmed. The session link will be uploaded one hour prior to the session on the website and will also be sent through email.";
-      }
+      successMessage.textContent = "Registration confirmed. The session link will be uploaded one hour prior to the session on the website and will also be sent through email.";
       successBox.classList.add("is-visible");
     } catch (error) {
       setStatus(error.message || "Unable to complete registration.", "error");

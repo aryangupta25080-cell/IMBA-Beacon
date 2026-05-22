@@ -1038,14 +1038,12 @@ button{
     const USER_EMAIL_KEY = "userEmail";
     const FREE_CLASS_LINK_KEY = "freeClassLink";
     const LIVE_CLASS_LINK_KEY = "liveClassLink";
-    const BATCH_INTERACTION_LINK = "https://meet.google.com/eqr-dwmh-qro?pli=1";
     const SESSION_TOKEN_KEY = "imbaSessionToken";
     const NAV_ITEMS = [
       { id: "dashboard", label: "Dashboard", icon: "layout-dashboard", target: "section-dashboard" },
       { id: "recordings", label: "Recordings", icon: "video", target: "section-recordings" },
       { id: "sheets", label: "Sheets", icon: "files", target: "section-sheets" },
       { id: "quiz", label: "Quiz", icon: "help-square-rounded", target: "section-quiz" },
-      { id: "batch", label: "Batch Sessions", icon: "users-group", target: "section-batch" },
       { id: "articles", label: "Articles", icon: "news", target: "articles", href: "./articles.html" },
       { id: "profile", label: "Profile", icon: "user-circle", target: "section-profile" }
     ];
@@ -1348,23 +1346,6 @@ button{
                 <span>Register Interview Session</span>
                 <i class="ti ti-arrow-up-right"></i>
               </a>
-            </article>
-            <article class="free-class-card" id="section-batch">
-              <div>
-                <span class="tag-pill amber"><i class="ti ti-users-group"></i> Available for all students</span>
-                <h2>Batch Interaction Session</h2>
-                <p>Complimentary batch interaction — login required, no purchase required</p>
-              </div>
-              <div class="free-session-actions">
-                <a class="cta-outline" href="./free-session-register.html?type=batch">
-                  <span>Register Batch Interaction</span>
-                  <i class="ti ti-arrow-up-right"></i>
-                </a>
-                <a class="cta-outline" href="${BATCH_INTERACTION_LINK}" target="_blank" rel="noopener noreferrer">
-                  <span>Join Batch Interaction</span>
-                  <i class="ti ti-video"></i>
-                </a>
-              </div>
             </article>
           </div>
         </section>
