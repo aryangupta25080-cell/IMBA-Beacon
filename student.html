@@ -335,7 +335,7 @@ button{
 }
 .free-sessions-grid{
   display:grid;
-  grid-template-columns:repeat(2,minmax(0,1fr));
+  grid-template-columns:1fr;
   gap:1rem;
 }
 .free-sessions-grid .free-class-card{
@@ -379,6 +379,53 @@ button{
 .free-class-card p{
   margin:0;
   color:rgba(255,255,255,.82);
+}
+.free-session-date{
+  display:inline-flex;
+  align-items:center;
+  gap:.5rem;
+  margin:.7rem 0 .25rem;
+  padding:.52rem .78rem;
+  border-radius:999px;
+  background:rgba(255,255,255,.12);
+  border:1px solid rgba(255,255,255,.16);
+  color:#fff;
+  font-weight:800;
+}
+.free-session-date span{
+  color:#ffd9a9;
+  font-weight:900;
+}
+.maths-schedule-card{
+  margin-top:.95rem;
+  overflow:hidden;
+}
+.maths-schedule-head{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:1rem;
+  margin-bottom:.95rem;
+}
+.maths-schedule-head h3{
+  margin:0 0 .25rem;
+  font-size:1.3rem;
+}
+.maths-schedule-head p{
+  margin:0;
+  color:var(--ink-soft);
+}
+.maths-schedule-frame{
+  border:1px solid rgba(106,31,54,.12);
+  border-radius:18px;
+  overflow:hidden;
+  background:#241f1f;
+  box-shadow:0 16px 34px rgba(60,30,40,.10);
+}
+.maths-schedule-frame img{
+  display:block;
+  width:100%;
+  height:auto;
 }
 .cta-outline,
 .cta-solid,
@@ -975,6 +1022,9 @@ button{
   .free-sessions-grid{
     grid-template-columns:1fr;
   }
+  .maths-schedule-head{
+    flex-direction:column;
+  }
   .cta-outline,
   .cta-solid,
   .section-btn,
@@ -1340,6 +1390,7 @@ button{
               <div>
                 <span class="tag-pill amber"><i class="ti ti-gift"></i> Available for all students</span>
                 <h2>Cracking the First 90 Seconds</h2>
+                <div class="free-session-date"><i class="ti ti-calendar-event"></i><span>24 May</span> · 8–9 PM</div>
                 <p>1 complimentary interview session — login required, no purchase required</p>
               </div>
               <a class="cta-outline" href="./free-session-register.html?type=interview">
@@ -1453,23 +1504,6 @@ button{
                   </article>
                 `;
               }).join("")}
-
-              <article class="track-card" style="background:linear-gradient(135deg,#fdf6ee 0%,#fff9f3 100%);border:1.5px solid rgba(232,146,58,.25);cursor:pointer;position:relative;overflow:hidden;" onclick="window.location.href='./schedule.html'">
-                <div style="position:absolute;top:-30px;right:-30px;width:120px;height:120px;background:radial-gradient(circle,rgba(232,146,58,.12) 0%,transparent 70%);pointer-events:none;"></div>
-                <small style="color:var(--amber);font-weight:800;letter-spacing:.08em;">MAY 2026</small>
-                <div class="track-head">
-                  <i class="ti ti-calendar-event" style="color:var(--amber);"></i>
-                  <h3 style="color:var(--maroon);">Your Sessions, Mapped.</h3>
-                </div>
-                <p style="color:var(--ink-soft);">Free · Basic · Pro — every live session, date &amp; time in one place.</p>
-                <div class="track-footer">
-                  <span style="font-size:.8rem;color:var(--amber);font-weight:700;">21, 25, 26, 27 May</span>
-                  <a class="track-btn" href="./schedule.html" style="background:linear-gradient(135deg,var(--amber-soft),var(--amber));color:var(--maroon-deep);border:none;font-weight:800;" onclick="event.stopPropagation()">
-                    View Schedule →
-                  </a>
-                </div>
-              </article>
-
               ${lockedCards.slice(2).map(function (card) {
                 return `
                   <article class="track-card locked-card"${card.id ? ` id="${card.id}"` : ""}>
@@ -1553,7 +1587,7 @@ button{
               </div>
               <p style="color:var(--ink-soft);">Free · Basic · Pro — every live session, date &amp; time in one place.</p>
               <div class="track-footer">
-                <span style="font-size:.8rem;color:var(--amber);font-weight:700;">21, 25, 26, 27 May</span>
+                <span style="font-size:.8rem;color:var(--amber);font-weight:700;">24, 25, 26, 27 May</span>
                 <a class="track-btn" href="./schedule.html" style="background:linear-gradient(135deg,var(--amber-soft),var(--amber));color:var(--maroon-deep);border:none;font-weight:800;" onclick="event.stopPropagation()">
                   View Schedule →
                 </a>
@@ -1573,6 +1607,22 @@ button{
               </div>
             </article>
           </div>
+
+          <article class="dashboard-card maths-schedule-card">
+            <div class="maths-schedule-head">
+              <div>
+                <span class="tag-pill amber"><i class="ti ti-calculator"></i> Enrolled students only</span>
+                <h3>Maths Lecture Schedule</h3>
+                <p>Topics mapped across 2-hour live maths lectures with a short break.</p>
+              </div>
+              <a class="section-btn" href="./assets/maths-schedule-may-2026.jpg" target="_blank" rel="noopener noreferrer">
+                Open schedule
+              </a>
+            </div>
+            <div class="maths-schedule-frame">
+              <img src="./assets/maths-schedule-may-2026.jpg" alt="Maths lecture schedule for enrolled IMBA Beacon students" loading="lazy">
+            </div>
+          </article>
 
           <article class="dashboard-card" style="margin-top:.95rem;">
             <div class="live-header">
