@@ -3,6 +3,15 @@
   "daily": [
     {
       "category": "Daily Brief",
+      "date": "23 May 2026",
+      "title": "iMBA Important Topics: 23 May 2026",
+      "summary": "In-depth daily brief covering rupee pressure, RBI intervention, forex reserves, oil risk, fiscal stress and macro policy signals.",
+      "url": "./daily-23-may.html",
+      "cta": "Read article",
+      "icon": "calendar-event"
+    },
+    {
+      "category": "Daily Brief",
       "date": "22 May 2026",
       "title": "iMBA Important Topics: 22 May 2026",
       "summary": "Daily interview-prep brief covering crude prices, Russian oil flows, investment diplomacy and fertiliser-sector reform.",
