@@ -323,38 +323,6 @@ button{
   letter-spacing:.16em;
   text-transform:uppercase;
 }
-.free-class-card{
-  padding:1.25rem 1.35rem;
-  border-radius:22px;
-  background:linear-gradient(135deg,#5c2537 0%,#472031 100%);
-  color:#fff;
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:1rem;
-}
-.free-sessions-grid{
-  display:grid;
-  grid-template-columns:1fr;
-  gap:1rem;
-}
-.free-sessions-grid .free-class-card{
-  min-height:178px;
-  align-items:flex-start;
-  flex-direction:column;
-}
-.free-sessions-grid .cta-outline{
-  margin-top:auto;
-}
-.free-session-actions{
-  display:flex;
-  flex-wrap:wrap;
-  gap:.65rem;
-  margin-top:auto;
-}
-.free-session-actions .cta-outline{
-  margin-top:0;
-}
 .tag-pill{
   display:inline-flex;
   align-items:center;
@@ -371,30 +339,6 @@ button{
 .tag-pill.pro{
   background:rgba(171,195,255,.16);
   color:#dde8ff;
-}
-.free-class-card h2{
-  margin:.8rem 0 .25rem;
-  font-size:1.52rem;
-}
-.free-class-card p{
-  margin:0;
-  color:rgba(255,255,255,.82);
-}
-.free-session-date{
-  display:inline-flex;
-  align-items:center;
-  gap:.5rem;
-  margin:.7rem 0 .25rem;
-  padding:.52rem .78rem;
-  border-radius:999px;
-  background:rgba(255,255,255,.12);
-  border:1px solid rgba(255,255,255,.16);
-  color:#fff;
-  font-weight:800;
-}
-.free-session-date span{
-  color:#ffd9a9;
-  font-weight:900;
 }
 .schedule-map-card{
   background:linear-gradient(135deg,#fdf6ee 0%,#fff9f3 100%);
@@ -1199,15 +1143,11 @@ body.schedule-open{
   .batch-grid.pro{
     grid-template-columns:1fr;
   }
-  .free-class-card,
   .live-link-box,
   .sheet-row,
   .track-footer{
     flex-direction:column;
     align-items:flex-start;
-  }
-  .free-sessions-grid{
-    grid-template-columns:1fr;
   }
   .schedule-view-header{
     align-items:flex-start;
@@ -1330,7 +1270,6 @@ body.schedule-open{
     let currentConfig = null;
 
     const SESSION_SCHEDULE = [
-      { date: "24 May, Sunday", plan: "free", title: "Cracking the First 90 Seconds", time: "8–9 PM", topics: ["Free interview session", "First impression"] },
       { date: "25 May, Monday", plan: "basic", title: "The Blueprint: Structuring Bulletproof Answers", time: "6–7 PM", topics: ["Answer structure", "Interview basics"] },
       { date: "25 May, Monday", plan: "pro", title: "Story-Mapping & The Master Question Blueprint", time: "8–9 PM", topics: ["Story mapping", "Master questions"] },
       { date: "25 May, Monday", plan: "pro", title: "Maths Lecture 1", time: "5–6:45 PM", topics: ["Set", "Relation Functions"] },
@@ -1669,28 +1608,6 @@ body.schedule-open{
           </article>
         `;
       }).join("");
-    }
-
-    function renderFreeClass() {
-      return `
-        <section class="dashboard-section" id="section-dashboard">
-          <p class="section-label">Free Sessions</p>
-          <div class="free-sessions-grid">
-            <article class="free-class-card">
-              <div>
-                <span class="tag-pill amber"><i class="ti ti-gift"></i> Available for all students</span>
-                <h2>Cracking the First 90 Seconds</h2>
-                <div class="free-session-date"><i class="ti ti-calendar-event"></i><span>24 May</span> · 8–9 PM</div>
-                <p>1 complimentary interview session — login required, no purchase required</p>
-              </div>
-              <a class="cta-outline" href="./free-session-register.html?type=interview">
-                <span>Register Interview Session</span>
-                <i class="ti ti-arrow-up-right"></i>
-              </a>
-            </article>
-          </div>
-        </section>
-      `;
     }
 
     function renderLiveClass(plan) {
@@ -2133,7 +2050,6 @@ body.schedule-open{
 
     function renderSections(student) {
       return [
-        renderFreeClass(),
         student.plan === "none" ? renderUpgradeSection() : "",
         renderTracks(student.plan),
         renderLiveClass(student.plan),
