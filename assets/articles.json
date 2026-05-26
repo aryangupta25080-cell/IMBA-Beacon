@@ -3,6 +3,15 @@
   "daily": [
     {
       "category": "Daily Brief",
+      "date": "26 May 2026",
+      "title": "iMBA Important Topics: 26 May 2026",
+      "summary": "Daily interview-prep brief covering fuel, fertiliser, forex pressure, energy security, Quad diplomacy and AI policy signals.",
+      "url": "./daily-26-may.html",
+      "cta": "Read article",
+      "icon": "calendar-event"
+    },
+    {
+      "category": "Daily Brief",
       "date": "25 May 2026",
       "title": "iMBA Important Topics: 25 May 2026",
       "summary": "Daily interview-prep brief covering the Hormuz crisis, Ebola risk, AI-enabled cybercrime and business implications.",
