@@ -1271,7 +1271,7 @@ body.schedule-open{
 
     const SESSION_SCHEDULE = [
       { date: "27 May, Wednesday", plan: "basic", title: "Interview Session 1: Structuring Bulletproof Answers", time: "6–7 PM", topics: ["Answer structure", "Interview basics"] },
-      { date: "27 May, Wednesday", plan: "pro", title: "Maths Lecture 1", time: "5–6:45 PM", topics: ["Set", "Relation Functions"] },
+      { date: "27 May, Wednesday", plan: "pro", title: "Pro (Maths): Set, Relation and Functions", time: "5–7 PM", topics: ["Set", "Relation Functions"], link: "https://meet.google.com/hip-zqmz-aij" },
       { date: "28 May, Thursday", plan: "pro", title: "Maths Lecture 2", time: "5–6:45 PM", topics: ["Trigo", "Inverse trigonometry"] },
       { date: "29 May, Friday", plan: "basic", title: "VA Session 1: Eliminating Fillers & Commanding Presence", time: "6–7 PM", topics: ["Presence", "Fillers"] },
       { date: "29 May, Friday", plan: "pro", title: "Maths Lecture 3", time: "5–6:45 PM", topics: ["Quadratic", "Complex"] },
@@ -1304,6 +1304,21 @@ body.schedule-open{
       return labels[plan] || "Free";
     }
 
+    function canAccessSession(session, plan) {
+      if (!session || session.plan === "free") return true;
+      if (session.plan === "basic") return plan === "basic" || plan === "pro";
+      if (session.plan === "pro") return plan === "pro";
+      return false;
+    }
+
+    function getNextVisibleSession(plan) {
+      return SESSION_SCHEDULE.find(function (session) {
+        return canAccessSession(session, plan) && session.link;
+      }) || SESSION_SCHEDULE.find(function (session) {
+        return canAccessSession(session, plan);
+      }) || null;
+    }
+
     function renderScheduleView() {
       const grouped = SESSION_SCHEDULE.reduce(function (groups, session) {
         if (!groups[session.date]) {
@@ -1321,6 +1336,7 @@ body.schedule-open{
               const topics = (session.topics || []).map(function (topic) {
                 return `<span>${escapeHtml(topic)}</span>`;
               }).join("");
+              const canJoin = canAccessSession(session, currentPlan) && session.link;
 
               return `
                 <article class="schedule-session-row">
@@ -1330,6 +1346,7 @@ body.schedule-open{
                     <span>${escapeHtml(session.time)}</span>
                   </div>
                   <div class="schedule-topic-tags">${topics}</div>
+                  ${canJoin ? `<button class="section-btn" type="button" data-open-link="${escapeHtml(session.link)}">Join</button>` : ""}
                 </article>
               `;
             }).join("")}
@@ -1612,7 +1629,12 @@ body.schedule-open{
 
     function renderLiveClass(plan) {
       const liveLink = (localStorage.getItem(LIVE_CLASS_LINK_KEY) || "").trim();
-      const hasLiveLink = Boolean(liveLink);
+      const nextSession = getNextVisibleSession(plan);
+      const effectiveLiveLink = (nextSession && nextSession.link ? nextSession.link : liveLink).trim();
+      const hasLiveLink = Boolean(effectiveLiveLink);
+      const liveTitle = nextSession ? nextSession.title : "Mock Interview Round";
+      const liveTime = nextSession ? nextSession.time : "";
+      const liveDetails = nextSession ? `${nextSession.date}${liveTime ? " · " + liveTime : ""}` : "Details uploaded soon";
 
       if (plan === "none") {
         return `
@@ -1620,8 +1642,8 @@ body.schedule-open{
             <p class="section-label">Live Class</p>
             <article class="dashboard-card locked-card">
               <div class="live-header">
-                <strong>Next Session — Mock Interview Round</strong>
-                <span class="live-pill"><i class="ti ti-point-filled"></i> Details uploaded soon</span>
+                <strong>Next Session — ${escapeHtml(liveTitle)}</strong>
+                <span class="live-pill"><i class="ti ti-point-filled"></i> ${escapeHtml(liveDetails)}</span>
               </div>
               <div class="live-link-box">
                 <div class="live-link-copy">
@@ -1651,18 +1673,18 @@ body.schedule-open{
           <p class="section-label">Live Class</p>
           <article class="dashboard-card">
             <div class="live-header">
-              <strong>Next Session — Mock Interview Round</strong>
-              <span class="live-pill"><i class="ti ti-point-filled"></i> Details uploaded soon</span>
+              <strong>Next Session — ${escapeHtml(liveTitle)}</strong>
+              <span class="live-pill"><i class="ti ti-point-filled"></i> ${escapeHtml(liveDetails)}</span>
             </div>
             <div class="live-link-box">
               <div class="live-link-copy">
                 <i class="ti ti-clock-hour-4"></i>
                 <div>
                   <strong>${hasLiveLink ? "Class link is active" : "Link will be posted 30 minutes before class starts"}</strong>
-                  <span>${hasLiveLink ? escapeHtml(liveLink) : "Waiting for mentor to post the link..."}</span>
+                  <span>${hasLiveLink ? escapeHtml(effectiveLiveLink) : "Waiting for mentor to post the link..."}</span>
                 </div>
               </div>
-              <button class="section-btn" type="button" data-open-link="${escapeHtml(liveLink)}" ${hasLiveLink ? "" : "disabled"}>
+              <button class="section-btn" type="button" data-open-link="${escapeHtml(effectiveLiveLink)}" ${hasLiveLink ? "" : "disabled"}>
                 Join Class
               </button>
             </div>
