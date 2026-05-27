@@ -176,6 +176,82 @@ h1{
   color:var(--ink-soft);
   line-height:1.65;
 }
+.recording-list{
+  display:grid;
+  gap:.85rem;
+  padding:1rem;
+}
+.recording-card{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:1rem;
+  padding:1rem;
+  border:1px solid rgba(106,31,54,.12);
+  border-radius:20px;
+  background:#fff;
+  box-shadow:0 12px 28px rgba(55,28,37,.06);
+}
+.recording-info{
+  display:flex;
+  align-items:center;
+  gap:.85rem;
+  min-width:0;
+}
+.recording-icon{
+  width:46px;
+  height:46px;
+  flex:0 0 auto;
+  display:grid;
+  place-items:center;
+  border-radius:16px;
+  color:var(--maroon);
+  background:linear-gradient(135deg,#fff3df,var(--gold-soft));
+  font-size:1.25rem;
+}
+.recording-info strong{
+  display:block;
+  color:var(--ink);
+  font-size:1rem;
+}
+.recording-info span{
+  display:block;
+  margin-top:.18rem;
+  color:var(--ink-soft);
+  font-size:.86rem;
+  line-height:1.45;
+}
+.recording-actions{
+  display:flex;
+  align-items:center;
+  gap:.7rem;
+  flex-wrap:wrap;
+  justify-content:flex-end;
+}
+.access-pill{
+  display:inline-flex;
+  align-items:center;
+  gap:.35rem;
+  padding:.5rem .72rem;
+  border-radius:999px;
+  color:var(--maroon);
+  background:#fff3df;
+  font-size:.78rem;
+  font-weight:900;
+  white-space:nowrap;
+}
+.recording-btn{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:.4rem;
+  padding:.72rem .9rem;
+  border-radius:14px;
+  color:var(--maroon-deep);
+  background:linear-gradient(135deg,var(--gold-soft),var(--gold));
+  font-weight:900;
+  box-shadow:0 12px 22px rgba(232,146,58,.16);
+}
 .status-line{
   min-height:1.4rem;
   margin:.95rem 0 0;
@@ -190,6 +266,9 @@ h1{
   .hero-band{padding:1.55rem}
   .recording-content{padding:.85rem}
   .recording-section-head{align-items:flex-start;flex-direction:column}
+  .recording-card{align-items:flex-start;flex-direction:column}
+  .recording-actions{width:100%;justify-content:space-between}
+  .recording-btn{flex:1}
 }
 </style>
 </head>
@@ -254,7 +333,14 @@ h1{
           meta: "Etiquette coaching",
           icon: "ti-message-circle-2",
           emptyTitle: "No etiquette recordings yet",
-          emptyCopy: "Interview etiquette recording links have not been uploaded yet. They will appear here once available."
+          emptyCopy: "Interview etiquette recording links have not been uploaded yet. They will appear here once available.",
+          recordings: [
+            {
+              title: "Free Interview Etiquette Session",
+              meta: "Available for Basic and Pro students",
+              href: "https://drive.google.com/file/d/1Yn84lbvlQvqAX9kvrIPi1oFXns77b75X/view?pli=1"
+            }
+          ]
         }
       ]
     }
@@ -288,11 +374,35 @@ h1{
             <h2>${escapeHtml(section.title)}</h2>
             <span><i class="ti ti-clock"></i> ${escapeHtml(section.meta)}</span>
           </div>
-          <div class="empty-state">
-            <span class="empty-icon"><i class="ti ${escapeHtml(section.icon)}"></i></span>
-            <strong>${escapeHtml(section.emptyTitle)}</strong>
-            <p>${escapeHtml(section.emptyCopy)}</p>
-          </div>
+          ${Array.isArray(section.recordings) && section.recordings.length ? `
+            <div class="recording-list">
+              ${section.recordings.map(function (recording) {
+                return `
+                  <div class="recording-card">
+                    <div class="recording-info">
+                      <span class="recording-icon"><i class="ti ${escapeHtml(section.icon)}"></i></span>
+                      <div>
+                        <strong>${escapeHtml(recording.title)}</strong>
+                        <span>${escapeHtml(recording.meta)}</span>
+                      </div>
+                    </div>
+                    <div class="recording-actions">
+                      <span class="access-pill"><i class="ti ti-crown"></i> Basic + Pro</span>
+                      <a class="recording-btn" href="${escapeHtml(recording.href)}" target="_blank" rel="noopener noreferrer">
+                        <i class="ti ti-player-play"></i> Open recording
+                      </a>
+                    </div>
+                  </div>
+                `;
+              }).join("")}
+            </div>
+          ` : `
+            <div class="empty-state">
+              <span class="empty-icon"><i class="ti ${escapeHtml(section.icon)}"></i></span>
+              <strong>${escapeHtml(section.emptyTitle)}</strong>
+              <p>${escapeHtml(section.emptyCopy)}</p>
+            </div>
+          `}
         </article>
       `;
     }).join("");
