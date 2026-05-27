@@ -147,10 +147,10 @@ const PROTECTED_CONTENT = {
     downloadName: "previous-year-questions.xlsx"
   },
   "sets-relation-functions-notes": {
-    file: "sheets/sets-relation-functions-class-notes.pdf",
+    file: "sheets/sets-relation-functions-onenote.zip",
     minPlan: "basic",
-    type: "application/pdf",
-    downloadName: "sets-relation-functions-class-notes.pdf"
+    type: "application/zip",
+    downloadName: "sets-relation-functions-onenote.zip"
   },
   "quiz-1": { file: "quizzes/quiz-1.html", minPlan: "basic", type: "text/html; charset=utf-8" },
   "quiz-2": { file: "quizzes/quiz-2.html", minPlan: "basic", type: "text/html; charset=utf-8" },

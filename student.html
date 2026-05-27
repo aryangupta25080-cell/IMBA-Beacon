@@ -1876,7 +1876,7 @@ body.schedule-open{
           meta: "Lecture notes and practice sheets",
           notes: "Mathematics lecture notes will be added here.",
           lectureNotes: [
-            { title: "Sets, Relation and Functions", href: protectedContentUrl("sets-relation-functions-notes"), downloadHref: protectedContentUrl("sets-relation-functions-notes", true), label: "Lecture Notes · PDF", icon: "file-type-pdf" }
+            { title: "Sets, Relation and Functions", downloadHref: protectedContentUrl("sets-relation-functions-notes", true), label: "Lecture Notes · OneNote", icon: "notebook" }
           ],
           practiceSheets: lectures
         },
@@ -1917,9 +1917,11 @@ body.schedule-open{
                   </div>
                   ${locked ? '<button class="sheet-btn pro-only" disabled>Locked</button>' : `
                     <div class="sheet-actions">
+                      ${viewHref ? `
                       <a class="sheet-btn" href="${escapeHtml(viewHref)}" target="_blank" rel="noopener noreferrer" style="font-size:.82rem;padding:.6rem .8rem;">
                         <i class="ti ti-eye" style="font-size:.9rem;"></i> View
                       </a>
+                      ` : ""}
                       ${downloadHref ? `
                       <a class="sheet-btn" href="${escapeHtml(downloadHref)}" ${item.downloadHref ? "download" : 'target="_blank" rel="noopener noreferrer"'} style="font-size:.82rem;padding:.6rem .8rem;background:linear-gradient(135deg,var(--amber-soft),var(--amber));color:var(--maroon-deep);border:none;">
                         <i class="ti ti-download" style="font-size:.9rem;"></i> Download
