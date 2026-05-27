@@ -146,6 +146,12 @@ const PROTECTED_CONTENT = {
     type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
     downloadName: "previous-year-questions.xlsx"
   },
+  "sets-relation-functions-notes": {
+    file: "sheets/sets-relation-functions-class-notes.pdf",
+    minPlan: "basic",
+    type: "application/pdf",
+    downloadName: "sets-relation-functions-class-notes.pdf"
+  },
   "quiz-1": { file: "quizzes/quiz-1.html", minPlan: "basic", type: "text/html; charset=utf-8" },
   "quiz-2": { file: "quizzes/quiz-2.html", minPlan: "basic", type: "text/html; charset=utf-8" },
   "quiz-3": { file: "quizzes/quiz-3.html", minPlan: "basic", type: "text/html; charset=utf-8" },

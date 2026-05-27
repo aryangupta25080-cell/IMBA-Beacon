@@ -1875,6 +1875,9 @@ body.schedule-open{
           icon: "calculator",
           meta: "Lecture notes and practice sheets",
           notes: "Mathematics lecture notes will be added here.",
+          lectureNotes: [
+            { title: "Sets, Relation and Functions", href: protectedContentUrl("sets-relation-functions-notes"), downloadHref: protectedContentUrl("sets-relation-functions-notes", true), label: "Lecture Notes · PDF", icon: "file-type-pdf" }
+          ],
           practiceSheets: lectures
         },
         {
@@ -1929,6 +1932,44 @@ body.schedule-open{
         `;
       }
 
+      function renderLectureNotes(subject) {
+        if (!subject.lectureNotes || !subject.lectureNotes.length) {
+          return `<p class="sheet-empty">${escapeHtml(subject.notes)}</p>`;
+        }
+
+        return `
+          <div class="sheet-list">
+            ${subject.lectureNotes.map(function (note) {
+              return `
+                <div class="sheet-row" style="padding:.72rem 0;">
+                  <div class="sheet-info">
+                    <div class="sheet-icon" style="width:32px;height:32px;font-size:.85rem;border-radius:10px;">
+                      <i class="ti ti-${note.icon || "notebook"}"></i>
+                    </div>
+                    <div>
+                      <strong style="font-size:.95rem;">${escapeHtml(note.title)}</strong>
+                      <span>${escapeHtml(note.label || "Lecture Notes · PDF")}</span>
+                    </div>
+                  </div>
+                  ${locked ? '<button class="sheet-btn pro-only" disabled>Locked</button>' : `
+                    <div class="sheet-actions">
+                      <a class="sheet-btn" href="${escapeHtml(note.href)}" target="_blank" rel="noopener noreferrer" style="font-size:.82rem;padding:.6rem .8rem;">
+                        <i class="ti ti-eye" style="font-size:.9rem;"></i> View
+                      </a>
+                      ${note.downloadHref ? `
+                      <a class="sheet-btn" href="${escapeHtml(note.downloadHref)}" download style="font-size:.82rem;padding:.6rem .8rem;background:linear-gradient(135deg,var(--amber-soft),var(--amber));color:var(--maroon-deep);border:none;">
+                        <i class="ti ti-download" style="font-size:.9rem;"></i> Download
+                      </a>
+                      ` : ""}
+                    </div>
+                  `}
+                </div>
+              `;
+            }).join("")}
+          </div>
+        `;
+      }
+
       return `
         <section class="dashboard-section" id="section-sheets">
           <p class="section-label">Course Materials</p>
@@ -1959,7 +2000,7 @@ body.schedule-open{
                           <span class="sheet-subsection-toggle">View <i class="ti ti-chevron-down"></i></span>
                         </summary>
                         <div class="sheet-subsection-body">
-                          <p class="sheet-empty">${escapeHtml(subject.notes)}</p>
+                          ${renderLectureNotes(subject)}
                         </div>
                       </details>
                       <details class="sheet-subsection sheet-dropdown">
