@@ -1894,32 +1894,34 @@ body.schedule-open{
         }
       ];
 
-      function renderPracticeSheets(subject) {
-        if (!subject.practiceSheets.length) {
-          return '<p class="sheet-empty">Practice sheets will be added here.</p>';
+      function renderMaterialRows(items, emptyCopy, defaultLabel, defaultIcon) {
+        if (!items || !items.length) {
+          return `<p class="sheet-empty">${escapeHtml(emptyCopy)}</p>`;
         }
 
         return `
           <div class="sheet-list">
-            ${subject.practiceSheets.map(function (sheet) {
+            ${items.map(function (item) {
+              const viewHref = item.href || (item.id ? `https://drive.google.com/file/d/${item.id}/view` : "");
+              const downloadHref = item.downloadHref || (item.id ? `https://drive.google.com/uc?export=download&id=${item.id}` : "");
               return `
                 <div class="sheet-row" style="padding:.72rem 0;">
                   <div class="sheet-info">
                     <div class="sheet-icon" style="width:32px;height:32px;font-size:.85rem;border-radius:10px;">
-                      <i class="ti ti-${sheet.icon || (sheet.href ? "file-text" : "file-type-pdf")}"></i>
+                      <i class="ti ti-${escapeHtml(item.icon || defaultIcon)}"></i>
                     </div>
                     <div>
-                      <strong style="font-size:.95rem;">${escapeHtml(sheet.title)}</strong>
-                      <span>${escapeHtml(sheet.label || "Practice Sheet · PDF")}</span>
+                      <strong style="font-size:.95rem;">${escapeHtml(item.title)}</strong>
+                      <span>${escapeHtml(item.label || defaultLabel)}</span>
                     </div>
                   </div>
                   ${locked ? '<button class="sheet-btn pro-only" disabled>Locked</button>' : `
                     <div class="sheet-actions">
-                      <a class="sheet-btn" href="${sheet.href ? escapeHtml(sheet.href) : `https://drive.google.com/file/d/${sheet.id}/view`}" target="_blank" rel="noopener noreferrer" style="font-size:.82rem;padding:.6rem .8rem;">
+                      <a class="sheet-btn" href="${escapeHtml(viewHref)}" target="_blank" rel="noopener noreferrer" style="font-size:.82rem;padding:.6rem .8rem;">
                         <i class="ti ti-eye" style="font-size:.9rem;"></i> View
                       </a>
-                      ${sheet.downloadHref || !sheet.href ? `
-                      <a class="sheet-btn" href="${sheet.downloadHref ? escapeHtml(sheet.downloadHref) : `https://drive.google.com/uc?export=download&id=${sheet.id}`}" ${sheet.downloadHref ? "download" : 'target="_blank" rel="noopener noreferrer"'} style="font-size:.82rem;padding:.6rem .8rem;background:linear-gradient(135deg,var(--amber-soft),var(--amber));color:var(--maroon-deep);border:none;">
+                      ${downloadHref ? `
+                      <a class="sheet-btn" href="${escapeHtml(downloadHref)}" ${item.downloadHref ? "download" : 'target="_blank" rel="noopener noreferrer"'} style="font-size:.82rem;padding:.6rem .8rem;background:linear-gradient(135deg,var(--amber-soft),var(--amber));color:var(--maroon-deep);border:none;">
                         <i class="ti ti-download" style="font-size:.9rem;"></i> Download
                       </a>
                       ` : ""}
@@ -1932,42 +1934,22 @@ body.schedule-open{
         `;
       }
 
-      function renderLectureNotes(subject) {
-        if (!subject.lectureNotes || !subject.lectureNotes.length) {
-          return `<p class="sheet-empty">${escapeHtml(subject.notes)}</p>`;
-        }
+      function renderPracticeSheets(subject) {
+        return renderMaterialRows(
+          subject.practiceSheets,
+          "Practice sheets will be added here.",
+          "Practice Sheet · PDF",
+          "file-type-pdf"
+        );
+      }
 
-        return `
-          <div class="sheet-list">
-            ${subject.lectureNotes.map(function (note) {
-              return `
-                <div class="sheet-row" style="padding:.72rem 0;">
-                  <div class="sheet-info">
-                    <div class="sheet-icon" style="width:32px;height:32px;font-size:.85rem;border-radius:10px;">
-                      <i class="ti ti-${note.icon || "notebook"}"></i>
-                    </div>
-                    <div>
-                      <strong style="font-size:.95rem;">${escapeHtml(note.title)}</strong>
-                      <span>${escapeHtml(note.label || "Lecture Notes · PDF")}</span>
-                    </div>
-                  </div>
-                  ${locked ? '<button class="sheet-btn pro-only" disabled>Locked</button>' : `
-                    <div class="sheet-actions">
-                      <a class="sheet-btn" href="${escapeHtml(note.href)}" target="_blank" rel="noopener noreferrer" style="font-size:.82rem;padding:.6rem .8rem;">
-                        <i class="ti ti-eye" style="font-size:.9rem;"></i> View
-                      </a>
-                      ${note.downloadHref ? `
-                      <a class="sheet-btn" href="${escapeHtml(note.downloadHref)}" download style="font-size:.82rem;padding:.6rem .8rem;background:linear-gradient(135deg,var(--amber-soft),var(--amber));color:var(--maroon-deep);border:none;">
-                        <i class="ti ti-download" style="font-size:.9rem;"></i> Download
-                      </a>
-                      ` : ""}
-                    </div>
-                  `}
-                </div>
-              `;
-            }).join("")}
-          </div>
-        `;
+      function renderLectureNotes(subject) {
+        return renderMaterialRows(
+          subject.lectureNotes,
+          subject.notes,
+          "Lecture Notes · PDF",
+          "file-type-pdf"
+        );
       }
 
       return `
