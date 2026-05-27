@@ -6,7 +6,7 @@
       "date": "27 May 2026",
       "title": "iMBA Important Topics: 27 May 2026",
       "summary": "Daily in-depth briefing covering markets, policy, AI, industry signals and interview-ready business discussion points.",
-      "url": "./daily-27-may.html",
+      "url": "protected:daily-27-may",
       "cta": "Read article",
       "icon": "calendar-event"
     },
@@ -15,7 +15,7 @@
       "date": "26 May 2026",
       "title": "iMBA Important Topics: 26 May 2026",
       "summary": "Daily interview-prep brief covering fuel, fertiliser, forex pressure, energy security, Quad diplomacy and AI policy signals.",
-      "url": "./daily-26-may.html",
+      "url": "protected:daily-26-may",
       "cta": "Read article",
       "icon": "calendar-event"
     },
@@ -24,7 +24,7 @@
       "date": "25 May 2026",
       "title": "iMBA Important Topics: 25 May 2026",
       "summary": "Daily interview-prep brief covering the Hormuz crisis, Ebola risk, AI-enabled cybercrime and business implications.",
-      "url": "./daily-25-may.html",
+      "url": "protected:daily-25-may",
       "cta": "Read article",
       "icon": "calendar-event"
     },
@@ -33,7 +33,7 @@
       "date": "23 May 2026",
       "title": "iMBA Important Topics: 23 May 2026",
       "summary": "In-depth daily brief covering rupee pressure, RBI intervention, forex reserves, oil risk, fiscal stress and macro policy signals.",
-      "url": "./daily-23-may.html",
+      "url": "protected:daily-23-may",
       "cta": "Read article",
       "icon": "calendar-event"
     },
@@ -42,7 +42,7 @@
       "date": "22 May 2026",
       "title": "iMBA Important Topics: 22 May 2026",
       "summary": "Daily interview-prep brief covering crude prices, Russian oil flows, investment diplomacy and fertiliser-sector reform.",
-      "url": "./daily-22-may.html",
+      "url": "protected:daily-22-may",
       "cta": "Read article",
       "icon": "calendar-event"
     },
@@ -51,7 +51,7 @@
       "date": "21 May 2026",
       "title": "iMBA Important Topics: 21 May 2026",
       "summary": "Daily interview-prep brief covering financial markets, currency pressure, geopolitics, energy disruption and strategic risk.",
-      "url": "./daily-21-may.html",
+      "url": "protected:daily-21-may",
       "cta": "Read article",
       "icon": "calendar-event"
     },
@@ -60,7 +60,7 @@
       "date": "18 May 2026",
       "title": "iMBA Important Topics: 18 May 2026",
       "summary": "Business Standard Delhi edition highlights across financial markets, corporate deals, economy, sectors and jobs.",
-      "url": "./daily-18-may.html",
+      "url": "protected:daily-18-may",
       "cta": "Read article",
       "icon": "calendar-event"
     },
@@ -69,7 +69,7 @@
       "date": "19 May 2026",
       "title": "iMBA Important News: 19 May 2026",
       "summary": "Daily digest covering markets, major corporate moves, economy, policy and Big Tech regulation.",
-      "url": "./daily-19-may.html",
+      "url": "protected:daily-19-may",
       "cta": "Read article",
       "icon": "calendar-event"
     },
@@ -78,7 +78,7 @@
       "date": "20 May 2026",
       "title": "Today's Key Reads: 20 May 2026",
       "summary": "A daily key-reads digest for IMBA interview prep, covering major policy, economy, business and strategic partnership developments.",
-      "url": "./daily-20-may.html",
+      "url": "protected:daily-20-may",
       "cta": "Read article",
       "icon": "calendar-event"
     }
@@ -89,7 +89,7 @@
       "date": "13-16 May 2026",
       "title": "Weekly Business Brief: Week 1",
       "summary": "A weekly business intelligence brief covering education, banking, markets, energy, geopolitics, corporate policy and next-week watchpoints.",
-      "url": "./weekly-business-brief-week-1.html",
+      "url": "protected:weekly-business-brief-week-1",
       "cta": "Read article",
       "icon": "sparkles"
     }
@@ -100,7 +100,7 @@
       "date": "May 2026",
       "title": "West Bengal 2026 Election",
       "summary": "A high-priority politics brief for election, voter-roll and governance discussion points.",
-      "url": "./Bengal_Elections.html",
+      "url": "protected:bengal-elections",
       "cta": "Read article",
       "icon": "pin"
     },
@@ -109,7 +109,7 @@
       "date": "May 2026",
       "title": "Tamil Nadu 2026: TVK Victory Report",
       "summary": "Important for understanding regional politics, result interpretation and leadership narratives.",
-      "url": "./Tamil_nadu_elections.html",
+      "url": "protected:tamil-nadu-elections",
       "cta": "Read article",
       "icon": "pin"
     },
@@ -118,7 +118,7 @@
       "date": "May 2026",
       "title": "PM Modi's 5-Nation Tour May 2026",
       "summary": "A useful international-relations example for trade, diplomacy and geopolitical follow-up questions.",
-      "url": "./PM_modi_visit_.html",
+      "url": "protected:pm-modi-visit",
       "cta": "Read article",
       "icon": "world"
     },
@@ -127,7 +127,7 @@
       "date": "May 2026",
       "title": "NEET Paper Leak Report: 2024-2026",
       "summary": "Important for education policy, exam integrity and public trust discussion in interviews.",
-      "url": "./IIT-Mandi-interview-prep-PDF__1_.html",
+      "url": "protected:neet-paper-leak-report",
       "cta": "Read article",
       "icon": "school"
     }

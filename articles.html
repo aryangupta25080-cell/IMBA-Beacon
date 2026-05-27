@@ -615,6 +615,11 @@ button{
         return "";
       }
 
+      if (url.startsWith("protected:")) {
+        const slug = url.slice("protected:".length).trim();
+        return slug ? `${apiBase}/protected/${encodeURIComponent(slug)}` : "";
+      }
+
       if (/^https?:\/\//i.test(url) || /^\//.test(url) || /^\.{1,2}\//.test(url)) {
         return url;
       }

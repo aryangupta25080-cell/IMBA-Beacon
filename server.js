@@ -1,6 +1,7 @@
 const http = require("node:http");
 const fs = require("node:fs/promises");
-const { existsSync } = require("node:fs");
+const fsSync = require("node:fs");
+const { existsSync } = fsSync;
 const path = require("node:path");
 const crypto = require("node:crypto");
 const { URL } = require("node:url");
@@ -14,6 +15,7 @@ const HOST = process.env.HOST || "0.0.0.0";
 const PORT = Number(process.env.PORT || 3000);
 const ROOT_DIR = __dirname;
 const DATA_DIR = path.join(ROOT_DIR, "data");
+const PROTECTED_CONTENT_DIR = path.join(ROOT_DIR, "protected-content");
 const WAITLIST_FILE = path.join(DATA_DIR, "waitlist.json");
 const PAYMENTS_FILE = path.join(DATA_DIR, "payments.json");
 const USERS_FILE = path.join(DATA_DIR, "users.json");
@@ -118,6 +120,40 @@ const DEFAULT_COUPON_DISCOUNT_PERCENT = 10;
 const FREE_SESSION_TYPES = {
   interview: "Free Interview Session",
   batch: "Free Batch Interaction Session"
+};
+
+const PROTECTED_CONTENT = {
+  "daily-18-may": { file: "articles/daily-18-may.html", minPlan: "basic", type: "text/html; charset=utf-8" },
+  "daily-19-may": { file: "articles/daily-19-may.html", minPlan: "basic", type: "text/html; charset=utf-8" },
+  "daily-20-may": { file: "articles/daily-20-may.html", minPlan: "basic", type: "text/html; charset=utf-8" },
+  "daily-21-may": { file: "articles/daily-21-may.html", minPlan: "basic", type: "text/html; charset=utf-8" },
+  "daily-22-may": { file: "articles/daily-22-may.html", minPlan: "basic", type: "text/html; charset=utf-8" },
+  "daily-23-may": { file: "articles/daily-23-may.html", minPlan: "basic", type: "text/html; charset=utf-8" },
+  "daily-25-may": { file: "articles/daily-25-may.html", minPlan: "basic", type: "text/html; charset=utf-8" },
+  "daily-26-may": { file: "articles/daily-26-may.html", minPlan: "basic", type: "text/html; charset=utf-8" },
+  "daily-27-may": { file: "articles/daily-27-may.html", minPlan: "basic", type: "text/html; charset=utf-8" },
+  "weekly-business-brief-week-1": { file: "articles/weekly-business-brief-week-1.html", minPlan: "basic", type: "text/html; charset=utf-8" },
+  "bengal-elections": { file: "articles/Bengal_Elections.html", minPlan: "basic", type: "text/html; charset=utf-8" },
+  "tamil-nadu-elections": { file: "articles/Tamil_nadu_elections.html", minPlan: "basic", type: "text/html; charset=utf-8" },
+  "pm-modi-visit": { file: "articles/PM_modi_visit_.html", minPlan: "basic", type: "text/html; charset=utf-8" },
+  "neet-paper-leak-report": { file: "articles/IIT-Mandi-interview-prep-PDF__1_.html", minPlan: "basic", type: "text/html; charset=utf-8" },
+  "master-question-bank": { file: "sheets/master-question-bank-final.html", minPlan: "pro", type: "text/html; charset=utf-8" },
+  "economic-terms": { file: "sheets/economic-terms-final.html", minPlan: "pro", type: "text/html; charset=utf-8" },
+  "model-answers": { file: "sheets/model-answers.html", minPlan: "basic", type: "text/html; charset=utf-8" },
+  "previous-year-questions": {
+    file: "sheets/previous-year-questions.xlsx",
+    minPlan: "basic",
+    type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    downloadName: "previous-year-questions.xlsx"
+  },
+  "quiz-1": { file: "quizzes/quiz-1.html", minPlan: "basic", type: "text/html; charset=utf-8" },
+  "quiz-2": { file: "quizzes/quiz-2.html", minPlan: "basic", type: "text/html; charset=utf-8" },
+  "quiz-3": { file: "quizzes/quiz-3.html", minPlan: "basic", type: "text/html; charset=utf-8" },
+  "quiz-4": { file: "quizzes/quiz-4.html", minPlan: "basic", type: "text/html; charset=utf-8" },
+  "quiz-5": { file: "quizzes/quiz-5.html", minPlan: "basic", type: "text/html; charset=utf-8" },
+  "quiz-6": { file: "quizzes/quiz-6.html", minPlan: "basic", type: "text/html; charset=utf-8" },
+  "quiz-7": { file: "quizzes/quiz-7.html", minPlan: "basic", type: "text/html; charset=utf-8" },
+  "quiz-8": { file: "quizzes/quiz-8.html", minPlan: "basic", type: "text/html; charset=utf-8" }
 };
 
 function normalizeCouponCode(value) {
@@ -666,6 +702,126 @@ function normalizeCourseAccess(user) {
     grantedAt: source.grantedAt || "",
     featureAccess: normalizeFeatureAccess(source.featureAccess, purchased)
   };
+}
+
+function getUserPlan(user) {
+  const courseAccess = normalizeCourseAccess(user);
+  return courseAccess.purchased && (courseAccess.planId === "basic" || courseAccess.planId === "pro")
+    ? courseAccess.planId
+    : "none";
+}
+
+function canAccessPlan(user, minPlan) {
+  const plan = getUserPlan(user);
+  if (minPlan === "pro") return plan === "pro";
+  if (minPlan === "basic") return plan === "basic" || plan === "pro";
+  return Boolean(user);
+}
+
+function getFrontendUrl(pathname) {
+  const baseUrl = FRONTEND_ORIGIN || "https://www.imba-beacon.in";
+  try {
+    return new URL(pathname, baseUrl).toString();
+  } catch (error) {
+    return pathname;
+  }
+}
+
+function redirectToLogin(request, response, url) {
+  const nextPath = `${url.pathname}${url.search || ""}`;
+  const loginUrl = getFrontendUrl(`/login.html?next=${encodeURIComponent(nextPath)}`);
+  response.writeHead(302, {
+    Location: loginUrl,
+    "Cache-Control": "no-store"
+  });
+  response.end();
+}
+
+function sendAccessDeniedPage(response, contentMeta) {
+  response.writeHead(403, {
+    "Content-Type": "text/html; charset=utf-8",
+    "Cache-Control": "no-store"
+  });
+  response.end(`<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Access denied | IMBA Beacon</title>
+  <style>
+    :root{--maroon:#4a1830;--maroon-deep:#2f1022;--gold:#f3bd6a;--cream:#fffaf4;--ink:#3b2230}
+    *{box-sizing:border-box}body{margin:0;min-height:100vh;display:grid;place-items:center;background:radial-gradient(circle at top,#fff7ed,var(--cream));font-family:Manrope,Arial,sans-serif;color:var(--ink);padding:24px}
+    .card{width:min(560px,100%);border:1px solid #eadfd6;border-radius:28px;background:#fff;box-shadow:0 24px 70px rgba(74,24,48,.14);padding:34px}
+    .badge{display:inline-flex;align-items:center;border-radius:999px;background:#fff0d2;color:var(--maroon);font-weight:800;padding:8px 14px;margin-bottom:18px}
+    h1{font-family:Georgia,serif;font-size:clamp(2rem,6vw,3.3rem);line-height:1;margin:0 0 12px;color:var(--maroon)}
+    p{font-size:1rem;line-height:1.65;color:#7d6874;margin:0 0 22px}
+    a{display:inline-flex;text-decoration:none;background:linear-gradient(135deg,var(--gold),#e8993f);color:var(--maroon-deep);font-weight:800;border-radius:16px;padding:13px 18px}
+  </style>
+</head>
+<body>
+  <main class="card">
+    <span class="badge">${contentMeta.minPlan === "pro" ? "Pro only" : "Paid members only"}</span>
+    <h1>Access denied</h1>
+    <p>This content is protected for ${contentMeta.minPlan === "pro" ? "Pro plan" : "Basic and Pro plan"} students. Please upgrade or switch to an eligible account to continue.</p>
+    <a href="${getFrontendUrl("/student.html#section-upgrade")}">View plans</a>
+  </main>
+</body>
+</html>`);
+}
+
+function resolveProtectedContent(slug) {
+  const normalizedSlug = String(slug || "").trim().toLowerCase().replace(/\.html$/i, "");
+  const contentMeta = PROTECTED_CONTENT[normalizedSlug];
+  if (!contentMeta) return null;
+
+  const filePath = path.resolve(PROTECTED_CONTENT_DIR, contentMeta.file);
+  if (!filePath.startsWith(PROTECTED_CONTENT_DIR + path.sep)) return null;
+  return { ...contentMeta, slug: normalizedSlug, filePath };
+}
+
+async function serveProtectedContent(request, response, url) {
+  const slug = decodeURIComponent(url.pathname.replace(/^\/protected\//, ""));
+  const contentMeta = resolveProtectedContent(slug);
+
+  if (!contentMeta || !existsSync(contentMeta.filePath)) {
+    sendJson(response, 404, { message: "Protected content not found." });
+    return;
+  }
+
+  const user = getSessionUser(request);
+  if (!user) {
+    redirectToLogin(request, response, url);
+    return;
+  }
+
+  if (!canAccessPlan(user, contentMeta.minPlan)) {
+    sendAccessDeniedPage(response, contentMeta);
+    return;
+  }
+
+  const headers = {
+    "Content-Type": contentMeta.type || "application/octet-stream",
+    "Cache-Control": "private, no-store",
+    "X-Content-Type-Options": "nosniff"
+  };
+
+  if (contentMeta.downloadName) {
+    const disposition = url.searchParams.get("download") === "1" ? "attachment" : "inline";
+    headers["Content-Disposition"] = `${disposition}; filename="${contentMeta.downloadName}"`;
+  }
+
+  if ((contentMeta.type || "").startsWith("text/html")) {
+    const html = await fs.readFile(contentMeta.filePath, "utf8");
+    const htmlWithBase = html.includes("<base ")
+      ? html
+      : html.replace(/<head([^>]*)>/i, `<head$1>\n<base href="${getFrontendUrl("/")}">`);
+    response.writeHead(200, headers);
+    response.end(htmlWithBase);
+    return;
+  }
+
+  response.writeHead(200, headers);
+  fsSync.createReadStream(contentMeta.filePath).pipe(response);
 }
 
 function buildPurchasedCourseAccess(user, planId) {
@@ -2164,6 +2320,11 @@ async function requestHandler(request, response) {
 
   if (request.method === "GET" && pathname === "/api/config") {
     sendJson(response, 200, buildClientConfig(), corsHeaders);
+    return;
+  }
+
+  if (request.method === "GET" && pathname.startsWith("/protected/")) {
+    await serveProtectedContent(request, response, url);
     return;
   }
 

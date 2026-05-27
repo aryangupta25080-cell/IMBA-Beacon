@@ -238,14 +238,14 @@ h1{
   const apiBase = (window.IMBA_SITE_CONFIG && window.IMBA_SITE_CONFIG.apiBaseUrl) || "";
   const SESSION_TOKEN_KEY = "imbaSessionToken";
   const quizzes = [
-    { id: "quiz-1", title: "Sets, Relations & Functions", href: "./quiz-1.html" },
-    { id: "quiz-2", title: "Trigonometry & Inverse Trigonometry", href: "./quiz-2.html" },
-    { id: "quiz-3", title: "Quadratic & Complex Numbers", href: "./quiz-3.html" },
-    { id: "quiz-4", title: "Limits, Continuity & Differentiability", href: "./quiz-4.html" },
-    { id: "quiz-5", title: "Integration & Area", href: "./quiz-5.html" },
-    { id: "quiz-6", title: "Permutation Combination & Binomial", href: "./quiz-6.html" },
-    { id: "quiz-7", title: "Matrices & Determinants", href: "./quiz-7.html" },
-    { id: "quiz-8", title: "Probability", href: "./quiz-8.html" }
+    { id: "quiz-1", title: "Sets, Relations & Functions", href: `${apiBase}/protected/quiz-1` },
+    { id: "quiz-2", title: "Trigonometry & Inverse Trigonometry", href: `${apiBase}/protected/quiz-2` },
+    { id: "quiz-3", title: "Quadratic & Complex Numbers", href: `${apiBase}/protected/quiz-3` },
+    { id: "quiz-4", title: "Limits, Continuity & Differentiability", href: `${apiBase}/protected/quiz-4` },
+    { id: "quiz-5", title: "Integration & Area", href: `${apiBase}/protected/quiz-5` },
+    { id: "quiz-6", title: "Permutation Combination & Binomial", href: `${apiBase}/protected/quiz-6` },
+    { id: "quiz-7", title: "Matrices & Determinants", href: `${apiBase}/protected/quiz-7` },
+    { id: "quiz-8", title: "Probability", href: `${apiBase}/protected/quiz-8` }
   ];
 
   const statusNode = document.getElementById("quiz-status");

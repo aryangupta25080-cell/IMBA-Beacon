@@ -1844,6 +1844,9 @@ body.schedule-open{
       ];
 
       const locked = plan === "none";
+      const protectedContentUrl = function (slug, download) {
+        return `${apiBase}/protected/${encodeURIComponent(slug)}${download ? "?download=1" : ""}`;
+      };
       const subjects = [
         {
           title: "Mathematics",
@@ -1858,10 +1861,10 @@ body.schedule-open{
           meta: "Lecture notes and practice sheets",
           notes: "Verbal communication lecture notes will be added here.",
           practiceSheets: [
-            { title: "Master Question Bank", href: "./master-question-bank-final.html", label: "Master Sheet · HTML" },
-            { title: "Economic Terms", href: "./economic-terms-final.html", label: "Master Sheet · HTML" },
-            { title: "Previous Year Questions", href: "./previous-year-questions.xlsx", downloadHref: "./previous-year-questions.xlsx", label: "Practice Sheet · XLSX", icon: "file-spreadsheet" },
-            { title: "Model Answers", href: "./model-answers.html", label: "Practice Sheet · HTML" }
+            { title: "Master Question Bank", href: protectedContentUrl("master-question-bank"), label: "Master Sheet · HTML" },
+            { title: "Economic Terms", href: protectedContentUrl("economic-terms"), label: "Master Sheet · HTML" },
+            { title: "Previous Year Questions", href: protectedContentUrl("previous-year-questions"), downloadHref: protectedContentUrl("previous-year-questions", true), label: "Practice Sheet · XLSX", icon: "file-spreadsheet" },
+            { title: "Model Answers", href: protectedContentUrl("model-answers"), label: "Practice Sheet · HTML" }
           ]
         }
       ];
