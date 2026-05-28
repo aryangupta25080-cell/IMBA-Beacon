@@ -153,6 +153,18 @@ const PROTECTED_CONTENT = {
     type: "application/pdf",
     downloadName: "sets-relation-functions-notes.pdf"
   },
+  "trigonometry-inverse-trigonometry-notes": {
+    file: "sheets/trigonometry-inverse-trigonometry-notes.pdf",
+    minPlan: "basic",
+    type: "application/pdf",
+    downloadName: "trigonometry-inverse-trigonometry-notes.pdf"
+  },
+  "lecture-2-practise-2-2-trigonometry": {
+    file: "sheets/lecture-2-practise-2-2-trigonometry.pdf",
+    minPlan: "basic",
+    type: "application/pdf",
+    downloadName: "lecture-2-practise-2-2-trigonometry.pdf"
+  },
   "quiz-1": { file: "quizzes/quiz-1.html", minPlan: "basic", type: "text/html; charset=utf-8" },
   "quiz-2": { file: "quizzes/quiz-2.html", minPlan: "basic", type: "text/html; charset=utf-8" },
   "quiz-3": { file: "quizzes/quiz-3.html", minPlan: "basic", type: "text/html; charset=utf-8" },
