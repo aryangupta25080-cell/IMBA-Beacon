@@ -1797,7 +1797,6 @@ body.schedule-open{
 
       const interviews = plan === "pro" ? 4 : 3;
       const verbal = plan === "pro" ? 3 : 1;
-      const mentoringUnlocked = plan === "pro";
 
       return `
         <section class="dashboard-section" id="section-tracks">
@@ -1862,19 +1861,6 @@ body.schedule-open{
               </div>
             </article>
           </div>
-
-          <article class="dashboard-card" style="margin-top:.95rem;">
-            <div class="live-header">
-              <strong>Maths Session</strong>
-              <span class="track-tag pro">${mentoringUnlocked ? '<i class="ti ti-bolt"></i> Pro active' : '<i class="ti ti-lock"></i> Pro only'}</span>
-            </div>
-            <p class="live-meta" style="margin-top:.55rem;">${mentoringUnlocked ? "8 live maths sessions are unlocked in your Pro plan." : "8 live maths sessions open after upgrading to Pro."}</p>
-            <div style="margin-top:.95rem;">
-              <button class="section-btn" type="button" ${mentoringUnlocked ? 'data-placeholder="mentoring"' : "disabled"}>
-                ${mentoringUnlocked ? "Open maths session" : "Locked for Basic"}
-              </button>
-            </div>
-          </article>
         </section>
       `;
     }
