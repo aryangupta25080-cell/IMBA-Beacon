@@ -3,6 +3,15 @@
   "daily": [
     {
       "category": "Daily Brief",
+      "date": "28 May 2026",
+      "title": "iMBA Important Topics: 28 May 2026",
+      "summary": "Daily in-depth briefing covering corporate, economy, consumer, energy and geopolitical developments for interview preparation.",
+      "url": "protected:daily-28-may",
+      "cta": "Read article",
+      "icon": "calendar-event"
+    },
+    {
+      "category": "Daily Brief",
       "date": "27 May 2026",
       "title": "iMBA Important Topics: 27 May 2026",
       "summary": "Daily in-depth briefing covering markets, policy, AI, industry signals and interview-ready business discussion points.",

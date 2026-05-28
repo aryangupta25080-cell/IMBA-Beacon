@@ -777,6 +777,21 @@ button{
       `;
     }
 
+    function renderArticleAccessDenied() {
+      articlesRootNode.innerHTML = `
+        <section class="dashboard-section">
+          <div class="article-empty">
+            <strong>Articles are available for enrolled students.</strong>
+            <p>Please choose Basic or Pro from the dashboard to unlock daily, weekly and important article reads.</p>
+            <a class="article-link" href="./student.html#section-upgrade">
+              <span>View plans</span>
+              <i class="ti ti-arrow-up-right"></i>
+            </a>
+          </div>
+        </section>
+      `;
+    }
+
     async function fetchSession() {
       const response = await fetch(`${apiBase}/api/auth/session`, {
         credentials: "include",
@@ -866,7 +881,13 @@ button{
           return;
         }
 
-        renderSidebar(getStudentState(currentUser));
+        const student = getStudentState(currentUser);
+        renderSidebar(student);
+        if (student.plan === "none") {
+          renderArticleAccessDenied();
+          setStatus("Articles are available after enrollment.", "error");
+          return;
+        }
         renderArticlesPage();
         setStatus("Articles loaded successfully.", "success");
       })
