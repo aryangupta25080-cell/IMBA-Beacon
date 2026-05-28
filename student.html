@@ -1681,7 +1681,7 @@ body.schedule-open{
                 <i class="ti ti-clock-hour-4"></i>
                 <div>
                   <strong>${hasLiveLink ? "Class link is active" : "Link will be posted 30 minutes before class starts"}</strong>
-                  <span>${hasLiveLink ? escapeHtml(effectiveLiveLink) : "Waiting for mentor to post the link..."}</span>
+                  <span>${hasLiveLink ? "Join button is enabled for enrolled students." : "Waiting for mentor to post the link..."}</span>
                 </div>
               </div>
               <button class="section-btn" type="button" data-open-link="${escapeHtml(effectiveLiveLink)}" ${hasLiveLink ? "" : "disabled"}>
