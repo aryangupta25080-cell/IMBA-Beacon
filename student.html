@@ -1242,7 +1242,6 @@ body.schedule-open{
     const USER_NAME_KEY = "userName";
     const USER_EMAIL_KEY = "userEmail";
     const FREE_CLASS_LINK_KEY = "freeClassLink";
-    const LIVE_CLASS_LINK_KEY = "liveClassLink";
     const SESSION_TOKEN_KEY = "imbaSessionToken";
     const NAV_ITEMS = [
       { id: "dashboard", label: "Dashboard", icon: "layout-dashboard", target: "section-dashboard" },
@@ -1284,6 +1283,21 @@ body.schedule-open{
       { date: "3 June, Wednesday", plan: "pro", title: "Maths Lecture 8", time: "5–6:45 PM", topics: ["Probability"] },
       { date: "4 June, Thursday", plan: "pro", title: "Interview Session 3: Live Mock Panel & Individual Diagnostic", time: "8–9 PM", topics: ["Mock panel", "Diagnostic"] }
     ];
+    const SESSION_YEAR = 2026;
+    const SESSION_MONTHS = {
+      january: 0,
+      february: 1,
+      march: 2,
+      april: 3,
+      may: 4,
+      june: 5,
+      july: 6,
+      august: 7,
+      september: 8,
+      october: 9,
+      november: 10,
+      december: 11
+    };
 
     function setStatus(message, type) {
       statusNode.textContent = message || "";
@@ -1311,12 +1325,29 @@ body.schedule-open{
       return false;
     }
 
+    function getSessionDate(session) {
+      const match = String(session?.date || "").match(/^(\d{1,2})\s+([A-Za-z]+)/);
+      if (!match) return null;
+      const monthIndex = SESSION_MONTHS[match[2].toLowerCase()];
+      if (monthIndex === undefined) return null;
+      return new Date(SESSION_YEAR, monthIndex, Number(match[1]));
+    }
+
+    function isUpcomingSession(session) {
+      const sessionDate = getSessionDate(session);
+      if (!sessionDate) return true;
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      return sessionDate.getTime() >= today.getTime();
+    }
+
     function getNextVisibleSession(plan) {
-      return SESSION_SCHEDULE.find(function (session) {
-        return canAccessSession(session, plan) && session.link;
-      }) || SESSION_SCHEDULE.find(function (session) {
-        return canAccessSession(session, plan);
-      }) || null;
+      const upcomingSessions = SESSION_SCHEDULE.filter(function (session) {
+        return canAccessSession(session, plan) && isUpcomingSession(session);
+      });
+      return upcomingSessions.find(function (session) {
+        return session.link;
+      }) || upcomingSessions[0] || null;
     }
 
     function renderScheduleView() {
@@ -1628,9 +1659,8 @@ body.schedule-open{
     }
 
     function renderLiveClass(plan) {
-      const liveLink = (localStorage.getItem(LIVE_CLASS_LINK_KEY) || "").trim();
       const nextSession = getNextVisibleSession(plan);
-      const effectiveLiveLink = (nextSession && nextSession.link ? nextSession.link : liveLink).trim();
+      const effectiveLiveLink = (nextSession && nextSession.link ? nextSession.link : "").trim();
       const hasLiveLink = Boolean(effectiveLiveLink);
       const liveTitle = nextSession ? nextSession.title : "Mock Interview Round";
       const liveTime = nextSession ? nextSession.time : "";
@@ -2160,7 +2190,6 @@ body.schedule-open{
         localStorage.removeItem(USER_NAME_KEY);
         localStorage.removeItem(USER_EMAIL_KEY);
         localStorage.removeItem(FREE_CLASS_LINK_KEY);
-        localStorage.removeItem(LIVE_CLASS_LINK_KEY);
         localStorage.removeItem(SESSION_TOKEN_KEY);
         window.location.href = "./index.html";
       } catch (error) {
