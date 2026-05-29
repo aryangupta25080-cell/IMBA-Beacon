@@ -67,11 +67,15 @@ const SMTP_PASS = process.env.SMTP_PASS || "";
 const EMAIL_FROM = process.env.EMAIL_FROM || RESEND_FROM || SMTP_USER || "";
 const APP_BASE_URL = process.env.APP_BASE_URL || `http://127.0.0.1:${PORT}`;
 const FRONTEND_ORIGIN = process.env.FRONTEND_ORIGIN || "";
+const EMAIL_OTP_COOLDOWN_SECONDS = Number(process.env.EMAIL_OTP_COOLDOWN_SECONDS || 60);
+const RESEND_EMAIL_INTERVAL_MS = Number(process.env.RESEND_EMAIL_INTERVAL_MS || 650);
 
 const googleClient = GOOGLE_CLIENT_ID ? new OAuth2Client(GOOGLE_CLIENT_ID) : null;
 const sessionStore = new Map();
 let database = null;
 let razorpayClient = null;
+let lastResendEmailSentAt = 0;
+let resendSendQueue = Promise.resolve();
 const PREMIUM_FEATURE_KEYS = [
   "liveClasses",
   "mockInterviews",
@@ -1139,6 +1143,23 @@ async function findUserByEmail(email) {
   return mapUserRow(row);
 }
 
+function wait(milliseconds) {
+  return new Promise((resolve) => setTimeout(resolve, milliseconds));
+}
+
+async function waitForResendSlot() {
+  const scheduledSend = resendSendQueue.then(async () => {
+    const elapsedMilliseconds = Date.now() - lastResendEmailSentAt;
+    if (elapsedMilliseconds < RESEND_EMAIL_INTERVAL_MS) {
+      await wait(RESEND_EMAIL_INTERVAL_MS - elapsedMilliseconds);
+    }
+    lastResendEmailSentAt = Date.now();
+  });
+
+  resendSendQueue = scheduledSend.catch(() => {});
+  await scheduledSend;
+}
+
 async function upsertUser(nextUser) {
   const db = await getDatabase();
   return upsertUserInDatabase(db, nextUser);
@@ -1165,6 +1186,18 @@ async function createOtpRecord(email, purpose = "verify-email") {
     new Date().toISOString()
   ]);
   return otpCode;
+}
+
+async function getOtpCooldownSeconds(email) {
+  const normalizedEmail = normalizeEmail(email);
+  const db = await getDatabase();
+  const existingRecord = await db.get("SELECT created_at FROM otp_codes WHERE email = ?", normalizedEmail);
+  const createdAt = existingRecord?.created_at ? new Date(existingRecord.created_at).getTime() : 0;
+
+  if (!createdAt) return 0;
+
+  const elapsedSeconds = Math.floor((Date.now() - createdAt) / 1000);
+  return Math.max(0, EMAIL_OTP_COOLDOWN_SECONDS - elapsedSeconds);
 }
 
 async function verifyOtpRecord(email, otp) {
@@ -1196,6 +1229,8 @@ async function sendOtpEmail(email, otpCode) {
   const html = `<p>Your IMBA Beacon verification code is <strong>${otpCode}</strong>.</p><p>It will expire in ${EMAIL_OTP_EXPIRY_MINUTES} minutes.</p>`;
 
   if (RESEND_API_KEY && (RESEND_FROM || EMAIL_FROM)) {
+    await waitForResendSlot();
+
     const resendResponse = await fetch("https://api.resend.com/emails", {
       method: "POST",
       headers: {
@@ -1652,6 +1687,12 @@ async function handleBeaconSignup(request, response) {
       return;
     }
 
+    const cooldownSeconds = await getOtpCooldownSeconds(email);
+    if (cooldownSeconds > 0) {
+      sendJson(response, 429, { message: `An OTP was already sent. Please wait ${cooldownSeconds} seconds before requesting another one.` });
+      return;
+    }
+
     const passwordHash = await hashSecret(password);
     const now = new Date().toISOString();
     await upsertUser({
@@ -1744,6 +1785,12 @@ async function handleRequestOtp(request, response) {
     const user = await findUserByEmail(email);
     if (!user) {
       sendJson(response, 404, { message: "No Beacon account found for this email. Please sign up first." });
+      return;
+    }
+
+    const cooldownSeconds = await getOtpCooldownSeconds(email);
+    if (cooldownSeconds > 0) {
+      sendJson(response, 429, { message: `An OTP was already sent. Please wait ${cooldownSeconds} seconds before requesting another one.` });
       return;
     }
 

@@ -214,6 +214,7 @@
     const signupCategoryInput = document.getElementById("signup-category");
     let config = null;
     let user = null;
+    let resendCountdownTimer = null;
     const searchParams = new URLSearchParams(window.location.search);
     const accessIntent = searchParams.get("access");
     const purchasePlan = searchParams.get("plan");
@@ -251,6 +252,43 @@
     function setStatus(message, type) {
       status.textContent = message;
       status.className = "login-status" + (type ? " " + type : "");
+    }
+
+    async function withButtonBusy(button, busyLabel, task) {
+      if (!button || button.disabled) return;
+
+      const originalLabel = button.textContent;
+      button.disabled = true;
+      button.textContent = busyLabel;
+
+      try {
+        await task();
+      } finally {
+        button.disabled = false;
+        button.textContent = originalLabel;
+      }
+    }
+
+    function startResendCooldown(seconds = 60) {
+      if (!resendSignupOtpButton) return;
+      window.clearInterval(resendCountdownTimer);
+
+      let remainingSeconds = seconds;
+      const originalLabel = "Resend OTP";
+      resendSignupOtpButton.disabled = true;
+      resendSignupOtpButton.textContent = `Resend in ${remainingSeconds}s`;
+
+      resendCountdownTimer = window.setInterval(() => {
+        remainingSeconds -= 1;
+        if (remainingSeconds <= 0) {
+          window.clearInterval(resendCountdownTimer);
+          resendSignupOtpButton.disabled = false;
+          resendSignupOtpButton.textContent = originalLabel;
+          return;
+        }
+
+        resendSignupOtpButton.textContent = `Resend in ${remainingSeconds}s`;
+      }, 1000);
     }
 
     function normalizeCouponCode(value) {
@@ -511,52 +549,68 @@
     tabButtons.forEach((button) => button.addEventListener("click", () => activateTab(button.dataset.tab)));
     passwordLoginForm.addEventListener("submit", async (event) => {
       event.preventDefault();
-      const formData = new FormData(passwordLoginForm);
-      const { response, payload } = await sendJsonRequest("/api/auth/login/password", Object.fromEntries(formData.entries()));
-      if (!response.ok) {
-        setStatus(payload.message || "Unable to login.", "error");
-        return;
-      }
-      rememberSession(payload);
-      user = payload.user;
-      await continueAfterAuth(payload.message || "Logged in successfully.");
+      await withButtonBusy(event.submitter, "Logging in...", async () => {
+        const formData = new FormData(passwordLoginForm);
+        const { response, payload } = await sendJsonRequest("/api/auth/login/password", Object.fromEntries(formData.entries()));
+        if (!response.ok) {
+          setStatus(payload.message || "Unable to login.", "error");
+          return;
+        }
+        rememberSession(payload);
+        user = payload.user;
+        await continueAfterAuth(payload.message || "Logged in successfully.");
+      });
     });
 
     signupForm.addEventListener("submit", async (event) => {
       event.preventDefault();
-      const formData = new FormData(signupForm);
-      const signupPayload = Object.fromEntries(formData.entries());
-      const { response, payload } = await sendJsonRequest("/api/auth/signup", signupPayload);
-      if (!response.ok) {
-        setStatus(payload.message || "Unable to create account.", "error");
-        return;
-      }
-      signupOtpRow.hidden = false;
-      signupNote.textContent = "An OTP has been sent to your email. Enter it below to verify your account and continue.";
-      setStatus(payload.message || "Account created successfully. Verify your OTP to continue.", "success");
+      await withButtonBusy(signupSubmitButton, "Sending OTP...", async () => {
+        const formData = new FormData(signupForm);
+        const signupPayload = Object.fromEntries(formData.entries());
+        const { response, payload } = await sendJsonRequest("/api/auth/signup", signupPayload);
+        if (!response.ok) {
+          setStatus(payload.message || "Unable to create account.", "error");
+          return;
+        }
+        signupOtpRow.hidden = false;
+        signupNote.textContent = "An OTP has been sent to your email. Enter it below to verify your account and continue.";
+        setStatus(payload.message || "Account created successfully. Verify your OTP to continue.", "success");
+        startResendCooldown();
+      });
     });
 
     verifySignupOtpButton.addEventListener("click", async () => {
-      const email = getSignupEmail();
-      const otp = signupOtpInput.value.trim();
-      const { response, payload } = await sendJsonRequest("/api/auth/otp/verify", { email, otp });
-      if (!response.ok) {
-        setStatus(payload.message || "Unable to verify OTP.", "error");
-        return;
-      }
-      rememberSession(payload);
-      user = payload.user;
-      await continueAfterAuth(payload.message || "OTP verified successfully.");
+      await withButtonBusy(verifySignupOtpButton, "Verifying...", async () => {
+        const email = getSignupEmail();
+        const otp = signupOtpInput.value.trim();
+        const { response, payload } = await sendJsonRequest("/api/auth/otp/verify", { email, otp });
+        if (!response.ok) {
+          setStatus(payload.message || "Unable to verify OTP.", "error");
+          return;
+        }
+        rememberSession(payload);
+        user = payload.user;
+        await continueAfterAuth(payload.message || "OTP verified successfully.");
+      });
     });
 
     resendSignupOtpButton.addEventListener("click", async () => {
+      if (resendSignupOtpButton.disabled) return;
+
+      resendSignupOtpButton.disabled = true;
+      resendSignupOtpButton.textContent = "Sending...";
+
       const email = getSignupEmail();
       const { response, payload } = await sendJsonRequest("/api/auth/otp/request", { email });
       if (!response.ok) {
+        resendSignupOtpButton.disabled = false;
+        resendSignupOtpButton.textContent = "Resend OTP";
         setStatus(payload.message || "Unable to resend OTP.", "error");
         return;
       }
+
       setStatus(payload.message || "A fresh OTP has been sent to your email.", "success");
+      startResendCooldown();
     });
 
     logoutButton.addEventListener("click", async () => {
