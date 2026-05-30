@@ -149,7 +149,7 @@ const PROTECTED_CONTENT = {
   "model-answers": { file: "sheets/model-answers.html", minPlan: "basic", type: "text/html; charset=utf-8" },
   "previous-year-questions": {
     file: "sheets/previous-year-questions.xlsx",
-    minPlan: "pro",
+    minPlan: "basic",
     type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
     downloadName: "previous-year-questions.xlsx"
   },

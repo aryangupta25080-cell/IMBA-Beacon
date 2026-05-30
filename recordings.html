@@ -406,17 +406,20 @@ h1{
           recordings: [
             {
               title: "Sets, Relations and Functions (Mathematics Lecture 1)",
-              meta: "Maths recording folder · Available for enrolled students",
+              meta: "Maths recording folder · Available for Pro students",
+              minPlan: "pro",
               href: "https://drive.google.com/drive/folders/1G4D0PxG4xtlHhQfnOqp8g2donA7Lk5aq"
             },
             {
               title: "Trigo and Inverse Trigo (Mathematics Lecture 2)",
-              meta: "Maths recording folder · Available for enrolled students",
+              meta: "Maths recording folder · Available for Pro students",
+              minPlan: "pro",
               href: "https://drive.google.com/drive/folders/1G4D0PxG4xtlHhQfnOqp8g2donA7Lk5aq"
             },
             {
               title: "Quadratic Equations + Complex Numbers (Mathematics Lecture 3)",
-              meta: "Maths recording · Available for enrolled students",
+              meta: "Maths recording · Available for Pro students",
+              minPlan: "pro",
               href: "https://drive.google.com/file/d/1D7eMp4Lgp2_bxLScJmPHPvzRBtrYtcE_/view?usp=sharing"
             }
           ]
@@ -445,6 +448,7 @@ h1{
             {
               title: "VA Session 1",
               meta: "Recorded in 3 parts · Available for Basic and Pro students",
+              minPlan: "basic",
               folder: true,
               parts: [
                 {
@@ -466,7 +470,8 @@ h1{
             },
             {
               title: "Free Interview Etiquette Session",
-              meta: "Available for Basic and Pro students",
+              meta: "Available for Pro students",
+              minPlan: "pro",
               href: "https://drive.google.com/file/d/1Yn84lbvlQvqAX9kvrIPi1oFXns77b75X/view?pli=1"
             }
           ]
@@ -490,12 +495,45 @@ h1{
       .replace(/'/g, "&#039;");
   }
 
-  function renderPage() {
+  function normalizePlan(value) {
+    return value === "basic" || value === "pro" || value === "none" ? value : "none";
+  }
+
+  function inferPlanFromUser(user) {
+    const planId = user && user.courseAccess && user.courseAccess.planId
+      ? normalizePlan(user.courseAccess.planId)
+      : normalizePlan(user && user.plan);
+    return planId === "basic" || planId === "pro" ? planId : "none";
+  }
+
+  function canAccessPlan(minPlan, plan) {
+    if (!minPlan || minPlan === "basic") return plan === "basic" || plan === "pro";
+    if (minPlan === "pro") return plan === "pro";
+    return false;
+  }
+
+  function renderAccessDenied(plan) {
+    contentNode.innerHTML = `
+      <article class="recording-section">
+        <div class="empty-state">
+          <span class="empty-icon"><i class="ti ti-lock"></i></span>
+          <strong>Maths recordings are Pro only</strong>
+          <p>Your current ${escapeHtml(plan === "basic" ? "Basic" : "student")} access does not include mathematics recording folders. Upgrade to Pro to open this library.</p>
+        </div>
+      </article>
+    `;
+  }
+
+  function renderPage(plan) {
     const config = pageConfig[type];
     document.title = `${config.title} | IMBA Beacon`;
     eyebrowNode.innerHTML = `<i class="ti ti-video"></i> ${escapeHtml(config.eyebrow)}`;
     titleNode.textContent = config.title;
     copyNode.textContent = config.copy;
+    if (type === "maths" && plan !== "pro") {
+      renderAccessDenied(plan);
+      return;
+    }
     contentNode.innerHTML = config.sections.map(function (section) {
       return `
         <article class="recording-section">
@@ -506,6 +544,7 @@ h1{
           ${Array.isArray(section.recordings) && section.recordings.length ? `
             <div class="recording-list">
               ${section.recordings.map(function (recording, recordingIndex) {
+                const recordingLocked = !canAccessPlan(recording.minPlan || "basic", plan);
                 if (recording.folder && Array.isArray(recording.parts)) {
                   const sliderId = `recording-slider-${recordingIndex}`;
                   return `
@@ -518,9 +557,15 @@ h1{
                             <span>${escapeHtml(recording.meta)}</span>
                           </div>
                         </div>
-                        <span class="access-pill"><i class="ti ti-crown"></i> Basic + Pro</span>
+                        <span class="access-pill"><i class="ti ${recording.minPlan === "pro" ? "ti-lock" : "ti-crown"}"></i> ${recording.minPlan === "pro" ? "Pro only" : "Basic + Pro"}</span>
                       </div>
-                      <div class="recording-slider-shell">
+                      ${recordingLocked ? `
+                      <div class="empty-state" style="padding:1.25rem;">
+                        <span class="empty-icon"><i class="ti ti-lock"></i></span>
+                        <strong>Pro recording</strong>
+                        <p>Upgrade to Pro to access this recording folder.</p>
+                      </div>
+                      ` : `<div class="recording-slider-shell">
                         <div class="recording-slider-controls" aria-label="${escapeHtml(recording.title)} slider controls">
                           <button class="recording-slider-btn" type="button" data-slider-target="${escapeHtml(sliderId)}" data-slider-direction="-1" aria-label="Previous recording">
                             <i class="ti ti-chevron-left"></i>
@@ -549,7 +594,7 @@ h1{
                             `;
                           }).join("")}
                         </div>
-                      </div>
+                      </div>`}
                     </div>
                   `;
                 }
@@ -563,10 +608,14 @@ h1{
                       </div>
                     </div>
                     <div class="recording-actions">
-                      <span class="access-pill"><i class="ti ti-crown"></i> Basic + Pro</span>
-                      <a class="recording-btn" href="${escapeHtml(recording.href)}" target="_blank" rel="noopener noreferrer">
+                      <span class="access-pill"><i class="ti ${recording.minPlan === "pro" ? "ti-lock" : "ti-crown"}"></i> ${recording.minPlan === "pro" ? "Pro only" : "Basic + Pro"}</span>
+                      ${recordingLocked ? `
+                      <button class="recording-btn" type="button" disabled>
+                        <i class="ti ti-lock"></i> Locked
+                      </button>
+                      ` : `<a class="recording-btn" href="${escapeHtml(recording.href)}" target="_blank" rel="noopener noreferrer">
                         <i class="ti ti-player-play"></i> Open recording
-                      </a>
+                      </a>`}
                     </div>
                   </div>
                 `;
@@ -621,7 +670,9 @@ h1{
         window.location.href = `./login.html?next=${encodeURIComponent(`./recordings.html?type=${type}`)}`;
         return;
       }
+      const plan = inferPlanFromUser(payload.user);
       statusNode.textContent = "Recordings page loaded successfully.";
+      renderPage(plan);
     } catch (error) {
       statusNode.textContent = "Please log in again to view recordings.";
       statusNode.classList.add("error");
@@ -629,7 +680,6 @@ h1{
     }
   }
 
-  renderPage();
   requireSession();
 })();
 </script>

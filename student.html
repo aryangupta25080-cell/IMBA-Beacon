@@ -1984,7 +1984,7 @@ body.schedule-open{
         <section class="dashboard-section" id="section-tracks">
           <p class="section-label">Course Tracks</p>
           <div class="track-grid">
-            <article class="track-card" id="section-recordings">
+            <article class="track-card${plan === "basic" ? " locked-card" : ""}" id="section-recordings">
               <small>Track 01</small>
               <div class="track-head">
                 <i class="ti ti-video"></i>
@@ -1992,13 +1992,22 @@ body.schedule-open{
               </div>
               <p>Lecture recordings and guided sessions.</p>
               <div class="track-progress">
-                <span>Progress <strong style="float:right;">3 / 8</strong></span>
-                <div class="track-progress-line"><span style="width:37.5%;"></span></div>
+                <span>${plan === "basic" ? "Pro-only recording library" : 'Progress <strong style="float:right;">3 / 8</strong>'}</span>
+                <div class="track-progress-line"><span style="width:${plan === "basic" ? "0" : "37.5"}%;"></span></div>
               </div>
               <div class="track-footer">
-                <span>8 lectures</span>
-                <a class="track-btn" href="./recordings.html?type=maths">Open library</a>
+                <span>${plan === "basic" ? '<i class="ti ti-lock"></i> Pro only' : "8 lectures"}</span>
+                ${plan === "basic" ? '<button class="track-btn" type="button" disabled>Locked</button>' : '<a class="track-btn" href="./recordings.html?type=maths">Open library</a>'}
               </div>
+              ${plan === "basic" ? `
+              <div class="locked-message">
+                <i class="ti ti-lock"></i>
+                <div>
+                  <strong>Maths recordings are Pro only</strong>
+                  <span>Upgrade to Pro to access mathematics lecture recordings.</span>
+                </div>
+              </div>
+              ` : ""}
             </article>
 
             <article class="track-card" id="section-quiz">
@@ -2091,9 +2100,9 @@ body.schedule-open{
             { title: "VA Session 1", href: protectedContentUrl("va-session-1-notes"), downloadHref: protectedContentUrl("va-session-1-notes", true), label: "Lecture Notes · PDF", icon: "file-type-pdf" }
           ],
           practiceSheets: [
-            { title: "Master Question Bank", href: protectedContentUrl("master-question-bank"), label: "Master Sheet · HTML" },
-            { title: "Economic Terms", href: protectedContentUrl("economic-terms"), label: "Master Sheet · HTML" },
-            { title: "Previous Year Questions", downloadHref: protectedContentUrl("previous-year-questions", true), label: "Practice Sheet · XLSX", icon: "file-spreadsheet", minPlan: "pro" },
+            { title: "Master Question Bank", href: protectedContentUrl("master-question-bank"), label: "Master Sheet · HTML", minPlan: "pro" },
+            { title: "Economic Terms", href: protectedContentUrl("economic-terms"), label: "Master Sheet · HTML", minPlan: "pro" },
+            { title: "Previous Year Questions", downloadHref: protectedContentUrl("previous-year-questions", true), label: "Practice Sheet · XLSX", icon: "file-spreadsheet" },
             { title: "Model Answers", href: protectedContentUrl("model-answers"), label: "Practice Sheet · HTML" }
           ]
         }
