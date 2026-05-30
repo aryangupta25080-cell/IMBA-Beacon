@@ -171,6 +171,12 @@ const PROTECTED_CONTENT = {
     type: "application/pdf",
     downloadName: "quadratic-and-complex-notes.pdf"
   },
+  "limit-continuity-differentiability-notes": {
+    file: "sheets/limit-continuity-differentiability-notes.pdf",
+    minPlan: "pro",
+    type: "application/pdf",
+    downloadName: "limit-continuity-differentiability-notes.pdf"
+  },
   "va-session-1-notes": {
     file: "sheets/va-session-1-notes.pdf",
     minPlan: "basic",
