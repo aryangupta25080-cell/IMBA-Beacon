@@ -171,6 +171,12 @@ const PROTECTED_CONTENT = {
     type: "application/pdf",
     downloadName: "quadratic-and-complex-notes.pdf"
   },
+  "va-session-1-notes": {
+    file: "sheets/va-session-1-notes.pdf",
+    minPlan: "basic",
+    type: "application/pdf",
+    downloadName: "va-session-1-notes.pdf"
+  },
   "lecture-2-practise-2-2-trigonometry": {
     file: "sheets/lecture-2-practise-2-2-trigonometry.pdf",
     minPlan: "basic",
