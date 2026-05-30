@@ -2093,7 +2093,7 @@ body.schedule-open{
           practiceSheets: [
             { title: "Master Question Bank", href: protectedContentUrl("master-question-bank"), label: "Master Sheet · HTML" },
             { title: "Economic Terms", href: protectedContentUrl("economic-terms"), label: "Master Sheet · HTML" },
-            { title: "Previous Year Questions", href: protectedContentUrl("previous-year-questions"), downloadHref: protectedContentUrl("previous-year-questions", true), label: "Practice Sheet · XLSX", icon: "file-spreadsheet" },
+            { title: "Previous Year Questions", downloadHref: protectedContentUrl("previous-year-questions", true), label: "Practice Sheet · XLSX", icon: "file-spreadsheet", minPlan: "pro" },
             { title: "Model Answers", href: protectedContentUrl("model-answers"), label: "Practice Sheet · HTML" }
           ]
         }
@@ -2109,6 +2109,7 @@ body.schedule-open{
             ${items.map(function (item) {
               const viewHref = item.href || (item.id ? `https://drive.google.com/file/d/${item.id}/view` : "");
               const downloadHref = item.downloadHref || (item.id ? `https://drive.google.com/uc?export=download&id=${item.id}` : "");
+              const itemLocked = locked || (item.minPlan === "pro" && plan !== "pro");
               return `
                 <div class="sheet-row" style="padding:.72rem 0;">
                   <div class="sheet-info">
@@ -2120,7 +2121,7 @@ body.schedule-open{
                       <span>${escapeHtml(item.label || defaultLabel)}</span>
                     </div>
                   </div>
-                  ${locked ? '<button class="sheet-btn pro-only" disabled>Locked</button>' : `
+                  ${itemLocked ? `<button class="sheet-btn pro-only" disabled>${item.minPlan === "pro" ? "Pro only" : "Locked"}</button>` : `
                     <div class="sheet-actions">
                       ${viewHref ? `
                       <a class="sheet-btn" href="${escapeHtml(viewHref)}" target="_blank" rel="noopener noreferrer" style="font-size:.82rem;padding:.6rem .8rem;">
