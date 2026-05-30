@@ -181,6 +181,40 @@ h1{
   gap:.85rem;
   padding:1rem;
 }
+.recording-folder{
+  display:grid;
+  gap:.85rem;
+  padding:1rem;
+  border:1px solid rgba(106,31,54,.12);
+  border-radius:22px;
+  background:linear-gradient(135deg,#fff9f1,#fffdf9);
+  box-shadow:0 14px 34px rgba(55,28,37,.07);
+}
+.recording-folder-head{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:1rem;
+  padding:.15rem .1rem .75rem;
+  border-bottom:1px solid var(--border);
+}
+.recording-folder-title{
+  display:flex;
+  align-items:center;
+  gap:.75rem;
+  min-width:0;
+}
+.recording-folder-title strong{
+  display:block;
+  color:var(--maroon);
+  font-size:1.05rem;
+}
+.recording-folder-title span{
+  display:block;
+  margin-top:.14rem;
+  color:var(--ink-soft);
+  font-size:.86rem;
+}
 .recording-card{
   display:flex;
   align-items:center;
@@ -266,6 +300,7 @@ h1{
   .hero-band{padding:1.55rem}
   .recording-content{padding:.85rem}
   .recording-section-head{align-items:flex-start;flex-direction:column}
+  .recording-folder-head{align-items:flex-start;flex-direction:column}
   .recording-card{align-items:flex-start;flex-direction:column}
   .recording-actions{width:100%;justify-content:space-between}
   .recording-btn{flex:1}
@@ -348,6 +383,28 @@ h1{
           emptyCopy: "Interview etiquette recording links have not been uploaded yet. They will appear here once available.",
           recordings: [
             {
+              title: "VA Session 1",
+              meta: "Recorded in 3 parts · Available for Basic and Pro students",
+              folder: true,
+              parts: [
+                {
+                  title: "Part 1",
+                  meta: "VA Session 1 recording",
+                  href: "https://drive.google.com/file/d/1n5S426ygIi0nUBS72ZEFdy2Zkcvlw3Fi/view?usp=sharing"
+                },
+                {
+                  title: "Part 2",
+                  meta: "VA Session 1 recording",
+                  href: "https://drive.google.com/file/d/1mVceUzBGug_DXW5qSuCeImZtzWZWkc99/view?usp=sharing"
+                },
+                {
+                  title: "Part 3",
+                  meta: "VA Session 1 recording",
+                  href: "https://drive.google.com/file/d/1X6F8Z9L-YHYw8_svZBjEsFoLSnKeP6q-/view?usp=sharing"
+                }
+              ]
+            },
+            {
               title: "Free Interview Etiquette Session",
               meta: "Available for Basic and Pro students",
               href: "https://drive.google.com/file/d/1Yn84lbvlQvqAX9kvrIPi1oFXns77b75X/view?pli=1"
@@ -389,6 +446,40 @@ h1{
           ${Array.isArray(section.recordings) && section.recordings.length ? `
             <div class="recording-list">
               ${section.recordings.map(function (recording) {
+                if (recording.folder && Array.isArray(recording.parts)) {
+                  return `
+                    <div class="recording-folder">
+                      <div class="recording-folder-head">
+                        <div class="recording-folder-title">
+                          <span class="recording-icon"><i class="ti ti-folder"></i></span>
+                          <div>
+                            <strong>${escapeHtml(recording.title)}</strong>
+                            <span>${escapeHtml(recording.meta)}</span>
+                          </div>
+                        </div>
+                        <span class="access-pill"><i class="ti ti-crown"></i> Basic + Pro</span>
+                      </div>
+                      ${recording.parts.map(function (part) {
+                        return `
+                          <div class="recording-card">
+                            <div class="recording-info">
+                              <span class="recording-icon"><i class="ti ti-player-play"></i></span>
+                              <div>
+                                <strong>${escapeHtml(part.title)}</strong>
+                                <span>${escapeHtml(part.meta)}</span>
+                              </div>
+                            </div>
+                            <div class="recording-actions">
+                              <a class="recording-btn" href="${escapeHtml(part.href)}" target="_blank" rel="noopener noreferrer">
+                                <i class="ti ti-player-play"></i> Open recording
+                              </a>
+                            </div>
+                          </div>
+                        `;
+                      }).join("")}
+                    </div>
+                  `;
+                }
                 return `
                   <div class="recording-card">
                     <div class="recording-info">
