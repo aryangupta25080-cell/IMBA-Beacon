@@ -215,6 +215,60 @@ h1{
   color:var(--ink-soft);
   font-size:.86rem;
 }
+.recording-slider-shell{
+  display:grid;
+  gap:.8rem;
+}
+.recording-slider-controls{
+  display:flex;
+  justify-content:flex-end;
+  gap:.55rem;
+}
+.recording-slider-btn{
+  width:42px;
+  height:42px;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  border:1px solid var(--border);
+  border-radius:14px;
+  color:var(--maroon);
+  background:#fff;
+  cursor:pointer;
+  box-shadow:0 10px 22px rgba(55,28,37,.06);
+  transition:transform .18s ease,box-shadow .18s ease,background .18s ease;
+}
+.recording-slider-btn:hover{
+  transform:translateY(-1px);
+  background:#fff8ee;
+  box-shadow:0 14px 28px rgba(232,146,58,.16);
+}
+.recording-slider{
+  display:flex;
+  gap:.85rem;
+  overflow-x:auto;
+  overscroll-behavior-inline:contain;
+  scroll-snap-type:x mandatory;
+  scroll-padding:0 .25rem;
+  padding:.25rem .15rem .5rem;
+  scrollbar-width:thin;
+  scrollbar-color:var(--gold-soft) transparent;
+}
+.recording-slider::-webkit-scrollbar{
+  height:8px;
+}
+.recording-slider::-webkit-scrollbar-track{
+  background:transparent;
+}
+.recording-slider::-webkit-scrollbar-thumb{
+  background:var(--gold-soft);
+  border-radius:999px;
+}
+.recording-slider .recording-card{
+  min-width:min(360px,86vw);
+  flex:0 0 min(360px,86vw);
+  scroll-snap-align:start;
+}
 .recording-card{
   display:flex;
   align-items:center;
@@ -301,6 +355,7 @@ h1{
   .recording-content{padding:.85rem}
   .recording-section-head{align-items:flex-start;flex-direction:column}
   .recording-folder-head{align-items:flex-start;flex-direction:column}
+  .recording-slider-controls{justify-content:flex-start}
   .recording-card{align-items:flex-start;flex-direction:column}
   .recording-actions{width:100%;justify-content:space-between}
   .recording-btn{flex:1}
@@ -445,8 +500,9 @@ h1{
           </div>
           ${Array.isArray(section.recordings) && section.recordings.length ? `
             <div class="recording-list">
-              ${section.recordings.map(function (recording) {
+              ${section.recordings.map(function (recording, recordingIndex) {
                 if (recording.folder && Array.isArray(recording.parts)) {
+                  const sliderId = `recording-slider-${recordingIndex}`;
                   return `
                     <div class="recording-folder">
                       <div class="recording-folder-head">
@@ -459,24 +515,36 @@ h1{
                         </div>
                         <span class="access-pill"><i class="ti ti-crown"></i> Basic + Pro</span>
                       </div>
-                      ${recording.parts.map(function (part) {
-                        return `
-                          <div class="recording-card">
-                            <div class="recording-info">
-                              <span class="recording-icon"><i class="ti ti-player-play"></i></span>
-                              <div>
-                                <strong>${escapeHtml(part.title)}</strong>
-                                <span>${escapeHtml(part.meta)}</span>
+                      <div class="recording-slider-shell">
+                        <div class="recording-slider-controls" aria-label="${escapeHtml(recording.title)} slider controls">
+                          <button class="recording-slider-btn" type="button" data-slider-target="${escapeHtml(sliderId)}" data-slider-direction="-1" aria-label="Previous recording">
+                            <i class="ti ti-chevron-left"></i>
+                          </button>
+                          <button class="recording-slider-btn" type="button" data-slider-target="${escapeHtml(sliderId)}" data-slider-direction="1" aria-label="Next recording">
+                            <i class="ti ti-chevron-right"></i>
+                          </button>
+                        </div>
+                        <div class="recording-slider" id="${escapeHtml(sliderId)}">
+                          ${recording.parts.map(function (part) {
+                            return `
+                              <div class="recording-card">
+                                <div class="recording-info">
+                                  <span class="recording-icon"><i class="ti ti-player-play"></i></span>
+                                  <div>
+                                    <strong>${escapeHtml(part.title)}</strong>
+                                    <span>${escapeHtml(part.meta)}</span>
+                                  </div>
+                                </div>
+                                <div class="recording-actions">
+                                  <a class="recording-btn" href="${escapeHtml(part.href)}" target="_blank" rel="noopener noreferrer">
+                                    <i class="ti ti-player-play"></i> Open recording
+                                  </a>
+                                </div>
                               </div>
-                            </div>
-                            <div class="recording-actions">
-                              <a class="recording-btn" href="${escapeHtml(part.href)}" target="_blank" rel="noopener noreferrer">
-                                <i class="ti ti-player-play"></i> Open recording
-                              </a>
-                            </div>
-                          </div>
-                        `;
-                      }).join("")}
+                            `;
+                          }).join("")}
+                        </div>
+                      </div>
                     </div>
                   `;
                 }
@@ -517,6 +585,22 @@ h1{
       ? { ...extraHeaders, Authorization: `Bearer ${sessionToken}` }
       : extraHeaders;
   }
+
+  document.addEventListener("click", function (event) {
+    const sliderButton = event.target.closest("[data-slider-target]");
+    if (!sliderButton) return;
+
+    const slider = document.getElementById(sliderButton.getAttribute("data-slider-target"));
+    if (!slider) return;
+
+    const direction = Number(sliderButton.getAttribute("data-slider-direction") || 1);
+    const firstCard = slider.querySelector(".recording-card");
+    const step = firstCard ? firstCard.getBoundingClientRect().width + 14 : 360;
+    slider.scrollBy({
+      left: direction * step,
+      behavior: "smooth"
+    });
+  });
 
   async function requireSession() {
     try {
