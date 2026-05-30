@@ -451,6 +451,18 @@ async function getDatabase() {
       UNIQUE (session_type, email)
     );
 
+    CREATE TABLE IF NOT EXISTS interview_date_responses (
+      id BIGSERIAL PRIMARY KEY,
+      name TEXT NOT NULL,
+      email TEXT NOT NULL UNIQUE,
+      phone TEXT,
+      interview_date DATE NOT NULL,
+      interview_time TEXT,
+      note TEXT,
+      submitted_at TIMESTAMPTZ NOT NULL,
+      updated_at TIMESTAMPTZ NOT NULL
+    );
+
     CREATE TABLE IF NOT EXISTS quiz_attempts (
       id BIGSERIAL PRIMARY KEY,
       email TEXT NOT NULL,
@@ -695,6 +707,12 @@ function isValidPhone(value) {
 function isValidPercentile(value) {
   const numericValue = Number(value);
   return Number.isFinite(numericValue) && numericValue >= 0 && numericValue <= 100;
+}
+
+function isValidDateInput(value) {
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(String(value || ""))) return false;
+  const parsedDate = new Date(`${value}T00:00:00Z`);
+  return !Number.isNaN(parsedDate.getTime()) && parsedDate.toISOString().slice(0, 10) === value;
 }
 
 function getPublicUser(user) {
@@ -2035,6 +2053,107 @@ async function handleFreeSessionRegistration(request, response) {
   }
 }
 
+async function handleInterviewDateList(request, response, corsHeaders = {}) {
+  const sessionUser = requireAuthenticatedUser(request, response, corsHeaders);
+  if (!sessionUser) return;
+
+  try {
+    const db = await getDatabase();
+    const rows = await db.all(`
+      SELECT name, email, phone, TO_CHAR(interview_date, 'YYYY-MM-DD') AS interview_date, interview_time, note, submitted_at, updated_at
+      FROM interview_date_responses
+      ORDER BY interview_date ASC, NULLIF(interview_time, '') ASC, name ASC
+    `);
+    const normalizedEmail = normalizeEmail(sessionUser.email);
+    const responses = rows.map((row) => ({
+      name: row.name,
+      email: row.email,
+      phone: row.phone || "",
+      interviewDate: row.interview_date ? String(row.interview_date).slice(0, 10) : "",
+      interviewTime: row.interview_time || "",
+      note: row.note || "",
+      submittedAt: row.submitted_at,
+      updatedAt: row.updated_at
+    }));
+
+    sendJson(response, 200, {
+      count: responses.length,
+      ownResponse: responses.find((entry) => normalizeEmail(entry.email) === normalizedEmail) || null,
+      responses
+    }, corsHeaders);
+  } catch (error) {
+    sendJson(response, 500, { message: "Unable to load interview date responses." }, corsHeaders);
+  }
+}
+
+async function handleInterviewDateSubmission(request, response, corsHeaders = {}) {
+  const sessionUser = requireAuthenticatedUser(request, response, corsHeaders);
+  if (!sessionUser) return;
+
+  try {
+    const body = await parseRequestBody(request);
+    const interviewDate = String(body.interviewDate || "").trim();
+    const interviewTime = String(body.interviewTime || "").trim().slice(0, 40);
+    const note = String(body.note || "").trim().slice(0, 180);
+    const email = normalizeEmail(sessionUser.email);
+    const name = String(sessionUser.name || email).trim();
+    const phone = String(sessionUser.phone || "").trim();
+    const now = new Date().toISOString();
+
+    if (!isValidDateInput(interviewDate)) {
+      sendJson(response, 400, { message: "Please select a valid interview date." }, corsHeaders);
+      return;
+    }
+
+    const db = await getDatabase();
+    await db.run(`
+      INSERT INTO interview_date_responses (
+        name,
+        email,
+        phone,
+        interview_date,
+        interview_time,
+        note,
+        submitted_at,
+        updated_at
+      )
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+      ON CONFLICT (email) DO UPDATE SET
+        name = excluded.name,
+        phone = excluded.phone,
+        interview_date = excluded.interview_date,
+        interview_time = excluded.interview_time,
+        note = excluded.note,
+        updated_at = excluded.updated_at
+    `, [
+      name,
+      email,
+      phone,
+      interviewDate,
+      interviewTime,
+      note,
+      now,
+      now
+    ]);
+
+    sendJson(response, 200, {
+      message: "Interview date saved. Thank you for updating the schedule board.",
+      response: {
+        name,
+        email,
+        phone,
+        interviewDate,
+        interviewTime,
+        note,
+        submittedAt: now,
+        updatedAt: now
+      }
+    }, corsHeaders);
+  } catch (error) {
+    sendJson(response, 400, { message: error.message || "Unable to save interview date." }, corsHeaders);
+  }
+}
+
 async function handleQuizAttemptSave(request, response, corsHeaders = {}) {
   const sessionUser = requireAuthenticatedUser(request, response, corsHeaders);
   if (!sessionUser) return;
@@ -2439,6 +2558,16 @@ async function requestHandler(request, response) {
       writeHead: (...args) => response.writeHead(args[0], { ...args[1], ...corsHeaders }),
       end: (...args) => response.end(...args)
     });
+    return;
+  }
+
+  if (request.method === "GET" && pathname === "/api/interview-dates") {
+    await handleInterviewDateList(request, response, corsHeaders);
+    return;
+  }
+
+  if (request.method === "POST" && pathname === "/api/interview-dates") {
+    await handleInterviewDateSubmission(request, response, corsHeaders);
     return;
   }
 

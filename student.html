@@ -1048,6 +1048,88 @@ body.schedule-open{
 .coupon-feedback.error{
   color:#bb4357;
 }
+.interview-date-grid{
+  display:grid;
+  grid-template-columns:minmax(260px,.85fr) minmax(320px,1.15fr);
+  gap:1rem;
+  align-items:start;
+}
+.section-heading-row{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:1rem;
+  margin-bottom:1rem;
+}
+.section-heading-row h3{
+  margin:0 0 .25rem;
+  color:var(--maroon);
+  font-size:1.2rem;
+}
+.section-heading-row p{
+  margin:0;
+  color:var(--ink-soft);
+}
+.interview-date-form{
+  display:grid;
+  gap:.75rem;
+}
+.interview-date-form label{
+  display:grid;
+  gap:.35rem;
+  color:var(--ink);
+  font-weight:800;
+  font-size:.88rem;
+}
+.interview-date-form input,
+.interview-date-form textarea{
+  width:100%;
+  padding:.9rem .95rem;
+  border-radius:14px;
+  border:1px solid var(--border);
+  background:var(--surface-soft);
+  color:var(--ink);
+  font:inherit;
+  font-weight:600;
+}
+.interview-date-form textarea{
+  min-height:96px;
+  resize:vertical;
+}
+.interview-date-note{
+  color:var(--ink-soft);
+  font-size:.86rem;
+  line-height:1.5;
+}
+.interview-date-list{
+  display:grid;
+  gap:.65rem;
+}
+.interview-date-row{
+  display:grid;
+  grid-template-columns:minmax(120px,.75fr) minmax(0,1fr);
+  gap:.75rem;
+  align-items:center;
+  padding:.82rem .9rem;
+  border:1px solid var(--border);
+  border-radius:16px;
+  background:var(--surface-soft);
+}
+.interview-date-row strong{
+  color:var(--maroon);
+}
+.interview-date-row small{
+  display:block;
+  color:var(--ink-soft);
+  margin-top:.12rem;
+}
+.interview-date-empty{
+  padding:1rem;
+  border:1px dashed var(--border);
+  border-radius:16px;
+  color:var(--ink-soft);
+  background:var(--surface-soft);
+}
 .profile-grid{
   display:grid;
   grid-template-columns:repeat(2,minmax(0,1fr));
@@ -1139,8 +1221,12 @@ body.schedule-open{
   .track-grid,
   .plans-grid,
   .profile-grid,
+  .interview-date-grid,
   .sheet-subsections,
   .batch-grid.pro{
+    grid-template-columns:1fr;
+  }
+  .interview-date-row{
     grid-template-columns:1fr;
   }
   .live-link-box,
@@ -1267,6 +1353,10 @@ body.schedule-open{
     let currentUser = null;
     let currentPlan = "none";
     let currentConfig = null;
+    let interviewDateBoard = {
+      ownResponse: null,
+      responses: []
+    };
 
     const SESSION_SCHEDULE = [
       { date: "27 May, Wednesday", plan: "basic", title: "Interview Session 1: Structuring Bulletproof Answers", time: "6–7 PM", topics: ["Answer structure", "Interview basics"] },
@@ -1311,6 +1401,18 @@ body.schedule-open{
         .replace(/>/g, "&gt;")
         .replace(/"/g, "&quot;")
         .replace(/'/g, "&#39;");
+    }
+
+    function formatInterviewDate(value) {
+      if (!value) return "Date not set";
+      const parsedDate = new Date(`${value}T00:00:00`);
+      if (Number.isNaN(parsedDate.getTime())) return value;
+      return parsedDate.toLocaleDateString("en-IN", {
+        day: "numeric",
+        month: "short",
+        year: "numeric",
+        weekday: "short"
+      });
     }
 
     function getPlanLabel(plan) {
@@ -2097,6 +2199,66 @@ body.schedule-open{
       `;
     }
 
+    function renderInterviewDateSection(student) {
+      const ownResponse = interviewDateBoard.ownResponse || {};
+      const responses = interviewDateBoard.responses || [];
+      const responseRows = responses.length
+        ? responses.map(function (entry) {
+            const dateLabel = formatInterviewDate(entry.interviewDate);
+            const timeLabel = entry.interviewTime ? ` · ${escapeHtml(entry.interviewTime)}` : "";
+            const noteLabel = entry.note ? `<small>${escapeHtml(entry.note)}</small>` : "";
+            return `
+              <div class="interview-date-row">
+                <div>
+                  <strong>${escapeHtml(dateLabel)}</strong>
+                  <small>${escapeHtml(entry.name || "Student")}${timeLabel}</small>
+                </div>
+                <div>
+                  <span class="tag-pill amber">${escapeHtml(entry.email || "Beacon student")}</span>
+                  ${noteLabel}
+                </div>
+              </div>
+            `;
+          }).join("")
+        : `<div class="interview-date-empty">No interview dates submitted yet. Add yours so we can map the candidate calendar.</div>`;
+
+      return `
+        <section class="dashboard-section" id="section-interview-dates">
+          <p class="section-label">Interview Dates</p>
+          <article class="dashboard-card">
+            <div class="section-heading-row">
+              <div>
+                <h3>Candidate interview date board</h3>
+                <p>Share your official interview date so the cohort can see how dates are distributed.</p>
+              </div>
+              <span class="tag-pill amber">${responses.length} response${responses.length === 1 ? "" : "s"}</span>
+            </div>
+            <div class="interview-date-grid">
+              <form class="interview-date-form" id="interview-date-form">
+                <label>
+                  Interview date
+                  <input type="date" name="interviewDate" value="${escapeHtml(ownResponse.interviewDate || "")}" required>
+                </label>
+                <label>
+                  Time slot <span class="interview-date-note">(optional)</span>
+                  <input type="text" name="interviewTime" value="${escapeHtml(ownResponse.interviewTime || "")}" placeholder="Example: 10:30 AM or afternoon slot" maxlength="40">
+                </label>
+                <label>
+                  Note <span class="interview-date-note">(optional)</span>
+                  <textarea name="note" placeholder="Example: IIT Mandi panel, document verification slot, etc." maxlength="180">${escapeHtml(ownResponse.note || "")}</textarea>
+                </label>
+                <button class="cta-solid" type="submit">Save interview date</button>
+                <p class="interview-date-note">Your name and email are taken from your logged-in Beacon account: ${escapeHtml(student.email)}.</p>
+              </form>
+              <div class="interview-date-list" id="interview-date-list">
+                ${responseRows}
+              </div>
+            </div>
+          </article>
+        </section>
+      `;
+    }
+
     function renderProfile(student) {
       const badge = getPlanBadge(student.plan);
       return `
@@ -2126,6 +2288,7 @@ body.schedule-open{
         renderLiveClass(student.plan),
         renderBatchSessions(student.plan),
         renderSheets(student.plan),
+        renderInterviewDateSection(student),
         renderProfile(student)
       ].join("");
     }
@@ -2157,6 +2320,21 @@ body.schedule-open{
         throw new Error("Unable to load dashboard configuration.");
       }
       return response.json();
+    }
+
+    async function fetchInterviewDates() {
+      const response = await fetch(`${apiBase}/api/interview-dates`, {
+        credentials: "include",
+        headers: getAuthHeaders()
+      });
+      if (!response.ok) {
+        throw new Error("Unable to load interview date responses.");
+      }
+      const payload = await response.json();
+      return {
+        ownResponse: payload.ownResponse || null,
+        responses: Array.isArray(payload.responses) ? payload.responses : []
+      };
     }
 
     function getAuthHeaders(extraHeaders = {}) {
@@ -2320,6 +2498,52 @@ body.schedule-open{
       }
     }
 
+    async function submitInterviewDate(form) {
+      const submitButton = form.querySelector("button[type='submit']");
+      const originalText = submitButton ? submitButton.textContent : "";
+      if (submitButton) {
+        submitButton.disabled = true;
+        submitButton.textContent = "Saving...";
+      }
+
+      try {
+        const formData = new FormData(form);
+        const response = await fetch(`${apiBase}/api/interview-dates`, {
+          method: "POST",
+          credentials: "include",
+          headers: getAuthHeaders({
+            "Content-Type": "application/json"
+          }),
+          body: JSON.stringify({
+            interviewDate: formData.get("interviewDate"),
+            interviewTime: formData.get("interviewTime"),
+            note: formData.get("note")
+          })
+        });
+        const payload = await response.json();
+
+        if (!response.ok) {
+          setStatus(payload.message || "Unable to save interview date.", "error");
+          return;
+        }
+
+        interviewDateBoard = await fetchInterviewDates();
+        renderDashboard(getStudentState(currentUser));
+        setStatus(payload.message || "Interview date saved.", "success");
+        const section = document.getElementById("section-interview-dates");
+        if (section) {
+          section.scrollIntoView({ behavior: "smooth", block: "start" });
+        }
+      } catch (error) {
+        setStatus(error.message || "Unable to save interview date right now.", "error");
+      } finally {
+        if (submitButton) {
+          submitButton.disabled = false;
+          submitButton.textContent = originalText;
+        }
+      }
+    }
+
     function updateActiveNav(target) {
       document.querySelectorAll("[data-nav-target]").forEach(function (node) {
         const matches = node.getAttribute("data-nav-target") === target;
@@ -2453,6 +2677,14 @@ body.schedule-open{
       }
     });
 
+    document.addEventListener("submit", function (event) {
+      const interviewDateForm = event.target.closest("#interview-date-form");
+      if (interviewDateForm) {
+        event.preventDefault();
+        submitInterviewDate(interviewDateForm);
+      }
+    });
+
     document.addEventListener("keydown", function (event) {
       if (event.key === "Enter" && event.target && event.target.id === "dashboard-coupon-code") {
         event.preventDefault();
@@ -2466,7 +2698,7 @@ body.schedule-open{
     logoutButton.addEventListener("click", logout);
 
     Promise.all([fetchConfig(), fetchSession()])
-      .then(function (results) {
+      .then(async function (results) {
         currentConfig = results[0];
         currentUser = results[1];
 
@@ -2475,6 +2707,7 @@ body.schedule-open{
           return;
         }
 
+        interviewDateBoard = await fetchInterviewDates();
         renderDashboard(getStudentState(currentUser));
         setStatus("Dashboard loaded successfully.", "success");
         scrollToRequestedSection();
