@@ -164,6 +164,12 @@ const PROTECTED_CONTENT = {
     type: "application/pdf",
     downloadName: "trigonometry-inverse-trigonometry-notes.pdf"
   },
+  "quadratic-and-complex-notes": {
+    file: "sheets/quadratic-and-complex-notes.pdf",
+    minPlan: "basic",
+    type: "application/pdf",
+    downloadName: "quadratic-and-complex-notes.pdf"
+  },
   "lecture-2-practise-2-2-trigonometry": {
     file: "sheets/lecture-2-practise-2-2-trigonometry.pdf",
     minPlan: "basic",
