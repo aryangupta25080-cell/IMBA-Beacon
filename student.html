@@ -1048,27 +1048,84 @@ body.schedule-open{
 .coupon-feedback.error{
   color:#bb4357;
 }
-.interview-date-grid{
-  display:grid;
-  grid-template-columns:minmax(260px,.85fr) minmax(320px,1.15fr);
-  gap:1rem;
-  align-items:start;
-}
-.section-heading-row{
+.interview-date-ribbon{
   display:flex;
-  align-items:flex-start;
+  align-items:center;
   justify-content:space-between;
   gap:1rem;
-  margin-bottom:1rem;
+  padding:1rem 1.15rem;
+  border:1px solid rgba(234,162,72,.32);
+  border-radius:22px;
+  background:linear-gradient(135deg,rgba(255,246,232,.98),rgba(255,255,255,.96));
+  box-shadow:0 18px 42px rgba(95,64,37,.08);
 }
-.section-heading-row h3{
+.interview-date-ribbon strong{
+  display:block;
+  color:var(--maroon);
+  font-size:1.04rem;
+}
+.interview-date-ribbon span{
+  display:block;
+  color:var(--ink-soft);
+  margin-top:.16rem;
+}
+.interview-date-ribbon .section-btn{
+  white-space:nowrap;
+}
+.interview-date-modal{
+  position:fixed;
+  inset:0;
+  z-index:80;
+  display:none;
+  align-items:center;
+  justify-content:center;
+  padding:1.25rem;
+  background:rgba(41,20,30,.52);
+  backdrop-filter:blur(8px);
+}
+.interview-date-modal.is-open{
+  display:flex;
+}
+.interview-date-panel{
+  width:min(620px,100%);
+  max-height:calc(100vh - 2rem);
+  overflow:auto;
+  border:1px solid var(--border);
+  border-radius:28px;
+  background:var(--surface);
+  box-shadow:0 32px 80px rgba(43,22,31,.28);
+}
+.interview-date-panel-header{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:1rem;
+  padding:1.15rem 1.25rem;
+  border-bottom:1px solid var(--border);
+}
+.interview-date-panel-header h3{
   margin:0 0 .25rem;
   color:var(--maroon);
-  font-size:1.2rem;
+  font-size:1.24rem;
 }
-.section-heading-row p{
+.interview-date-panel-header p{
   margin:0;
   color:var(--ink-soft);
+}
+.interview-date-close{
+  width:42px;
+  height:42px;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  border:1px solid var(--border);
+  border-radius:14px;
+  background:var(--surface-soft);
+  color:var(--maroon);
+  cursor:pointer;
+}
+.interview-date-panel-body{
+  padding:1.25rem;
 }
 .interview-date-form{
   display:grid;
@@ -1093,7 +1150,7 @@ body.schedule-open{
   font-weight:600;
 }
 .interview-date-form textarea{
-  min-height:96px;
+  min-height:76px;
   resize:vertical;
 }
 .interview-date-note{
@@ -1101,19 +1158,14 @@ body.schedule-open{
   font-size:.86rem;
   line-height:1.5;
 }
-.interview-date-list{
-  display:grid;
-  gap:.65rem;
-}
 .interview-date-row{
   display:grid;
-  grid-template-columns:minmax(120px,.75fr) minmax(0,1fr);
-  gap:.75rem;
-  align-items:center;
-  padding:.82rem .9rem;
+  gap:.2rem;
+  padding:.9rem;
   border:1px solid var(--border);
   border-radius:16px;
   background:var(--surface-soft);
+  margin-bottom:.9rem;
 }
 .interview-date-row strong{
   color:var(--maroon);
@@ -1129,6 +1181,7 @@ body.schedule-open{
   border-radius:16px;
   color:var(--ink-soft);
   background:var(--surface-soft);
+  margin-bottom:.9rem;
 }
 .profile-grid{
   display:grid;
@@ -1221,13 +1274,17 @@ body.schedule-open{
   .track-grid,
   .plans-grid,
   .profile-grid,
-  .interview-date-grid,
   .sheet-subsections,
   .batch-grid.pro{
     grid-template-columns:1fr;
   }
-  .interview-date-row{
-    grid-template-columns:1fr;
+  .interview-date-ribbon{
+    flex-direction:column;
+    align-items:flex-start;
+  }
+  .interview-date-ribbon .section-btn{
+    width:100%;
+    justify-content:center;
   }
   .live-link-box,
   .sheet-row,
@@ -1503,6 +1560,28 @@ body.schedule-open{
       scheduleView.classList.remove("is-open");
       scheduleView.setAttribute("aria-hidden", "true");
       document.body.classList.remove("schedule-open");
+    }
+
+    function getInterviewDateModal() {
+      return document.getElementById("interview-date-modal");
+    }
+
+    function openInterviewDateModal() {
+      const modal = getInterviewDateModal();
+      if (!modal) return;
+      modal.classList.add("is-open");
+      modal.setAttribute("aria-hidden", "false");
+      const firstField = modal.querySelector("input, textarea, button");
+      if (firstField) {
+        firstField.focus();
+      }
+    }
+
+    function closeInterviewDateModal() {
+      const modal = getInterviewDateModal();
+      if (!modal) return;
+      modal.classList.remove("is-open");
+      modal.setAttribute("aria-hidden", "true");
     }
 
     function normalizeCouponCode(value) {
@@ -2201,60 +2280,60 @@ body.schedule-open{
 
     function renderInterviewDateSection(student) {
       const ownResponse = interviewDateBoard.ownResponse || {};
-      const responses = interviewDateBoard.responses || [];
-      const responseRows = responses.length
-        ? responses.map(function (entry) {
-            const dateLabel = formatInterviewDate(entry.interviewDate);
-            const timeLabel = entry.interviewTime ? ` · ${escapeHtml(entry.interviewTime)}` : "";
-            const noteLabel = entry.note ? `<small>${escapeHtml(entry.note)}</small>` : "";
-            return `
-              <div class="interview-date-row">
-                <div>
-                  <strong>${escapeHtml(dateLabel)}</strong>
-                  <small>${escapeHtml(entry.name || "Student")}${timeLabel}</small>
-                </div>
-                <div>
-                  <span class="tag-pill amber">${escapeHtml(entry.email || "Beacon student")}</span>
-                  ${noteLabel}
-                </div>
-              </div>
-            `;
-          }).join("")
-        : `<div class="interview-date-empty">No interview dates submitted yet. Add yours so we can map the candidate calendar.</div>`;
+      const savedResponse = ownResponse.interviewDate
+        ? `
+          <div class="interview-date-row">
+            <strong>Your saved details</strong>
+            <small>${escapeHtml(formatInterviewDate(ownResponse.interviewDate))} · ${escapeHtml(ownResponse.interviewTime || "Slot not added")}</small>
+            <small>${escapeHtml(ownResponse.note || "Location not added")}</small>
+          </div>
+        `
+        : `<div class="interview-date-empty">No interview details saved yet. Add yours once you know the date, slot and place.</div>`;
 
       return `
         <section class="dashboard-section" id="section-interview-dates">
-          <p class="section-label">Interview Dates</p>
-          <article class="dashboard-card">
-            <div class="section-heading-row">
-              <div>
-                <h3>Candidate interview date board</h3>
-                <p>Share your official interview date so the cohort can see how dates are distributed.</p>
-              </div>
-              <span class="tag-pill amber">${responses.length} response${responses.length === 1 ? "" : "s"}</span>
+          <article class="interview-date-ribbon">
+            <div>
+              <strong>Interview date details</strong>
+              <span>${ownResponse.interviewDate ? "Your response is saved privately." : "Share your date, slot and place after login."}</span>
             </div>
-            <div class="interview-date-grid">
-              <form class="interview-date-form" id="interview-date-form">
-                <label>
-                  Interview date
-                  <input type="date" name="interviewDate" value="${escapeHtml(ownResponse.interviewDate || "")}" required>
-                </label>
-                <label>
-                  Time slot <span class="interview-date-note">(optional)</span>
-                  <input type="text" name="interviewTime" value="${escapeHtml(ownResponse.interviewTime || "")}" placeholder="Example: 10:30 AM or afternoon slot" maxlength="40">
-                </label>
-                <label>
-                  Note <span class="interview-date-note">(optional)</span>
-                  <textarea name="note" placeholder="Example: IIT Mandi panel, document verification slot, etc." maxlength="180">${escapeHtml(ownResponse.note || "")}</textarea>
-                </label>
-                <button class="cta-solid" type="submit">Save interview date</button>
-                <p class="interview-date-note">Your name and email are taken from your logged-in Beacon account: ${escapeHtml(student.email)}.</p>
-              </form>
-              <div class="interview-date-list" id="interview-date-list">
-                ${responseRows}
-              </div>
-            </div>
+            <button class="section-btn" type="button" data-action="open-interview-date">
+              <i class="ti ti-calendar-event"></i>
+              ${ownResponse.interviewDate ? "Update details" : "Add details"}
+            </button>
           </article>
+          <div class="interview-date-modal" id="interview-date-modal" aria-hidden="true">
+            <div class="interview-date-panel" role="dialog" aria-modal="true" aria-labelledby="interview-date-heading">
+              <div class="interview-date-panel-header">
+                <div>
+                  <h3 id="interview-date-heading">Your interview details</h3>
+                  <p>Only you can see this on the dashboard. Admin can review responses from the database.</p>
+                </div>
+                <button class="interview-date-close" type="button" data-action="close-interview-date" aria-label="Close interview date form">
+                  <i class="ti ti-x"></i>
+                </button>
+              </div>
+              <div class="interview-date-panel-body">
+                ${savedResponse}
+                <form class="interview-date-form" id="interview-date-form">
+                  <label>
+                    Interview date
+                    <input type="date" name="interviewDate" value="${escapeHtml(ownResponse.interviewDate || "")}" required>
+                  </label>
+                  <label>
+                    Interview slot
+                    <input type="text" name="interviewTime" value="${escapeHtml(ownResponse.interviewTime || "")}" placeholder="Example: Morning slot, afternoon slot, 1:15 PM" maxlength="40" required>
+                  </label>
+                  <label>
+                    Interview place
+                    <textarea name="note" placeholder="Example: IIT Mandi, online panel, document verification room" maxlength="120" required>${escapeHtml(ownResponse.note || "")}</textarea>
+                  </label>
+                  <button class="cta-solid" type="submit">Save interview details</button>
+                  <p class="interview-date-note">Name and email are added automatically from your logged-in Beacon account: ${escapeHtml(student.email)}.</p>
+                </form>
+              </div>
+            </div>
+          </div>
         </section>
       `;
     }
@@ -2283,12 +2362,12 @@ body.schedule-open{
 
     function renderSections(student) {
       return [
+        renderInterviewDateSection(student),
         student.plan === "none" ? renderUpgradeSection() : "",
         renderTracks(student.plan),
         renderLiveClass(student.plan),
         renderBatchSessions(student.plan),
         renderSheets(student.plan),
-        renderInterviewDateSection(student),
         renderProfile(student)
       ].join("");
     }
@@ -2641,6 +2720,26 @@ body.schedule-open{
         return;
       }
 
+      const openInterviewDateButton = event.target.closest("[data-action='open-interview-date']");
+      if (openInterviewDateButton) {
+        event.preventDefault();
+        openInterviewDateModal();
+        return;
+      }
+
+      const closeInterviewDateButton = event.target.closest("[data-action='close-interview-date']");
+      if (closeInterviewDateButton) {
+        event.preventDefault();
+        closeInterviewDateModal();
+        return;
+      }
+
+      const interviewDateModal = getInterviewDateModal();
+      if (interviewDateModal && event.target === interviewDateModal) {
+        closeInterviewDateModal();
+        return;
+      }
+
       const downloadButton = event.target.closest("[data-download-sheet]");
       if (downloadButton) {
         event.preventDefault();
@@ -2667,6 +2766,10 @@ body.schedule-open{
     document.addEventListener("keydown", function (event) {
       if (event.key === "Escape" && scheduleView.classList.contains("is-open")) {
         closeScheduleView();
+      }
+      const interviewDateModal = getInterviewDateModal();
+      if (event.key === "Escape" && interviewDateModal && interviewDateModal.classList.contains("is-open")) {
+        closeInterviewDateModal();
       }
     });
 

@@ -2059,13 +2059,14 @@ async function handleInterviewDateList(request, response, corsHeaders = {}) {
 
   try {
     const db = await getDatabase();
-    const rows = await db.all(`
+    const normalizedEmail = normalizeEmail(sessionUser.email);
+    const row = await db.get(`
       SELECT name, email, phone, TO_CHAR(interview_date, 'YYYY-MM-DD') AS interview_date, interview_time, note, submitted_at, updated_at
       FROM interview_date_responses
-      ORDER BY interview_date ASC, NULLIF(interview_time, '') ASC, name ASC
-    `);
-    const normalizedEmail = normalizeEmail(sessionUser.email);
-    const responses = rows.map((row) => ({
+      WHERE email = ?
+      LIMIT 1
+    `, [normalizedEmail]);
+    const ownResponse = row ? {
       name: row.name,
       email: row.email,
       phone: row.phone || "",
@@ -2074,15 +2075,14 @@ async function handleInterviewDateList(request, response, corsHeaders = {}) {
       note: row.note || "",
       submittedAt: row.submitted_at,
       updatedAt: row.updated_at
-    }));
+    } : null;
 
     sendJson(response, 200, {
-      count: responses.length,
-      ownResponse: responses.find((entry) => normalizeEmail(entry.email) === normalizedEmail) || null,
-      responses
+      ownResponse,
+      responses: ownResponse ? [ownResponse] : []
     }, corsHeaders);
   } catch (error) {
-    sendJson(response, 500, { message: "Unable to load interview date responses." }, corsHeaders);
+    sendJson(response, 500, { message: "Unable to load your interview date response." }, corsHeaders);
   }
 }
 
@@ -2094,7 +2094,7 @@ async function handleInterviewDateSubmission(request, response, corsHeaders = {}
     const body = await parseRequestBody(request);
     const interviewDate = String(body.interviewDate || "").trim();
     const interviewTime = String(body.interviewTime || "").trim().slice(0, 40);
-    const note = String(body.note || "").trim().slice(0, 180);
+    const note = String(body.note || "").trim().slice(0, 120);
     const email = normalizeEmail(sessionUser.email);
     const name = String(sessionUser.name || email).trim();
     const phone = String(sessionUser.phone || "").trim();
@@ -2102,6 +2102,16 @@ async function handleInterviewDateSubmission(request, response, corsHeaders = {}
 
     if (!isValidDateInput(interviewDate)) {
       sendJson(response, 400, { message: "Please select a valid interview date." }, corsHeaders);
+      return;
+    }
+
+    if (!interviewTime) {
+      sendJson(response, 400, { message: "Please enter your interview slot." }, corsHeaders);
+      return;
+    }
+
+    if (!note) {
+      sendJson(response, 400, { message: "Please enter your interview location." }, corsHeaders);
       return;
     }
 
@@ -2137,7 +2147,7 @@ async function handleInterviewDateSubmission(request, response, corsHeaders = {}
     ]);
 
     sendJson(response, 200, {
-      message: "Interview date saved. Thank you for updating the schedule board.",
+      message: "Interview details saved privately.",
       response: {
         name,
         email,
