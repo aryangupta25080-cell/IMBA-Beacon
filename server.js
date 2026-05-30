@@ -155,19 +155,19 @@ const PROTECTED_CONTENT = {
   },
   "sets-relation-functions-notes": {
     file: "sheets/sets-relation-functions-notes.pdf",
-    minPlan: "basic",
+    minPlan: "pro",
     type: "application/pdf",
     downloadName: "sets-relation-functions-notes.pdf"
   },
   "trigonometry-inverse-trigonometry-notes": {
     file: "sheets/trigonometry-inverse-trigonometry-notes.pdf",
-    minPlan: "basic",
+    minPlan: "pro",
     type: "application/pdf",
     downloadName: "trigonometry-inverse-trigonometry-notes.pdf"
   },
   "quadratic-and-complex-notes": {
     file: "sheets/quadratic-and-complex-notes.pdf",
-    minPlan: "basic",
+    minPlan: "pro",
     type: "application/pdf",
     downloadName: "quadratic-and-complex-notes.pdf"
   },
@@ -179,7 +179,7 @@ const PROTECTED_CONTENT = {
   },
   "lecture-2-practise-2-2-trigonometry": {
     file: "sheets/lecture-2-practise-2-2-trigonometry.pdf",
-    minPlan: "basic",
+    minPlan: "pro",
     type: "application/pdf",
     downloadName: "lecture-2-practise-2-2-trigonometry.pdf"
   },

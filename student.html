@@ -2062,14 +2062,14 @@ body.schedule-open{
 
     function renderSheets(plan) {
       const lectures = [
-        { title: "Lecture 1 Practice Sheet", id: "1woLrco4lqo4HtgclYSJnZGKTnewdXh5q" },
-        { title: "Lecture 2 Practice Sheet", id: "150n8jaPDmhrUQjEEq_ZI_nbpqsXfO4y8" },
-        { title: "Lecture 3 Practice Sheet", id: "1d9S93hIFe2J8CH1NChcVaHAplYTBCD--" },
-        { title: "Lecture 4 Practice Sheet", id: "1qIxI0Bvu_nLjZ9-RW1JqHAIWmyTVsqor" },
-        { title: "Lecture 5 Practice Sheet", id: "1T6QH1dvXMzt_bX4xEWTySj_HQ0tBml46" },
-        { title: "Lecture 6 Practice Sheet", id: "19sfHliA7QblUyXcNLanx4j7QF0fz8W-f" },
-        { title: "Lecture 7 Practice Sheet", id: "1qvoUIZZxs2odDPy2tjDiEzZicwoIr053" },
-        { title: "Lecture 8 Practice Sheet", id: "1nXLejdm0DhtNn5Uduoe5DfqxZ6rYKMEF" }
+        { title: "Lecture 1 Practice Sheet", id: "1woLrco4lqo4HtgclYSJnZGKTnewdXh5q", minPlan: "pro" },
+        { title: "Lecture 2 Practice Sheet", id: "150n8jaPDmhrUQjEEq_ZI_nbpqsXfO4y8", minPlan: "pro" },
+        { title: "Lecture 3 Practice Sheet", id: "1d9S93hIFe2J8CH1NChcVaHAplYTBCD--", minPlan: "pro" },
+        { title: "Lecture 4 Practice Sheet", id: "1qIxI0Bvu_nLjZ9-RW1JqHAIWmyTVsqor", minPlan: "pro" },
+        { title: "Lecture 5 Practice Sheet", id: "1T6QH1dvXMzt_bX4xEWTySj_HQ0tBml46", minPlan: "pro" },
+        { title: "Lecture 6 Practice Sheet", id: "19sfHliA7QblUyXcNLanx4j7QF0fz8W-f", minPlan: "pro" },
+        { title: "Lecture 7 Practice Sheet", id: "1qvoUIZZxs2odDPy2tjDiEzZicwoIr053", minPlan: "pro" },
+        { title: "Lecture 8 Practice Sheet", id: "1nXLejdm0DhtNn5Uduoe5DfqxZ6rYKMEF", minPlan: "pro" }
       ];
 
       const locked = plan === "none";
@@ -2083,12 +2083,12 @@ body.schedule-open{
           meta: "Lecture notes and practice sheets",
           notes: "Mathematics lecture notes will be added here.",
           lectureNotes: [
-            { title: "Sets, Relation and Functions", href: protectedContentUrl("sets-relation-functions-notes"), downloadHref: protectedContentUrl("sets-relation-functions-notes", true), label: "Lecture Notes · PDF", icon: "file-type-pdf" },
-            { title: "Trigonometry and Inverse Trigonometry", href: protectedContentUrl("trigonometry-inverse-trigonometry-notes"), downloadHref: protectedContentUrl("trigonometry-inverse-trigonometry-notes", true), label: "Lecture Notes · PDF", icon: "file-type-pdf" },
-            { title: "Quadratic and Complex", href: protectedContentUrl("quadratic-and-complex-notes"), downloadHref: protectedContentUrl("quadratic-and-complex-notes", true), label: "Lecture Notes · PDF", icon: "file-type-pdf" }
+            { title: "Sets, Relation and Functions", href: protectedContentUrl("sets-relation-functions-notes"), downloadHref: protectedContentUrl("sets-relation-functions-notes", true), label: "Lecture Notes · PDF", icon: "file-type-pdf", minPlan: "pro" },
+            { title: "Trigonometry and Inverse Trigonometry", href: protectedContentUrl("trigonometry-inverse-trigonometry-notes"), downloadHref: protectedContentUrl("trigonometry-inverse-trigonometry-notes", true), label: "Lecture Notes · PDF", icon: "file-type-pdf", minPlan: "pro" },
+            { title: "Quadratic and Complex", href: protectedContentUrl("quadratic-and-complex-notes"), downloadHref: protectedContentUrl("quadratic-and-complex-notes", true), label: "Lecture Notes · PDF", icon: "file-type-pdf", minPlan: "pro" }
           ],
           practiceSheets: lectures.concat([
-            { title: "Lecture 2 Practise 2-2", href: protectedContentUrl("lecture-2-practise-2-2-trigonometry"), downloadHref: protectedContentUrl("lecture-2-practise-2-2-trigonometry", true), label: "Practice Problem Set · PDF", icon: "file-type-pdf" }
+            { title: "Lecture 2 Practise 2-2", href: protectedContentUrl("lecture-2-practise-2-2-trigonometry"), downloadHref: protectedContentUrl("lecture-2-practise-2-2-trigonometry", true), label: "Practice Problem Set · PDF", icon: "file-type-pdf", minPlan: "pro" }
           ])
         },
         {
