@@ -3,6 +3,15 @@
   "daily": [
     {
       "category": "Daily Brief",
+      "date": "30 May 2026",
+      "title": "iMBA Important Topics: 30 May 2026",
+      "summary": "Daily interview-prep briefing covering energy security, petroleum pricing, semiconductors, geopolitics, monsoon risk and agriculture.",
+      "url": "protected:daily-30-may",
+      "cta": "Read article",
+      "icon": "calendar-event"
+    },
+    {
+      "category": "Daily Brief",
       "date": "29 May 2026",
       "title": "iMBA Important Topics: 29 May 2026",
       "summary": "Daily interview-prep briefing covering agentic AI, enterprise technology, energy security, agriculture and geopolitics.",
