@@ -1423,7 +1423,7 @@ body.schedule-open{
       { date: "29 May, Friday", plan: "pro", title: "Quadratic Session", time: "5 PM", topics: ["Quadratic Equations", "Complex Numbers"], mentor: "Raghvi Mishra", link: "https://meet.google.com/htv-cpus-deh" },
       { date: "30 May, Saturday", plan: "pro", title: "Maths Lecture 4", time: "5–6:45 PM", topics: ["Limit", "Continuity", "Differentiability"] },
       { date: "31 May, Sunday", plan: "pro", title: "Interview Session 2: Story-Mapping & Master Question Blueprint", time: "8–9 PM", topics: ["Story mapping", "Master questions"] },
-      { date: "31 May, Sunday", plan: "pro", title: "Maths Lecture 5", time: "5–6:45 PM", topics: ["Integration", "Area under curve"] },
+      { date: "31 May, Sunday", plan: "pro", title: "Integration+Area Under curve", time: "5–6:30 PM", topics: ["Integration", "Area under curve"], mentor: "Raghvi Mishra", duration: "1 hr 30 min", link: "https://meet.google.com/vqv-kyww-oxq" },
       { date: "1 June, Monday", plan: "pro", title: "Maths Lecture 6", time: "5–6:45 PM", topics: ["Permutation & Combination", "Binomial"] },
       { date: "2 June, Tuesday", plan: "pro", title: "VA Session 2: Navigating Stress Panels & Current Trends", time: "8–9 PM", topics: ["Stress panels", "Current trends"] },
       { date: "2 June, Tuesday", plan: "pro", title: "Maths Lecture 7", time: "5–6:45 PM", topics: ["Matrix and Determinants"] },
@@ -1847,6 +1847,7 @@ body.schedule-open{
       const liveTime = nextSession ? nextSession.time : "";
       const liveDetails = nextSession ? `${nextSession.date}${liveTime ? " · " + liveTime : ""}` : "Details uploaded soon";
       const liveMentor = nextSession && nextSession.mentor ? nextSession.mentor : "Hardik Agarwal";
+      const liveDuration = nextSession && nextSession.duration ? nextSession.duration : "60 min";
 
       if (plan === "none") {
         return `
@@ -1867,7 +1868,7 @@ body.schedule-open{
                 </div>
                 <button class="section-btn" type="button" disabled>Join Class</button>
               </div>
-              <p class="live-meta">Mentor: ${escapeHtml(liveMentor)} · Duration: 60 min · All enrolled students</p>
+              <p class="live-meta">Mentor: ${escapeHtml(liveMentor)} · Duration: ${escapeHtml(liveDuration)} · All enrolled students</p>
               <div class="locked-message">
                 <i class="ti ti-lock"></i>
                 <div>
@@ -1900,7 +1901,7 @@ body.schedule-open{
                 Join Class
               </button>
             </div>
-            <p class="live-meta">Mentor: ${escapeHtml(liveMentor)} · Duration: 60 min · ${plan === "pro" ? "Pro — priority seating" : "All enrolled students"}</p>
+            <p class="live-meta">Mentor: ${escapeHtml(liveMentor)} · Duration: ${escapeHtml(liveDuration)} · ${plan === "pro" ? "Pro — priority seating" : "All enrolled students"}</p>
           </article>
         </section>
       `;
