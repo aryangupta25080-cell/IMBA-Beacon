@@ -3,6 +3,15 @@
   "daily": [
     {
       "category": "Daily Brief",
+      "date": "1 June 2026",
+      "title": "iMBA Important Topics: 1 June 2026",
+      "summary": "Daily interview-prep briefing covering EV adoption, microfinance, defence lessons, platforms, digital risk and strategic economics.",
+      "url": "protected:daily-1-june",
+      "cta": "Read article",
+      "icon": "calendar-event"
+    },
+    {
+      "category": "Daily Brief",
       "date": "30 May 2026",
       "title": "iMBA Important Topics: 30 May 2026",
       "summary": "Daily interview-prep briefing covering energy security, petroleum pricing, semiconductors, geopolitics, monsoon risk and agriculture.",
@@ -122,6 +131,15 @@
     }
   ],
   "important": [
+    {
+      "category": "Strategic Affairs",
+      "date": "June 2026",
+      "title": "West Asia War: Lessons for India",
+      "summary": "Important strategic-affairs brief on modern warfare, defence preparedness, ISR, low-cost weapons and self-reliance lessons for India.",
+      "url": "protected:west-asia-war-lessons",
+      "cta": "Read article",
+      "icon": "world"
+    },
     {
       "category": "Must Read",
       "date": "May 2026",
