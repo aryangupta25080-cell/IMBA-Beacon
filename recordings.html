@@ -329,16 +329,32 @@ h1{
   white-space:nowrap;
 }
 .recording-btn{
+  appearance:none;
+  border:0;
   display:inline-flex;
   align-items:center;
   justify-content:center;
   gap:.4rem;
+  min-width:178px;
+  min-height:48px;
   padding:.72rem .9rem;
   border-radius:14px;
   color:var(--maroon-deep);
   background:linear-gradient(135deg,var(--gold-soft),var(--gold));
+  font:inherit;
   font-weight:900;
+  line-height:1;
+  text-decoration:none;
+  cursor:pointer;
   box-shadow:0 12px 22px rgba(232,146,58,.16);
+}
+.recording-btn:focus-visible{
+  outline:3px solid rgba(232,146,58,.34);
+  outline-offset:3px;
+}
+.recording-btn:disabled{
+  cursor:not-allowed;
+  opacity:.72;
 }
 .recording-modal-backdrop{
   position:fixed;
