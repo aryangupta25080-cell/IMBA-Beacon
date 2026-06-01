@@ -340,6 +340,74 @@ h1{
   font-weight:900;
   box-shadow:0 12px 22px rgba(232,146,58,.16);
 }
+.recording-modal-backdrop{
+  position:fixed;
+  inset:0;
+  z-index:40;
+  display:none;
+  align-items:center;
+  justify-content:center;
+  padding:1rem;
+  background:rgba(36,20,28,.48);
+  backdrop-filter:blur(7px);
+}
+.recording-modal-backdrop.is-open{
+  display:flex;
+}
+.recording-modal{
+  width:min(560px,100%);
+  border:1px solid rgba(106,31,54,.16);
+  border-radius:26px;
+  background:linear-gradient(135deg,#fffaf3,#fffdf9);
+  box-shadow:0 28px 70px rgba(55,28,37,.24);
+  overflow:hidden;
+}
+.recording-modal-head{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:1rem;
+  padding:1.2rem 1.25rem;
+  border-bottom:1px solid var(--border);
+  background:#f8f0e6;
+}
+.recording-modal-head strong{
+  display:block;
+  color:var(--maroon);
+  font-size:1.15rem;
+}
+.recording-modal-head span{
+  display:block;
+  margin-top:.18rem;
+  color:var(--ink-soft);
+  font-size:.9rem;
+}
+.recording-modal-close{
+  width:40px;
+  height:40px;
+  display:inline-grid;
+  place-items:center;
+  border:1px solid var(--border);
+  border-radius:14px;
+  color:var(--maroon);
+  background:#fff;
+  cursor:pointer;
+}
+.recording-modal-body{
+  display:grid;
+  gap:.85rem;
+  padding:1rem;
+}
+.recording-modal-part{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:1rem;
+  padding:1rem;
+  border:1px solid rgba(106,31,54,.12);
+  border-radius:18px;
+  background:#fff;
+}
 .status-line{
   min-height:1.4rem;
   margin:.95rem 0 0;
@@ -359,6 +427,7 @@ h1{
   .recording-card{align-items:flex-start;flex-direction:column}
   .recording-actions{width:100%;justify-content:space-between}
   .recording-btn{flex:1}
+  .recording-modal-part{align-items:flex-start;flex-direction:column}
 }
 </style>
 </head>
@@ -383,6 +452,21 @@ h1{
     <div class="recording-content" id="recording-content"></div>
   </section>
 </main>
+
+<div class="recording-modal-backdrop" id="recording-modal-backdrop" aria-hidden="true">
+  <div class="recording-modal" role="dialog" aria-modal="true" aria-labelledby="recording-modal-title">
+    <div class="recording-modal-head">
+      <div>
+        <strong id="recording-modal-title">Recording parts</strong>
+        <span id="recording-modal-meta">Choose the part you want to open.</span>
+      </div>
+      <button class="recording-modal-close" type="button" id="recording-modal-close" aria-label="Close recording options">
+        <i class="ti ti-x"></i>
+      </button>
+    </div>
+    <div class="recording-modal-body" id="recording-modal-body"></div>
+  </div>
+</div>
 
 <script>
 (function () {
@@ -427,6 +511,28 @@ h1{
               meta: "Maths recording · Available for Pro students",
               minPlan: "pro",
               href: "https://drive.google.com/file/d/1L_iBW1yvV5QrpYA7UwzQb1zSRdLUxAFq/view?usp=sharing"
+            },
+            {
+              title: "Integration and Area Under the Curve (Mathematics Lecture 5)",
+              meta: "Recorded in 3 parts · Available for Pro students",
+              minPlan: "pro",
+              parts: [
+                {
+                  title: "Recording Part 1",
+                  meta: "Mathematics Lecture 5 recording",
+                  href: "https://drive.google.com/file/d/1WD2tSKwLhnaSPJxxe7OcowsnmVXarmbS/view?usp=drive_link"
+                },
+                {
+                  title: "Recording Part 2",
+                  meta: "Mathematics Lecture 5 recording",
+                  href: "https://drive.google.com/file/d/1pMKXAK9bBc5ChTPeykrNk_EFszLqFrte/view?usp=drive_link"
+                },
+                {
+                  title: "Recording Part 3",
+                  meta: "Mathematics Lecture 5 recording",
+                  href: "https://drive.google.com/file/d/1rb0eTJcHQaH9N0ufpw2MxljQwxdtZbKl/view?usp=drive_link"
+                }
+              ]
             }
           ]
         }
@@ -509,6 +615,12 @@ h1{
   const titleNode = document.getElementById("recording-title");
   const copyNode = document.getElementById("recording-copy");
   const contentNode = document.getElementById("recording-content");
+  const modalBackdrop = document.getElementById("recording-modal-backdrop");
+  const modalTitle = document.getElementById("recording-modal-title");
+  const modalMeta = document.getElementById("recording-modal-meta");
+  const modalBody = document.getElementById("recording-modal-body");
+  const modalClose = document.getElementById("recording-modal-close");
+  let modalRecordings = [];
 
   function escapeHtml(value) {
     return String(value || "")
@@ -550,6 +662,7 @@ h1{
 
   function renderPage(plan) {
     const config = pageConfig[type];
+    modalRecordings = [];
     document.title = `${config.title} | IMBA Beacon`;
     eyebrowNode.innerHTML = `<i class="ti ti-video"></i> ${escapeHtml(config.eyebrow)}`;
     titleNode.textContent = config.title;
@@ -637,6 +750,10 @@ h1{
                       <button class="recording-btn" type="button" disabled>
                         <i class="ti ti-lock"></i> Locked
                       </button>
+                      ` : Array.isArray(recording.parts) && recording.parts.length ? `
+                      <button class="recording-btn" type="button" data-recording-modal="${modalRecordings.push(recording) - 1}">
+                        <i class="ti ti-player-play"></i> Open recording
+                      </button>
                       ` : `<a class="recording-btn" href="${escapeHtml(recording.href)}" target="_blank" rel="noopener noreferrer">
                         <i class="ti ti-player-play"></i> Open recording
                       </a>`}
@@ -664,7 +781,45 @@ h1{
       : extraHeaders;
   }
 
+  function closeRecordingModal() {
+    modalBackdrop.classList.remove("is-open");
+    modalBackdrop.setAttribute("aria-hidden", "true");
+    modalBody.innerHTML = "";
+  }
+
+  function openRecordingModal(recording) {
+    modalTitle.textContent = recording.title;
+    modalMeta.textContent = "Choose the recording part you want to open.";
+    modalBody.innerHTML = recording.parts.map(function (part) {
+      return `
+        <div class="recording-modal-part">
+          <div class="recording-info">
+            <span class="recording-icon"><i class="ti ti-player-play"></i></span>
+            <div>
+              <strong>${escapeHtml(part.title)}</strong>
+              <span>${escapeHtml(part.meta)}</span>
+            </div>
+          </div>
+          <a class="recording-btn" href="${escapeHtml(part.href)}" target="_blank" rel="noopener noreferrer">
+            <i class="ti ti-external-link"></i> Open
+          </a>
+        </div>
+      `;
+    }).join("");
+    modalBackdrop.classList.add("is-open");
+    modalBackdrop.setAttribute("aria-hidden", "false");
+  }
+
   document.addEventListener("click", function (event) {
+    const modalButton = event.target.closest("[data-recording-modal]");
+    if (modalButton) {
+      const recording = modalRecordings[Number(modalButton.getAttribute("data-recording-modal"))];
+      if (recording && Array.isArray(recording.parts)) {
+        openRecordingModal(recording);
+      }
+      return;
+    }
+
     const sliderButton = event.target.closest("[data-slider-target]");
     if (!sliderButton) return;
 
@@ -678,6 +833,18 @@ h1{
       left: direction * step,
       behavior: "smooth"
     });
+  });
+
+  modalClose.addEventListener("click", closeRecordingModal);
+  modalBackdrop.addEventListener("click", function (event) {
+    if (event.target === modalBackdrop) {
+      closeRecordingModal();
+    }
+  });
+  document.addEventListener("keydown", function (event) {
+    if (event.key === "Escape" && modalBackdrop.classList.contains("is-open")) {
+      closeRecordingModal();
+    }
   });
 
   async function requireSession() {
