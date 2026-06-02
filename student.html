@@ -2122,6 +2122,8 @@ body.schedule-open{
               const viewHref = item.href || (item.id ? `https://drive.google.com/file/d/${item.id}/view` : "");
               const downloadHref = item.downloadHref || (item.id ? `https://drive.google.com/uc?export=download&id=${item.id}` : "");
               const itemLocked = locked || (item.minPlan === "pro" && plan !== "pro");
+              const viewIsProtected = viewHref.indexOf("/protected/") !== -1;
+              const downloadIsProtected = downloadHref.indexOf("/protected/") !== -1;
               return `
                 <div class="sheet-row" style="padding:.72rem 0;">
                   <div class="sheet-info">
@@ -2136,12 +2138,12 @@ body.schedule-open{
                   ${itemLocked ? `<button class="sheet-btn pro-only" disabled>${item.minPlan === "pro" ? "Pro only" : "Locked"}</button>` : `
                     <div class="sheet-actions">
                       ${viewHref ? `
-                      <a class="sheet-btn" href="${escapeHtml(viewHref)}" target="_blank" rel="noopener noreferrer" style="font-size:.82rem;padding:.6rem .8rem;">
+                      <a class="sheet-btn ${viewIsProtected ? "js-protected-content" : ""}" href="${escapeHtml(viewHref)}" ${viewIsProtected ? 'data-protected-action="view"' : 'target="_blank" rel="noopener noreferrer"'} style="font-size:.82rem;padding:.6rem .8rem;">
                         <i class="ti ti-eye" style="font-size:.9rem;"></i> View
                       </a>
                       ` : ""}
                       ${downloadHref ? `
-                      <a class="sheet-btn" href="${escapeHtml(downloadHref)}" ${item.downloadHref ? "download" : 'target="_blank" rel="noopener noreferrer"'} style="font-size:.82rem;padding:.6rem .8rem;background:linear-gradient(135deg,var(--amber-soft),var(--amber));color:var(--maroon-deep);border:none;">
+                      <a class="sheet-btn ${downloadIsProtected ? "js-protected-content" : ""}" href="${escapeHtml(downloadHref)}" ${downloadIsProtected ? 'data-protected-action="download"' : (item.downloadHref ? "download" : 'target="_blank" rel="noopener noreferrer"')} style="font-size:.82rem;padding:.6rem .8rem;background:linear-gradient(135deg,var(--amber-soft),var(--amber));color:var(--maroon-deep);border:none;">
                         <i class="ti ti-download" style="font-size:.9rem;"></i> Download
                       </a>
                       ` : ""}
@@ -2439,6 +2441,75 @@ body.schedule-open{
         : extraHeaders;
     }
 
+    function getFilenameFromDisposition(disposition, fallbackName) {
+      const safeFallback = fallbackName || "imba-beacon-file";
+      const filenameMatch = String(disposition || "").match(/filename\*?=(?:UTF-8''|")?([^";]+)/i);
+      if (!filenameMatch) return safeFallback;
+
+      try {
+        return decodeURIComponent(filenameMatch[1].replace(/"/g, "").trim()) || safeFallback;
+      } catch (error) {
+        return filenameMatch[1].replace(/"/g, "").trim() || safeFallback;
+      }
+    }
+
+    async function openProtectedContentLink(link) {
+      const href = link.getAttribute("href");
+      if (!href) return;
+
+      const action = link.getAttribute("data-protected-action") || "view";
+      const shouldDownload = action === "download";
+      const previewWindow = shouldDownload ? null : window.open("", "_blank");
+
+      try {
+        setStatus("Opening protected material...", "success");
+        const response = await fetch(href, {
+          credentials: "include",
+          headers: getAuthHeaders()
+        });
+
+        if (response.redirected && response.url.indexOf("login.html") !== -1) {
+          if (previewWindow) previewWindow.close();
+          window.location.href = response.url;
+          return;
+        }
+
+        const contentType = response.headers.get("content-type") || "";
+        if (!response.ok) {
+          if (previewWindow) {
+            previewWindow.document.open();
+            previewWindow.document.write(contentType.includes("text/html") ? await response.text() : "<p>Unable to open this protected material.</p>");
+            previewWindow.document.close();
+          }
+          throw new Error(response.status === 403 ? "This material is not available for your current plan." : "Unable to open this protected material.");
+        }
+
+        const blob = await response.blob();
+        const objectUrl = URL.createObjectURL(blob);
+
+        if (shouldDownload) {
+          const disposition = response.headers.get("content-disposition") || "";
+          const downloadLink = document.createElement("a");
+          downloadLink.href = objectUrl;
+          downloadLink.download = getFilenameFromDisposition(disposition, "imba-beacon-material");
+          document.body.appendChild(downloadLink);
+          downloadLink.click();
+          downloadLink.remove();
+        } else if (previewWindow) {
+          previewWindow.location.href = objectUrl;
+        } else {
+          window.open(objectUrl, "_blank", "noopener,noreferrer");
+        }
+
+        window.setTimeout(function () {
+          URL.revokeObjectURL(objectUrl);
+        }, 60000);
+      } catch (error) {
+        if (previewWindow && previewWindow.location.href === "about:blank") previewWindow.close();
+        setStatus(error.message || "Unable to open this protected material.", "error");
+      }
+    }
+
     async function logout() {
       try {
         const response = await fetch(`${apiBase}/api/auth/logout`, {
@@ -2668,6 +2739,13 @@ body.schedule-open{
     }
 
     document.addEventListener("click", function (event) {
+      const protectedContentLink = event.target.closest(".js-protected-content");
+      if (protectedContentLink) {
+        event.preventDefault();
+        openProtectedContentLink(protectedContentLink);
+        return;
+      }
+
       const navButton = event.target.closest("[data-nav-target]");
       if (navButton) {
         const target = navButton.getAttribute("data-nav-target");

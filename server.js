@@ -589,7 +589,8 @@ function getCorsHeaders(request) {
     "Access-Control-Allow-Origin": allowedOrigin,
     "Access-Control-Allow-Credentials": "true",
     "Access-Control-Allow-Headers": "Content-Type, Authorization",
-    "Access-Control-Allow-Methods": "GET,POST,OPTIONS"
+    "Access-Control-Allow-Methods": "GET,POST,OPTIONS",
+    "Access-Control-Expose-Headers": "Content-Disposition"
   };
 }
 
@@ -791,20 +792,22 @@ function getFrontendUrl(pathname) {
   }
 }
 
-function redirectToLogin(request, response, url) {
+function redirectToLogin(request, response, url, extraHeaders = {}) {
   const nextPath = `${url.pathname}${url.search || ""}`;
   const loginUrl = getFrontendUrl(`/login.html?next=${encodeURIComponent(nextPath)}`);
   response.writeHead(302, {
     Location: loginUrl,
-    "Cache-Control": "no-store"
+    "Cache-Control": "no-store",
+    ...extraHeaders
   });
   response.end();
 }
 
-function sendAccessDeniedPage(response, contentMeta) {
+function sendAccessDeniedPage(response, contentMeta, extraHeaders = {}) {
   response.writeHead(403, {
     "Content-Type": "text/html; charset=utf-8",
-    "Cache-Control": "no-store"
+    "Cache-Control": "no-store",
+    ...extraHeaders
   });
   response.end(`<!doctype html>
 <html lang="en">
@@ -843,30 +846,31 @@ function resolveProtectedContent(slug) {
   return { ...contentMeta, slug: normalizedSlug, filePath };
 }
 
-async function serveProtectedContent(request, response, url) {
+async function serveProtectedContent(request, response, url, extraHeaders = {}) {
   const slug = decodeURIComponent(url.pathname.replace(/^\/protected\//, ""));
   const contentMeta = resolveProtectedContent(slug);
 
   if (!contentMeta || !existsSync(contentMeta.filePath)) {
-    sendJson(response, 404, { message: "Protected content not found." });
+    sendJson(response, 404, { message: "Protected content not found." }, extraHeaders);
     return;
   }
 
   const user = getSessionUser(request);
   if (!user) {
-    redirectToLogin(request, response, url);
+    redirectToLogin(request, response, url, extraHeaders);
     return;
   }
 
   if (!canAccessPlan(user, contentMeta.minPlan)) {
-    sendAccessDeniedPage(response, contentMeta);
+    sendAccessDeniedPage(response, contentMeta, extraHeaders);
     return;
   }
 
   const headers = {
     "Content-Type": contentMeta.type || "application/octet-stream",
     "Cache-Control": "private, no-store",
-    "X-Content-Type-Options": "nosniff"
+    "X-Content-Type-Options": "nosniff",
+    ...extraHeaders
   };
 
   if (contentMeta.downloadName) {
@@ -2542,7 +2546,7 @@ async function requestHandler(request, response) {
   }
 
   if (request.method === "GET" && pathname.startsWith("/protected/")) {
-    await serveProtectedContent(request, response, url);
+    await serveProtectedContent(request, response, url, corsHeaders);
     return;
   }
 
