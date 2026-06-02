@@ -140,6 +140,7 @@ const PROTECTED_CONTENT = {
   "daily-29-may": { file: "articles/daily-29-may.html", minPlan: "basic", type: "text/html; charset=utf-8" },
   "daily-30-may": { file: "articles/daily-30-may.html", minPlan: "basic", type: "text/html; charset=utf-8" },
   "daily-1-june": { file: "articles/daily-1-june.html", minPlan: "basic", type: "text/html; charset=utf-8" },
+  "daily-2-june": { file: "articles/daily-2-june.html", minPlan: "basic", type: "text/html; charset=utf-8" },
   "weekly-business-brief-week-1": { file: "articles/weekly-business-brief-week-1.html", minPlan: "basic", type: "text/html; charset=utf-8" },
   "west-asia-war-lessons": { file: "articles/west-asia-war-lessons.html", minPlan: "basic", type: "text/html; charset=utf-8" },
   "bengal-elections": { file: "articles/Bengal_Elections.html", minPlan: "basic", type: "text/html; charset=utf-8" },
