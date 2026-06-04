@@ -3,6 +3,15 @@
   "daily": [
     {
       "category": "Daily Brief",
+      "date": "4 June 2026",
+      "title": "4 June HTML",
+      "summary": "Daily interview-prep briefing for 4 June 2026, formatted in the IMBA Beacon reading layout.",
+      "url": "protected:daily-4-june",
+      "cta": "Read article",
+      "icon": "calendar-event"
+    },
+    {
+      "category": "Daily Brief",
       "date": "2 June 2026",
       "title": "iMBA Important Topics: 2 June 2026",
       "summary": "Daily interview-prep briefing covering AI chips, digital surveillance, markets, policy, business strategy and global affairs.",
@@ -140,6 +149,15 @@
     }
   ],
   "important": [
+    {
+      "category": "Strategic Affairs",
+      "date": "June 2026",
+      "title": "West Asia War 2",
+      "summary": "Important strategic-affairs brief on West Asia developments and interview-ready implications for India.",
+      "url": "protected:west-asia-war-2",
+      "cta": "Read article",
+      "icon": "world"
+    },
     {
       "category": "Strategic Affairs",
       "date": "June 2026",
