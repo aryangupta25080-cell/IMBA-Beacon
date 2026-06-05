@@ -103,19 +103,28 @@ const otpTransporter = SMTP_HOST && SMTP_USER && SMTP_PASS
   : null;
 
 const PLAN_CATALOG = {
+  interview: {
+    id: "interview",
+    label: "Interview Pack",
+    amount: 89900,
+    currency: "INR",
+    description: "Three mock interviews, one dual panel interview, 1-on-1 mentorship, and last-minute prep"
+  },
   basic: {
     id: "basic",
     label: "Basic",
     amount: 119900,
     currency: "INR",
-    description: "IMBA Beacon Basic preparation plan"
+    description: "IMBA Beacon Basic preparation plan",
+    hidden: true
   },
   pro: {
     id: "pro",
     label: "Pro",
     amount: 179900,
     currency: "INR",
-    description: "IMBA Beacon Pro preparation plan"
+    description: "IMBA Beacon Pro preparation plan",
+    hidden: true
   }
 };
 
@@ -762,18 +771,19 @@ function normalizeFeatureAccess(value, purchased = false) {
 function normalizeCourseAccess(user) {
   const source = user?.courseAccess && typeof user.courseAccess === "object" ? user.courseAccess : {};
   const purchased = Boolean(source.purchased || user?.purchased);
-  const planId = source.planId === "basic" || source.planId === "pro" ? source.planId : null;
+  const planId = PLAN_CATALOG[source.planId] ? source.planId : null;
+  const defaultFeatureAccess = planId === "interview" ? false : purchased;
   return {
     purchased,
     planId,
     grantedAt: source.grantedAt || "",
-    featureAccess: normalizeFeatureAccess(source.featureAccess, purchased)
+    featureAccess: normalizeFeatureAccess(source.featureAccess, defaultFeatureAccess)
   };
 }
 
 function getUserPlan(user) {
   const courseAccess = normalizeCourseAccess(user);
-  return courseAccess.purchased && (courseAccess.planId === "basic" || courseAccess.planId === "pro")
+  return courseAccess.purchased && PLAN_CATALOG[courseAccess.planId]
     ? courseAccess.planId
     : "none";
 }
@@ -901,7 +911,9 @@ function buildPurchasedCourseAccess(user, planId) {
     planId,
     grantedAt: currentCourseAccess.grantedAt || new Date().toISOString(),
     featureAccess: PREMIUM_FEATURE_KEYS.reduce((accumulator, key) => {
-      accumulator[key] = true;
+      accumulator[key] = planId === "interview"
+        ? ["mockInterviews", "mentorFeedback", "progressTracker"].includes(key)
+        : true;
       return accumulator;
     }, {})
   };
@@ -1356,7 +1368,7 @@ function buildClientConfig() {
     paymentsEnabled: PAYMENTS_ENABLED,
     paymentProvider: "razorpay",
     razorpayKeyId: RAZORPAY_KEY_ID,
-    plans: Object.values(PLAN_CATALOG).map((plan) => ({
+    plans: Object.values(PLAN_CATALOG).filter((plan) => !plan.hidden).map((plan) => ({
       id: plan.id,
       label: plan.label,
       amount: plan.amount,
@@ -1542,7 +1554,7 @@ async function handleAdminUserAccessUpdate(request, response, url, corsHeaders) 
     const body = await parseRequestBody(request);
     const email = normalizeEmail(body.email);
     const purchased = Boolean(body.purchased);
-    const planId = body.planId === "basic" || body.planId === "pro" ? body.planId : null;
+    const planId = PLAN_CATALOG[body.planId] ? body.planId : null;
     const requestedFeatureAccess = body.featureAccess && typeof body.featureAccess === "object" ? body.featureAccess : {};
 
     if (!isValidEmail(email)) {
@@ -1568,7 +1580,9 @@ async function handleAdminUserAccessUpdate(request, response, url, corsHeaders) 
       featureAccess: PREMIUM_FEATURE_KEYS.reduce((accumulator, key) => {
         accumulator[key] = typeof requestedFeatureAccess[key] === "boolean"
           ? requestedFeatureAccess[key]
-          : purchased;
+          : (planId === "interview"
+            ? ["mockInterviews", "mentorFeedback", "progressTracker"].includes(key)
+            : purchased);
         return accumulator;
       }, {})
     };

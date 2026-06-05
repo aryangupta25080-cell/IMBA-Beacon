@@ -246,7 +246,9 @@
     }
 
     function getPurchasePlanLabel() {
-      return purchasePlan === "pro" ? "Pro" : "Basic";
+      if (purchasePlan === "interview") return "Interview Pack";
+      if (purchasePlan === "pro") return "Pro";
+      return "Basic";
     }
 
     function setStatus(message, type) {
@@ -395,7 +397,7 @@
         syncUi();
       }
 
-      setStatus(payload.message || `${getPurchasePlanLabel()} plan activated successfully. Redirecting you now...`, "success");
+      setStatus(payload.message || `${getPurchasePlanLabel()} activated successfully. Redirecting you now...`, "success");
       redirectToNext(800);
       return true;
     }
@@ -439,7 +441,7 @@
           amount: payload.amount,
           currency: payload.currency,
           name: "IMBA Beacon",
-          description: `${getPurchasePlanLabel()} plan checkout`,
+          description: `${getPurchasePlanLabel()} checkout`,
           order_id: payload.order_id,
           prefill: {
             name: user.name || "",

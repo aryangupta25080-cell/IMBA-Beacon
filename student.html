@@ -142,6 +142,10 @@ button{
   background:rgba(232,146,58,.18);
   color:#ffd9ab;
 }
+.plan-badge.interview{
+  background:rgba(246,216,173,.22);
+  color:#ffe2b8;
+}
 .plan-badge.pro{
   background:rgba(171,195,255,.18);
   color:#e4ecff;
@@ -1473,7 +1477,7 @@ body.schedule-open{
     }
 
     function getPlanLabel(plan) {
-      const labels = { free: "Free", basic: "Basic", pro: "Pro" };
+      const labels = { free: "Free", interview: "Interview Pack", basic: "Basic", pro: "Pro" };
       return labels[plan] || "Free";
     }
 
@@ -1589,14 +1593,14 @@ body.schedule-open{
     }
 
     function normalizePlan(value) {
-      return value === "basic" || value === "pro" || value === "none" ? value : "none";
+      return value === "interview" || value === "basic" || value === "pro" || value === "none" ? value : "none";
     }
 
     function inferPlanFromUser(user) {
       const planId = user && user.courseAccess && user.courseAccess.purchased
         ? normalizePlan(user.courseAccess.planId)
         : "none";
-      return planId === "basic" || planId === "pro" ? planId : "none";
+      return planId === "interview" || planId === "basic" || planId === "pro" ? planId : "none";
     }
 
     function formatPrice(paise) {
@@ -1606,6 +1610,11 @@ body.schedule-open{
         currency: "INR",
         maximumFractionDigits: 0
       }).format(amount);
+    }
+
+    function getCatalogPlanLabel(planId) {
+      const catalog = getPlanCatalog();
+      return (catalog[planId] && catalog[planId].label) || getPlanLabel(planId);
     }
 
     function getDashboardCouponCode() {
@@ -1686,6 +1695,7 @@ body.schedule-open{
         }, {});
 
       return {
+        interview: plans.interview || { id: "interview", label: "Interview Pack", amount: 89900, currency: "INR" },
         basic: plans.basic || { id: "basic", label: "Basic", amount: 119900, currency: "INR" },
         pro: plans.pro || { id: "pro", label: "Pro", amount: 179900, currency: "INR" }
       };
@@ -1738,12 +1748,21 @@ body.schedule-open{
     }
 
     function getPlanBadge(plan) {
+      if (plan === "interview") return { label: "Interview Pack", className: "interview" };
       if (plan === "basic") return { label: "Basic Plan", className: "basic" };
       if (plan === "pro") return { label: "Pro Plan", className: "pro" };
       return { label: "Not Enrolled", className: "none" };
     }
 
     function getStats(plan) {
+      if (plan === "interview") {
+        return [
+          { value: "3", label: "Mock interviews" },
+          { value: "1", label: "Dual panel interview" },
+          { value: "1:1", label: "Mentorship" },
+          { value: "Prep", label: "Last-minute strategy" }
+        ];
+      }
       if (plan === "basic") {
         return [
           { value: "3", label: "Mock interviews" },
@@ -1823,8 +1842,7 @@ body.schedule-open{
       `;
 
       planPillsNode.innerHTML = `
-        <button type="button" data-plan-id="basic" class="${student.plan === "basic" ? "is-active" : ""}" ${student.plan === "basic" ? "disabled" : ""}>Basic</button>
-        <button type="button" data-plan-id="pro" class="${student.plan === "pro" ? "is-active" : ""}" ${student.plan === "pro" ? "disabled" : ""}>Pro</button>
+        <button type="button" data-plan-id="interview" class="${student.plan === "interview" ? "is-active" : ""}" ${student.plan === "interview" ? "disabled" : ""}>Interview Pack</button>
       `;
     }
 
@@ -1849,7 +1867,11 @@ body.schedule-open{
       const liveMentor = nextSession && nextSession.mentor ? nextSession.mentor : "Hardik Agarwal";
       const liveDuration = nextSession && nextSession.duration ? nextSession.duration : "60 min";
 
-      if (plan === "none") {
+      if (plan === "none" || plan === "interview") {
+        const lockTitle = plan === "interview" ? "Live course classes are not included in this pack" : "Live classes available after purchase";
+        const lockCopy = plan === "interview"
+          ? "Your Interview Pack focuses on mock interviews, mentorship, and last-minute prep. Course classes stay locked."
+          : "Enroll in a plan to unlock class access and mentor updates.";
         return `
           <section class="dashboard-section">
             <p class="section-label">Live Class</p>
@@ -1872,8 +1894,8 @@ body.schedule-open{
               <div class="locked-message">
                 <i class="ti ti-lock"></i>
                 <div>
-                  <strong>Live classes available after purchase</strong>
-                  <span>Enroll in a plan to unlock class access and mentor updates.</span>
+                  <strong>${escapeHtml(lockTitle)}</strong>
+                  <span>${escapeHtml(lockCopy)}</span>
                 </div>
               </div>
             </article>
@@ -1978,6 +2000,63 @@ body.schedule-open{
         `;
       }
 
+      if (plan === "interview") {
+        const packCards = [
+          {
+            label: "Pack 01",
+            icon: "microphone",
+            title: "3 Mock Interviews",
+            copy: "Three focused mock interviews to sharpen structure, confidence, and delivery.",
+            meta: "Includes 1 dual panel interview"
+          },
+          {
+            label: "Pack 02",
+            icon: "users",
+            title: "1-on-1 Mentorship",
+            copy: "Personal mentor support for last-mile strategy and answer refinement.",
+            meta: "Mentor-led guidance"
+          },
+          {
+            label: "Pack 03",
+            icon: "bolt",
+            title: "Last-Minute Prep",
+            copy: "High-signal revision support for the final stretch before your interview.",
+            meta: "Interview-ready focus"
+          },
+          {
+            label: "Syllabus",
+            icon: "calculator",
+            title: "Math Syllabus",
+            copy: "Quick topic map so you know what to revise without unlocking course materials.",
+            meta: "Overview included"
+          }
+        ];
+
+        return `
+          <section class="dashboard-section" id="section-tracks">
+            <p class="section-label">Interview Pack</p>
+            <div class="track-grid">
+              ${packCards.map(function (card) {
+                return `
+                  <article class="track-card">
+                    <small>${escapeHtml(card.label)}</small>
+                    <div class="track-head">
+                      <i class="ti ti-${card.icon}"></i>
+                      <h3>${escapeHtml(card.title)}</h3>
+                    </div>
+                    <p>${escapeHtml(card.copy)}</p>
+                    <div class="track-footer">
+                      <span>${escapeHtml(card.meta)}</span>
+                      <button class="track-btn" type="button" disabled>Included</button>
+                    </div>
+                  </article>
+                `;
+              }).join("")}
+            </div>
+          </section>
+        `;
+      }
+
       const interviews = plan === "pro" ? 4 : 3;
       const verbal = plan === "pro" ? 3 : 1;
 
@@ -2072,6 +2151,65 @@ body.schedule-open{
         { title: "Lecture 7 Practice Sheet", id: "1qvoUIZZxs2odDPy2tjDiEzZicwoIr053", minPlan: "pro" },
         { title: "Lecture 8 Practice Sheet", id: "1nXLejdm0DhtNn5Uduoe5DfqxZ6rYKMEF", minPlan: "pro" }
       ];
+
+      const mathSyllabusTopics = [
+        "Sets",
+        "Relation and Functions",
+        "Trigonometry and Inverse Trigonometry",
+        "Quadratic Equations",
+        "Complex Numbers",
+        "Limit, Continuity and Differentiability",
+        "Integration and Area Under Curve",
+        "Permutation and Combination",
+        "Binomial Theorem",
+        "Matrices and Determinants",
+        "Probability"
+      ];
+      if (plan === "interview") {
+        return `
+          <section class="dashboard-section" id="section-sheets">
+            <p class="section-label">Math Syllabus</p>
+            <article class="dashboard-card">
+              <div class="subject-sheet-head">
+                <div class="subject-sheet-title">
+                  <div class="subject-sheet-icon">
+                    <i class="ti ti-calculator"></i>
+                  </div>
+                  <div>
+                    <strong>Mathematics Syllabus Overview</strong>
+                    <span>Topic map included with the Interview Pack</span>
+                  </div>
+                </div>
+                <span class="sheet-btn" style="pointer-events:none;">Overview</span>
+              </div>
+              <div class="sheet-list" style="margin-top:1rem;">
+                ${mathSyllabusTopics.map(function (topic, index) {
+                  return `
+                    <div class="sheet-row" style="padding:.72rem 0;">
+                      <div class="sheet-info">
+                        <div class="sheet-icon" style="width:32px;height:32px;font-size:.85rem;border-radius:10px;">
+                          ${String(index + 1).padStart(2, "0")}
+                        </div>
+                        <div>
+                          <strong style="font-size:.95rem;">${escapeHtml(topic)}</strong>
+                          <span>Revision topic</span>
+                        </div>
+                      </div>
+                    </div>
+                  `;
+                }).join("")}
+              </div>
+              <div class="locked-message" style="margin-top:1rem;">
+                <i class="ti ti-lock"></i>
+                <div>
+                  <strong>Course recordings, notes, quizzes, and sheets stay locked</strong>
+                  <span>This pack gives interview support and the syllabus overview only.</span>
+                </div>
+              </div>
+            </article>
+          </section>
+        `;
+      }
 
       const locked = plan === "none";
       const protectedContentUrl = function (slug, download) {
@@ -2244,54 +2382,25 @@ body.schedule-open{
 
     function renderUpgradeSection() {
       const catalog = getPlanCatalog();
+      const plan = catalog.interview;
       return `
         <section class="dashboard-section" id="section-upgrade">
           <p class="section-label">Upgrade</p>
-          <div class="coupon-box">
-            <strong>Have a coupon code?</strong>
-            <p>Enter IMDS10 for 10% off the Pro plan. Limited to the first 10 students.</p>
-            <div class="coupon-row">
-              <input type="text" id="dashboard-coupon-code" placeholder="Enter coupon code" autocomplete="off"/>
-              <button class="coupon-action" type="button" data-action="apply-coupon">Apply</button>
-            </div>
-            <div class="coupon-feedback" id="dashboard-coupon-feedback" aria-live="polite"></div>
-          </div>
           <div class="plans-grid">
-            <article class="plan-card">
-              <span class="tag-pill amber">Basic</span>
-              <h3>Basic Plan</h3>
-              <div class="plan-price">${escapeHtml(formatPrice(catalog.basic.amount))}</div>
-              <p class="plan-copy">Structured support for focused interview preparation.</p>
+            <article class="plan-card featured" style="grid-column:1 / -1;">
+              <span class="tag-pill amber">Interview Pack</span>
+              <h3>Crack the Interview Sprint</h3>
+              <div class="plan-price">${escapeHtml(formatPrice(plan.amount))}</div>
+              <p class="plan-copy">A sharp, mentor-led last-mile pack built for students who need confident interview execution without the full course library.</p>
               <ul>
+                <li>1-on-1 mentorship</li>
                 <li>3 mock interviews</li>
-                <li>Practice quizzes</li>
-                <li>1 interview etiquettes session</li>
-                <li>Practice sheets</li>
-                <li>Previous year questions</li>
-                <li>1-on-1 mentorship</li>
+                <li>1 dual panel interview included within the mock interview track</li>
+                <li>Last-minute prep for answer structure, confidence and interview strategy</li>
+                <li>Math syllabus overview included</li>
               </ul>
               <div style="margin-top:1rem;">
-                <button class="cta-solid" type="button" data-plan-id="basic">Choose Basic</button>
-              </div>
-            </article>
-
-            <article class="plan-card featured">
-              <span class="tag-pill amber">Pro</span>
-              <h3>Pro Plan</h3>
-              <div class="plan-price">${escapeHtml(formatPrice(catalog.pro.amount))}</div>
-              <p class="plan-copy">Expanded mentoring with deeper guided support.</p>
-              <ul>
-                <li>3 mock interviews + 1 dual panel interview</li>
-                <li>Practice quizzes</li>
-                <li>3 interview etiquettes sessions</li>
-                <li>Practice sheets</li>
-                <li>Previous year questions</li>
-                <li>Master Questions Sheet</li>
-                <li>1-on-1 mentorship</li>
-                <li>9 live maths sessions</li>
-              </ul>
-              <div style="margin-top:1rem;">
-                <button class="cta-solid" type="button" data-plan-id="pro">Choose Pro</button>
+                <button class="cta-solid" type="button" data-plan-id="interview">Choose Interview Pack</button>
               </div>
             </article>
           </div>
@@ -2572,10 +2681,11 @@ body.schedule-open{
     async function startCheckout(planId, triggerButton) {
       const couponCode = getDashboardCouponCode();
       const checkoutCouponCode = planId === "pro" ? couponCode : "";
+      const planLabel = getCatalogPlanLabel(planId);
 
       if (couponCode && !checkoutCouponCode) {
         syncCouponButtonState(false);
-        setCouponFeedback("Coupons apply to Pro only. Basic checkout will continue at regular price.");
+        setCouponFeedback("Coupons apply to Pro only. Checkout will continue at regular price.");
       }
 
       if (!currentUser) {
@@ -2585,7 +2695,7 @@ body.schedule-open{
       }
 
       if (currentPlan === planId) {
-        setStatus(`${planId === "pro" ? "Pro" : "Basic"} plan is already active on this account.`, "success");
+        setStatus(`${planLabel} is already active on this account.`, "success");
         return;
       }
 
@@ -2623,7 +2733,6 @@ body.schedule-open{
         }
 
         if (payload.coupon && payload.coupon.applied) {
-          const planLabel = planId === "pro" ? "Pro" : "Basic";
           setStatus(`Coupon ${payload.coupon.code} applied. Final ${planLabel} checkout is ${payload.coupon.finalAmountDisplay}.`, "success");
         }
 
@@ -2633,7 +2742,7 @@ body.schedule-open{
           amount: payload.amount,
           currency: payload.currency,
           name: "IMBA Beacon",
-          description: `${planId === "pro" ? "Pro" : "Basic"} plan checkout`,
+          description: `${planLabel} checkout`,
           order_id: payload.order_id,
           prefill: {
             name: student.name,
