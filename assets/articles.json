@@ -3,6 +3,15 @@
   "daily": [
     {
       "category": "Daily Brief",
+      "date": "7 June 2026",
+      "title": "iMBA Important Topics: 7 June 2026",
+      "summary": "Daily interview-prep briefing covering GDP growth, rupee pressure, AI cybersecurity and key opinion themes.",
+      "url": "protected:daily-7-june",
+      "cta": "Read article",
+      "icon": "calendar-event"
+    },
+    {
+      "category": "Daily Brief",
       "date": "4 June 2026",
       "title": "4 June HTML",
       "summary": "Daily interview-prep briefing for 4 June 2026, formatted in the IMBA Beacon reading layout.",
