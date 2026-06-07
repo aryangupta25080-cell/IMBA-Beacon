@@ -792,7 +792,7 @@ function getUserPlan(user) {
 function canAccessPlan(user, minPlan) {
   const plan = getUserPlan(user);
   if (minPlan === "pro") return plan === "pro";
-  if (minPlan === "basic") return plan === "basic" || plan === "pro";
+  if (minPlan === "basic") return plan === "basic" || plan === "pro" || plan === "interview";
   return Boolean(user);
 }
 

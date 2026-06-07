@@ -133,6 +133,10 @@ button{
   background:rgba(171,195,255,.18);
   color:#e4ecff;
 }
+.plan-badge.interview{
+  background:rgba(245,196,124,.18);
+  color:#ffe2ad;
+}
 .sidebar-nav{
   padding:1rem .9rem;
   display:grid;
@@ -557,7 +561,7 @@ button{
     }
 
     function normalizePlan(value) {
-      return value === "basic" || value === "pro" || value === "none" ? value : "none";
+      return value === "basic" || value === "pro" || value === "interview" || value === "none" ? value : "none";
     }
 
     function normalizeArticleView(value) {
@@ -631,7 +635,7 @@ button{
       const planId = user && user.courseAccess && user.courseAccess.purchased
         ? normalizePlan(user.courseAccess.planId)
         : "none";
-      return planId === "basic" || planId === "pro" ? planId : "none";
+      return planId === "basic" || planId === "pro" || planId === "interview" ? planId : "none";
     }
 
     function getStudentState(user) {
@@ -675,6 +679,7 @@ button{
     function getPlanBadge(plan) {
       if (plan === "basic") return { label: "Basic Plan", className: "basic" };
       if (plan === "pro") return { label: "Pro Plan", className: "pro" };
+      if (plan === "interview") return { label: "Interview Pack", className: "interview" };
       return { label: "Not Enrolled", className: "none" };
     }
 

@@ -224,9 +224,11 @@
     let purchaseCheckoutStarted = false;
 
     function getSafeNextUrl() {
-      if (!requestedNext || !requestedNext.startsWith("./")) return "./student.html";
+      if (!requestedNext) return "./student.html";
+      if (/^https?:\/\//i.test(requestedNext) || requestedNext.startsWith("//")) return "./student.html";
       if (requestedNext.includes("login.html")) return "./student.html";
-      return requestedNext;
+      if (requestedNext.startsWith("./") || requestedNext.startsWith("/")) return requestedNext;
+      return "./student.html";
     }
 
     function redirectToNext(delay = 300) {
